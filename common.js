@@ -47,7 +47,9 @@ function loadPosts(url, postsModel) {
             let child = rawChild.data;
             postsModel.append({
                 postTitle: child.title,
-                postContent: child.selftext
+                postContent: child.selftext,
+                author: child.author,
+                score: child.score
             });
         }
     });

@@ -53,6 +53,7 @@ Kirigami.ApplicationWindow {
                 id: postsModel
             }
             delegate: Kirigami.AbstractCard {
+                property var showsPost: (postContent !== null && postContent.length > 0)
                 contentItem: Item {
 
                     implicitWidth: delegateLayout.implicitWidth
@@ -71,16 +72,28 @@ Kirigami.ApplicationWindow {
                         columns: 2
                         ColumnLayout {
                             Kirigami.Heading {
+                                Layout.fillWidth: true
+                                wrapMode: Text.WordWrap
                                 level: 2
                                 text: postTitle
                             }
                             Kirigami.Separator {
                                 Layout.fillWidth: true
+                                visible: showsPost
                             }
                             Controls.Label {
                                 Layout.fillWidth: true
                                 wrapMode: Text.WordWrap
                                 text: postContent
+                            }
+
+                            Text {
+                                color: 'orange'
+                                text: `<b>By</b> ${author}`
+                            }
+                            Text {
+                                color: 'green'
+                                text: `<b>${score}</b>`
                             }
                         }
                     }
