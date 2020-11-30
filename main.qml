@@ -116,17 +116,16 @@ Kirigami.ApplicationWindow {
                             Controls.Label {
                                 width: parent.width
                                 Layout.fillWidth: true
-
-                                wrapMode: Text.Word Wrap
+                                wrapMode: Text.WordWrap
                                 text: postContent
                                 visible: hasContent
                             }
                             Image {
                                 source: previewImage
                                 visible: showImagePreview
-                                Layout.fillWidth:  true
-                                fillMode: Image.Stretch
-                                height: sourceSize.height
+                                sourceSize.width: parent.width - 8
+                                fillMode: Image.PreserveAspectFit
+                                width: parent.width - 8
                             }
                         }
                         Image {
