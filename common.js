@@ -49,7 +49,9 @@ function loadPosts(url, postsModel) {
                 postTitle: child.title,
                 postContent: child.selftext,
                 author: child.author,
-                score: child.score
+                score: child.score,
+                thumbnail: child.thumbnail,
+                commentCount: child.num_comments
             });
         }
     });
@@ -63,10 +65,12 @@ function loadSubs(subsModel) {
             url: "/",
             description: "Front page of the internet"
         });
+        console.log(subsModel.get(0));
 
 
         for (let rawChild of data.data.children) {
             let child = rawChild.data;
+
             subsModel.append({
                 name: child.display_name,
                 url: child.url,

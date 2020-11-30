@@ -9,8 +9,13 @@ Kirigami.ApplicationWindow {
     title: "Baconer"
 
     Component.onCompleted: {
+        console.log("Loading subreddits");
         Common.loadSubs(subsModel);
+        console.log("Loaded subreddits");
+        console.log("Loading posts");
         subsView.currentIndex = 0;
+
+        Common.loadPosts("/", postsModel);
     }
 
     globalDrawer: Kirigami.GlobalDrawer {
@@ -18,6 +23,7 @@ Kirigami.ApplicationWindow {
         id: navDrawer
         header: RowLayout {
             Layout.fillWidth: true
+
             Kirigami.SearchField {
                 visible: !navDrawer.collapsed
                 Layout.fillWidth: true
@@ -53,23 +59,17 @@ Kirigami.ApplicationWindow {
                 id: postsModel
             }
             delegate: Kirigami.AbstractCard {
-                property var showsPost: (postContent !== null && postContent.length > 0)
+                property var hasContent: (postContent !== null && postContent.length > 0)
+                property var rowEachWidthMult: 0.2
                 contentItem: Item {
-
                     implicitWidth: delegateLayout.implicitWidth
                     implicitHeight: delegateLayout.implicitHeight
-                    GridLayout {
+
+
+                    RowLayout {
                         id: delegateLayout
+                        width: parent.width
 
-                        anchors {
-                            left: parent.left
-                            top: parent.top
-                            right: parent.right
-                        }
-                        rowSpacing: Kirigami.Units.smallSpacing
-                        columnSpacing: Kirigami.Units.smallSpacing
-
-                        columns: 2
                         ColumnLayout {
                             Kirigami.Heading {
                                 Layout.fillWidth: true
@@ -77,24 +77,52 @@ Kirigami.ApplicationWindow {
                                 level: 2
                                 text: postTitle
                             }
+
                             Kirigami.Separator {
                                 Layout.fillWidth: true
-                                visible: showsPost
-                            }
-                            Controls.Label {
-                                Layout.fillWidth: true
-                                wrapMode: Text.WordWrap
-                                text: postContent
                             }
 
-                            Text {
-                                color: 'orange'
-                                text: `<b>By</b> ${author}`
+                            RowLayout {
+                                width: parent.width
+
+                                Text {
+                                    Layout.minimumWidth: 100
+                                    Layout.preferredWidth: parent.width * rowEachWidthMult
+                                    color: 'orange'
+                                    text: `<b>By</b> ${author}`
+                                }
+                                Text {
+                                    Layout.minimumWidth: 100
+                                    Layout.preferredWidth: parent.width * rowEachWidthMult
+                                    Layout.alignment: Layout.Center
+                                    horizontalAlignment: Text.AlignHCenter
+                                    color: 'blue'
+                                    text: `<b>Comments:</b> ${commentCount}`
+                                }
+
+                                Text {
+                                    Layout.minimumWidth: 100
+                                    Layout.preferredWidth: parent.width * rowEachWidthMult
+                                    Layout.alignment: Layout.Right
+                                    horizontalAlignment: Text.AlignRight
+                                    color: 'green'
+                                    text: `<b>${score}</b>`
+                                }
                             }
-                            Text {
-                                color: 'green'
-                                text: `<b>${score}</b>`
+
+                            Controls.Label {
+                                width: parent.width
+                                Layout.fillWidth: true
+
+                                wrapMode: Text.WordWrap
+                                text: postContent
+                                visible: hasContent
                             }
+                        }
+                        Image {
+                            Layout.alignment: Layout.Right
+                            source: thumbnail
+                            visible: thumbnail != null && thumbnail.length > 0
                         }
                     }
                 }
