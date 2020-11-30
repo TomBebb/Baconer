@@ -59,8 +59,11 @@ Kirigami.ApplicationWindow {
                 id: postsModel
             }
             delegate: Kirigami.AbstractCard {
-                property var hasContent: (postContent !== null && postContent.length > 0)
+                property var hasContent: (postContent != null && postContent.length > 0)
                 property var rowEachWidthMult: 0.2
+                property var showImagePreview: (previewImage != null)
+                property var showThumbnail: (!showImagePreview && thumbnail != null && thumbnail.length > 0)
+
                 contentItem: Item {
                     implicitWidth: delegateLayout.implicitWidth
                     implicitHeight: delegateLayout.implicitHeight
@@ -114,15 +117,22 @@ Kirigami.ApplicationWindow {
                                 width: parent.width
                                 Layout.fillWidth: true
 
-                                wrapMode: Text.WordWrap
+                                wrapMode: Text.Word Wrap
                                 text: postContent
                                 visible: hasContent
+                            }
+                            Image {
+                                source: previewImage
+                                visible: showImagePreview
+                                Layout.fillWidth:  true
+                                fillMode: Image.Stretch
+                                height: sourceSize.height
                             }
                         }
                         Image {
                             Layout.alignment: Layout.Right
                             source: thumbnail
-                            visible: thumbnail != null && thumbnail.length > 0
+                            visible: showThumbnail
                         }
                     }
                 }

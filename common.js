@@ -45,16 +45,22 @@ function loadPosts(url, postsModel) {
         postsModel.clear();
         for (let rawChild of data.data.children) {
             let child = rawChild.data;
+
             postsModel.append({
                 postTitle: child.title,
                 postContent: child.selftext,
                 author: child.author,
                 score: child.score,
-                thumbnail: child.thumbnail,
-                commentCount: child.num_comments
+                thumbnail: fixURL(child.thumbnail),
+                commentCount: child.num_comments,
+                previewImage: fixURL(child.preview.images[0].source.url)
             });
         }
     });
+}
+
+function fixURL(url) {
+    return url.replace("&amp;", "&");
 }
 
 function loadSubs(subsModel) {
