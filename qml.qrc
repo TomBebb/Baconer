@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>common.js</file>
+        <file>SubredditList.qml</file>
     </qresource>
 </RCC>

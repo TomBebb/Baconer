@@ -10,7 +10,7 @@ Kirigami.ApplicationWindow {
 
     Component.onCompleted: {
         console.log("Loading subreddits");
-        Common.loadSubs(subsModel);
+        Common.loadSubs(subsView.model);
         console.log("Loaded subreddits");
         console.log("Loading posts");
         subsView.currentIndex = 0;
@@ -30,24 +30,8 @@ Kirigami.ApplicationWindow {
             }
         }
 
-        ListView {
+        SubredditList {
             id: subsView
-            model: ListModel {
-                id: subsModel
-            }
-            delegate: Kirigami.BasicListItem {
-                label: Common.isFrontpage(this) ? name: `${name} (${url})`
-                subtitle: description
-            }
-            onCurrentItemChanged: function() {
-                let currentData = model.get(currentIndex);
-
-                root.title = "Baconer";
-                if (!Common.isFrontpage(currentData))
-                    root.title += ` - ${currentData.url}`;
-
-                Common.loadPosts(currentData.url, postsModel);
-            }
         }
     }
     Kirigami.ScrollablePage {
