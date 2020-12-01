@@ -5,8 +5,6 @@ function getJSON(url) {
   xhr.open("GET", url);
   xhr.send();
 
-  console.log(url);
-
   return new Promise(function(resolve, reject) {
       xhr.onreadystatechange = function() {
         if (xhr.readyState !== XMLHttpRequest.DONE)
@@ -45,23 +43,28 @@ function isFrontpage(data) {
 function loadPosts(url, postsModel) {
     getRedditJSON(url).then(data => {
         postsModel.clear();
+        console.log(`Got posts data: ${url} => ${data.data.children.length}`);
 
         for (let rawChild of data.data.children) {
             let child = rawChild.data;
+            console.log(`loading post: ${child.title}`);
             const previewData = child.preview;
-            const previewDataImages = previewData === null ? null : previewData.images;
-            const previewImage = (previewDataImages === null || previewDataImages.length === 0) ? "" : fixURL(previewDataImages[0].source.url);
+                                    console.log(`loading post images: ${child.title}`);
+            const previewDataImages = previewData ? previewData.images : null;
 
-            const modelData = {
+                                    console.log(`loading post data: ${child.title}`);
+
+            let modelData = {
                 postTitle: child.title,
                 postContent: child.selftext,
-                postContentHtml: child.selftext_html,
                 author: child.author,
                 score: child.score,
                 thumbnail: child.thumbnail,
-                commentCount: child.num_comments,
-                previewImage: previewImage
+                commentCount: child.num_comments
             };
+                                    console.log(`Getting preview`);
+            modelData.previewImage = (previewDataImages === null || previewDataImages.length === 0) ? "" : fixURL(previewDataImages[0].source.url);
+                                    console.log(`gOT preview`);
 
             postsModel.append(modelData);
         }
@@ -80,11 +83,18 @@ function loadSubs(subsModel) {
 
     getRedditJSON("/subreddits/default").then(data => {
         subsModel.clear();
-        subsModel.append({
-            name: "Frontpage",
-            url: "/",
-            description: "Front page of the internet"
-        });
+
+                                                  subsModel.append({
+                                                      name: "AskReddit",
+                                                      url: "/r/askreddit",
+                                                      description: "Ask"
+                                                  });
+
+                                                  subsModel.append({
+                                                      name: "Frontpage",
+                                                      url: "/",
+                                                      description: "Front page of the internet"
+                                                  });
 
         for (let rawChild of data.data.children) {
             let child = rawChild.data;

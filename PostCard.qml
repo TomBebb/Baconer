@@ -59,12 +59,13 @@ Kirigami.AbstractCard {
                 }
 
                 Controls.Label {
-                    width: parent.width
                     Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                    textFormat: TextEdit.MarkdownText
                     text: postContent
                     visible: hasContent
                 }
+
                 Image {
                     source: previewImage
                     visible: showImagePreview
