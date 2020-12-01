@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>common.js</file>
         <file>SubredditList.qml</file>
+        <file>PostCard.qml</file>
     </qresource>
 </RCC>

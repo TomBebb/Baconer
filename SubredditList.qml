@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import org.kde.kirigami 2.11 as Kirigami
+import "common.js" as Common
 
 
 ListView {

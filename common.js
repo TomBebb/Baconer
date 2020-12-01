@@ -5,6 +5,8 @@ function getJSON(url) {
   xhr.open("GET", url);
   xhr.send();
 
+  console.log(url);
+
   return new Promise(function(resolve, reject) {
       xhr.onreadystatechange = function() {
         if (xhr.readyState !== XMLHttpRequest.DONE)
@@ -43,27 +45,42 @@ function isFrontpage(data) {
 function loadPosts(url, postsModel) {
     getRedditJSON(url).then(data => {
         postsModel.clear();
+
         for (let rawChild of data.data.children) {
             let child = rawChild.data;
-
-            postsModel.append({
+            const modelData = {
                 postTitle: child.title,
                 postContent: child.selftext,
                 author: child.author,
                 score: child.score,
-                thumbnail: fixURL(child.thumbnail),
-                commentCount: child.num_comments,
-                previewImage: fixURL(child.preview.images[0].source.url)
-            });
+                thumbnail: child.thumbnail,
+                commentCount: child.num_comments
+            };
+
+            const previewData = child.preview;
+            const previewDataImages = previewData === null ? null : previewData.images;
+            let previewUrl = (previewDataImages === null || previewDataImages.length === 0) ? "" : previewDataImages[0].source.url;
+
+            if (previewUrl)
+                previewUrl = fixURL(previewUrl);
+
+            modelData.previewImage = previewUrl;
+
+            postsModel.append(modelData);
         }
     });
 }
 
 function fixURL(url) {
-    return url.replace("&amp;", "&");
+
+    url = url.replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">");
+    return url;
 }
 
 function loadSubs(subsModel) {
+
     getRedditJSON("/subreddits/default").then(data => {
         subsModel.clear();
         subsModel.append({
@@ -71,8 +88,6 @@ function loadSubs(subsModel) {
             url: "/",
             description: "Front page of the internet"
         });
-        console.log(subsModel.get(0));
-
 
         for (let rawChild of data.data.children) {
             let child = rawChild.data;
