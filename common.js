@@ -48,23 +48,20 @@ function loadPosts(url, postsModel) {
 
         for (let rawChild of data.data.children) {
             let child = rawChild.data;
+            const previewData = child.preview;
+            const previewDataImages = previewData === null ? null : previewData.images;
+            const previewImage = (previewDataImages === null || previewDataImages.length === 0) ? "" : fixURL(previewDataImages[0].source.url);
+
             const modelData = {
                 postTitle: child.title,
                 postContent: child.selftext,
+                postContentHtml: child.selftext_html,
                 author: child.author,
                 score: child.score,
                 thumbnail: child.thumbnail,
-                commentCount: child.num_comments
+                commentCount: child.num_comments,
+                previewImage: previewImage
             };
-
-            const previewData = child.preview;
-            const previewDataImages = previewData === null ? null : previewData.images;
-            let previewUrl = (previewDataImages === null || previewDataImages.length === 0) ? "" : previewDataImages[0].source.url;
-
-            if (previewUrl)
-                previewUrl = fixURL(previewUrl);
-
-            modelData.previewImage = previewUrl;
 
             postsModel.append(modelData);
         }
