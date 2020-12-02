@@ -64,14 +64,20 @@ Kirigami.AbstractCard {
                     textFormat: TextEdit.MarkdownText
                     text: postContent
                     visible: hasContent
+
+                    onLinkActivated: {
+                        Qt.openUrlExternally(link);
+                    }
+
                 }
 
                 Image {
                     source: previewImage
                     visible: showImagePreview
-                    sourceSize.width: parent.width - 8
                     fillMode: Image.PreserveAspectFit
                     width: parent.width - 8
+                    sourceSize.width: imageWidth
+                    sourceSize.height: imageHeight
                 }
             }
             Image {

@@ -34,7 +34,7 @@ function rawGet(url, params) {
         }
     }
     console.log(`expanded url: ${url}`);
-    
+
     const xhr = new XMLHttpRequest();
     xhr.open("GET", url);
     xhr.timeout = 1000;
@@ -91,9 +91,6 @@ function loadPosts(url, postsModel, after) {
 
     return getRedditJSON(url, params).then(data => {
 
-        if (!after)
-            postsModel.clear();
-
         for (const rawChild of data.data.children) {
             const child = rawChild.data;
             const previewData = child.preview;
@@ -147,9 +144,10 @@ function loadSubs(subsModel) {
             url: "/",
             description: "Front page of the internet"
         });
-
+        console.log(`Raw subs: ${data.data.children.length}`);
         for (let rawChild of data.data.children) {
             let child = rawChild.data;
+            console.log(`Raw sub: ${child.display_name}; ${child.url}; ${child.public_description}`);
 
             subsModel.append({
                 name: child.display_name,
@@ -157,6 +155,14 @@ function loadSubs(subsModel) {
                 description: tidyDescription(child.public_description)
             });
         }
+
+        console.log(`Subs: ${subsModel.count}`);
+
+        for (let i = 0; i < subsModel.count; i++) {
+            const sub = subsModel.get(i);
+            console.log(`sub ${i}: ${sub.name};${sub.url};${sub.description}`);
+        }
+
         return data;
     });
 }
