@@ -79,14 +79,14 @@ function isFrontpage(data) {
     return data.url === "/";
 }
 
+
 function loadPosts(url, postsModel, after) {
     const params = {};
-    
+
     params.raw_json = 1;
 
     if (after) {
         params.after = after;
-        console.log("Load after params: "+toString(params));
     }
 
     return getRedditJSON(url, params).then(data => {
@@ -94,28 +94,37 @@ function loadPosts(url, postsModel, after) {
         if (!after)
             postsModel.clear();
 
-        for (let rawChild of data.data.children) {
-            let child = rawChild.data;
+        for (const rawChild of data.data.children) {
+            const child = rawChild.data;
             const previewData = child.preview;
             const previewDataImages = previewData ? previewData.images : null;
 
             let modelData = {
-                postTitle: child.title,
-                postContent: child.selftext,
-                author: child.author,
-                score: child.score,
-                thumbnail: child.thumbnail,
-                commentCount: child.num_comments
+                "postTitle": child.title,
+                "postContent": child.selftext,
+                "author": child.author,
+                "score": child.score,
+                "thumbnail": child.thumbnail,
+                "commentCount": child.num_comments
             };
-            modelData.previewImage = (previewDataImages === null || previewDataImages.length === 0) ? "" : previewDataImages[0].source.url;
 
-            postsModel.append(modelData);
+            if (previewDataImages !== null && previewDataImages.length > 0) {
+                const chosenImage = previewDataImages[0]
+                const chosenImageSource = chosenImage.source
+                modelData.previewImage = chosenImageSource.url
+                modelData.imageWidth = chosenImageSource.width
+                modelData.imageHeight = chosenImageSource.height
+            } else {
+                modelData.previewImage = ""
+            }
+
+            postsModel.append(modelData)
         }
 
-        postsModel.after = data.data.after;
-        postsModel.before = data.data.before;
+        postsModel.after = data.data.after
+        postsModel.before = data.data.before
 
-        return data;
+        return data
     });
 }
 
