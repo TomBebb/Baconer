@@ -76,6 +76,7 @@ Kirigami.AbstractCard {
             }
             Image {
                 Layout.alignment: Layout.Right
+                fillMode: Image.PreserveAspectFit
                 source: thumbnail
                 visible: showThumbnail
             }

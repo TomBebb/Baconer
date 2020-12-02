@@ -9,13 +9,10 @@ Kirigami.ApplicationWindow {
     title: "Baconer"
 
     Component.onCompleted: {
-        console.log("Loading subreddits");
         Common.loadSubs(subsView.model);
         subsView.currentIndex = 0;
 
-        console.log("Loading posts");
-        Common.loadPosts("/r/askreddit", postsModel);
-        console.log("Loaded posts");
+        Common.loadPosts("/", postsModel);
     }
 
     globalDrawer: Kirigami.GlobalDrawer {
@@ -40,9 +37,19 @@ Kirigami.ApplicationWindow {
         Kirigami.CardsListView {
             id: postsView
             model: ListModel {
+                property string after
+                property string before
+                property bool loadingPosts
                 id: postsModel
             }
             delegate: PostCard {}
+            onContentYChanged: {
+            
+                if (atYEnd) {
+                    const url = subsView.getURL();
+                    Common.loadPostsAfter(url, postsModel)
+                }
+            }
         }
     }
     pageStack.initialPage: postsPage

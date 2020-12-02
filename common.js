@@ -1,26 +1,65 @@
 .pragma library
 
-function getJSON(url) {
-  var xhr = new XMLHttpRequest;
-  xhr.open("GET", url);
-  xhr.send();
+function toString(obj) {
+    if (obj === null)
+        return "null";
+    var txt;
+    switch(typeof(obj)) {
+        case "object":
+            if (Array.isArray(obj)) {
+                txt = "[";
+                for (let i = 0; i < obj.length; i++) {
+                    if (i > 0)
+                        txt += ", ";
+                    txt += toString(obj[i]);
+                }
+                return txt + "]";
+            } else {
+                txt = "{ ";
+                for (const field of Object.keys(obj)) {
+                    txt += `${field}: ${toString(obj[field])}, `;
+                }
+                return txt + " }";
+            }
+        default:
+            return obj + "";
+    }
+}
 
-  return new Promise(function(resolve, reject) {
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState !== XMLHttpRequest.DONE)
-            return;
-
-        if (xhr.status >= 200 && xhr.status < 300) {
-            resolve(JSON.parse(xhr.responseText));
-        } else {
-            reject({
-                url: url,
-                status: xhr.status,
-                statusText: xhr.statusText,
-            });
+function rawGet(url, params) {
+    if (params) {
+        url += "?";
+        for (let key of Object.keys(params)) {
+            url += `${encodeURI(key)}=${encodeURI(params[key])}&`;
         }
-      }
-  });
+    }
+    console.log(`expanded url: ${url}`);
+    
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.timeout = 1000;
+    xhr.send();
+
+    return new Promise(function(resolve, reject) {
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState !== XMLHttpRequest.DONE)
+                return;
+
+            if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(xhr.responseText);
+            } else {
+                reject({
+                    url: url,
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                });
+            }
+        };
+    });
+}
+
+function getJSON(url, params) {
+    return rawGet(url, params).then(JSON.parse);
 }
 
 function tidyDescription(text) {
@@ -32,27 +71,33 @@ function tidyDescription(text) {
     return text;
 }
 
-function getRedditJSON(url) {
-    return getJSON("https://api.reddit.com" + url);
+function getRedditJSON(url, params) {
+    return getJSON("https://api.reddit.com" + url, params);
 }
 
 function isFrontpage(data) {
     return data.url === "/";
 }
 
-function loadPosts(url, postsModel) {
-    getRedditJSON(url).then(data => {
-        postsModel.clear();
-        console.log(`Got posts data: ${url} => ${data.data.children.length}`);
+function loadPosts(url, postsModel, after) {
+    const params = {};
+    
+    params.raw_json = 1;
+
+    if (after) {
+        params.after = after;
+        console.log("Load after params: "+toString(params));
+    }
+
+    return getRedditJSON(url, params).then(data => {
+
+        if (!after)
+            postsModel.clear();
 
         for (let rawChild of data.data.children) {
             let child = rawChild.data;
-            console.log(`loading post: ${child.title}`);
             const previewData = child.preview;
-                                    console.log(`loading post images: ${child.title}`);
             const previewDataImages = previewData ? previewData.images : null;
-
-                                    console.log(`loading post data: ${child.title}`);
 
             let modelData = {
                 postTitle: child.title,
@@ -62,39 +107,37 @@ function loadPosts(url, postsModel) {
                 thumbnail: child.thumbnail,
                 commentCount: child.num_comments
             };
-                                    console.log(`Getting preview`);
-            modelData.previewImage = (previewDataImages === null || previewDataImages.length === 0) ? "" : fixURL(previewDataImages[0].source.url);
-                                    console.log(`gOT preview`);
+            modelData.previewImage = (previewDataImages === null || previewDataImages.length === 0) ? "" : previewDataImages[0].source.url;
 
             postsModel.append(modelData);
         }
+
+        postsModel.after = data.data.after;
+        postsModel.before = data.data.before;
+
+        return data;
     });
 }
 
-function fixURL(url) {
-
-    url = url.replace("&amp;", "&")
-        .replace("&lt;", "<")
-        .replace("&gt;", ">");
-    return url;
+function loadPostsAfter(url, postsModel) {
+    if (postsModel.loadingPosts)
+        return;
+    postsModel.loadingPosts = true;
+    const afterLoadCb = () => {
+        postsModel.loadingPosts = false;
+    };
+    return loadPosts(url, postsModel, postsModel.finalId)
+        .then(afterLoadCb, afterLoadCb);
 }
 
 function loadSubs(subsModel) {
-
-    getRedditJSON("/subreddits/default").then(data => {
+    return getRedditJSON("/subreddits/default").then(data => {
         subsModel.clear();
-
-                                                  subsModel.append({
-                                                      name: "AskReddit",
-                                                      url: "/r/askreddit",
-                                                      description: "Ask"
-                                                  });
-
-                                                  subsModel.append({
-                                                      name: "Frontpage",
-                                                      url: "/",
-                                                      description: "Front page of the internet"
-                                                  });
+        subsModel.append({
+            name: "Frontpage",
+            url: "/",
+            description: "Front page of the internet"
+        });
 
         for (let rawChild of data.data.children) {
             let child = rawChild.data;
@@ -105,5 +148,6 @@ function loadSubs(subsModel) {
                 description: tidyDescription(child.public_description)
             });
         }
+        return data;
     });
 }

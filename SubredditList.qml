@@ -4,18 +4,25 @@ import "common.js" as Common
 
 
 ListView {
-    model: ListModel {}
+    id: subsList
+    model: ListModel { id: subsModel }
     delegate: Kirigami.BasicListItem {
         label: Common.isFrontpage(this) ? name: `${name} (${url})`
         subtitle: description
     }
     onCurrentItemChanged: function() {
-        let currentData = model.get(currentIndex);
-
+        const current = getCurrentData();
         root.title = "Baconer";
-        if (!Common.isFrontpage(currentData))
+        if (!Common.isFrontpage(current))
             root.title += ` - ${currentData.url}`;
 
-        Common.loadPosts(currentData.url, postsModel);
+        Common.loadPosts(current.url, postsModel)
+    }
+    function getCurrentData() {
+        return model.get(currentIndex);
+    }
+    
+    function getURL() {
+        return getCurrentData().url;
     }
 }
