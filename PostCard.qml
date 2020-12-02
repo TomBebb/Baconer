@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0 as Controls
 import org.kde.kirigami 2.11 as Kirigami
+import Ionicon 1.0
 
 Kirigami.AbstractCard {
     property var hasContent: (postContent != null && postContent.length > 0)
@@ -12,7 +13,6 @@ Kirigami.AbstractCard {
     contentItem: Item {
         implicitWidth: delegateLayout.implicitWidth
         implicitHeight: delegateLayout.implicitHeight
-
 
         RowLayout {
             id: delegateLayout
@@ -33,6 +33,18 @@ Kirigami.AbstractCard {
                 RowLayout {
                     width: parent.width
 
+                    Ionicon {
+                        id: upvote
+                        source: "arrow-up-a"
+                        size: parent.height
+                        color: 'lightgreen'
+                    }
+                    Ionicon {
+                        id: downvote
+                        source: "arrow-down-a"
+                        size: parent.height
+                        color: 'orangered'
+                    }
                     Text {
                         Layout.minimumWidth: 100
                         Layout.preferredWidth: parent.width * rowEachWidthMult
@@ -72,12 +84,17 @@ Kirigami.AbstractCard {
                 }
 
                 Image {
+                    property var aspectRatio: imageHeight / imageWidth
                     source: previewImage
                     visible: showImagePreview
                     fillMode: Image.PreserveAspectFit
-                    width: parent.width - 8
+
                     sourceSize.width: imageWidth
                     sourceSize.height: imageHeight
+
+                    Layout.preferredWidth: parent.width - 8
+                    Layout.preferredHeight: width * aspectRatio
+
                 }
             }
             Image {

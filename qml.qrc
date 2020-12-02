@@ -4,5 +4,6 @@
         <file>common.js</file>
         <file>SubredditList.qml</file>
         <file>PostCard.qml</file>
+        <file>PostsPage.qml</file>
     </qresource>
 </RCC>

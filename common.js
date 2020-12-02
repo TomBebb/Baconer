@@ -97,12 +97,12 @@ function loadPosts(url, postsModel, after) {
             const previewDataImages = previewData ? previewData.images : null;
 
             let modelData = {
-                "postTitle": child.title,
-                "postContent": child.selftext,
-                "author": child.author,
-                "score": child.score,
-                "thumbnail": child.thumbnail,
-                "commentCount": child.num_comments
+                postTitle: child.title,
+                postContent: child.selftext,
+                author: child.author,
+                score: child.score,
+                thumbnail: child.thumbnail,
+                commentCount: child.num_comments
             };
 
             if (previewDataImages !== null && previewDataImages.length > 0) {
@@ -139,28 +139,23 @@ function loadPostsAfter(url, postsModel) {
 function loadSubs(subsModel) {
     return getRedditJSON("/subreddits/default").then(data => {
         subsModel.clear();
+        const frontPage = "Frontpage";
         subsModel.append({
-            name: "Frontpage",
+            name: frontPage,
+            title: frontPage,
             url: "/",
             description: "Front page of the internet"
         });
-        console.log(`Raw subs: ${data.data.children.length}`);
+
         for (let rawChild of data.data.children) {
             let child = rawChild.data;
-            console.log(`Raw sub: ${child.display_name}; ${child.url}; ${child.public_description}`);
 
             subsModel.append({
                 name: child.display_name,
+                title: child.title,
                 url: child.url,
                 description: tidyDescription(child.public_description)
             });
-        }
-
-        console.log(`Subs: ${subsModel.count}`);
-
-        for (let i = 0; i < subsModel.count; i++) {
-            const sub = subsModel.get(i);
-            console.log(`sub ${i}: ${sub.name};${sub.url};${sub.description}`);
         }
 
         return data;
