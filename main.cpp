@@ -1,11 +1,15 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QStringView>
+#include <QtWebView/QtWebView>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
+
+    QtWebView::initialize();
 
     QQmlApplicationEngine engine;
     QPM_INIT(engine);

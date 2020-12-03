@@ -1,7 +1,11 @@
 .import QtQuick 2.1 as Quick
 
 function openLink(url) {
-    Qt.openUrlExternally(url);
+    //Qt.openUrlExternally(url);
+    createComponent("/pages/WebPage.qml", {initialURL: url}).then(page => {
+        console.log("Loaded page");
+        root.pageStack.push(page);
+    });
 }
 
 function isString(txt) {

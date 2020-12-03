@@ -1,4 +1,6 @@
 QT += quick
+QT += webview
+
 
 CONFIG += c++11
 

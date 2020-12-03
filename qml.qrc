@@ -10,5 +10,6 @@
         <file>common/SubredditList.qml</file>
         <file>actions/IconAction.qml</file>
         <file>actions/BackAction.qml</file>
+        <file>pages/WebPage.qml</file>
     </qresource>
 </RCC>
