@@ -3,18 +3,22 @@ import QtQuick.Layouts 1.2
 import QtQml.Models 2.15
 import QtQuick.Controls 2.0 as Controls
 import org.kde.kirigami 2.11 as Kirigami
-import "common.js" as Common
 import Ionicon 1.0
+import "common.js" as Common
 
 Kirigami.ApplicationWindow {
     id: root
-    title: "Baconer"
+    title: `Baconer - ${subsView.currentURL}`
     controlsVisible: true
-    Component.onCompleted: {
-        Common.loadSubs(subsView.model);
-        subsView.currentIndex = 0;
 
-        Common.loadPosts(subsView.getURL(), postsModel);
+
+    Component.onCompleted: {
+        subsView.currentIndex = 0;
+        Common.loadSubs(subsView.model).then(() => {
+            subsView.reload();
+
+            Common.loadPosts(subsView.currentURL, postsPage.model);
+        });
     }
 
     IoniconLoader {}

@@ -1,14 +1,16 @@
-import QtQuick 2.0
+import QtQuick 2.1
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0 as Controls
 import org.kde.kirigami 2.11 as Kirigami
 import Ionicon 1.0
+import "common.js" as Common
 
 Kirigami.AbstractCard {
-    property var hasContent: (postContent != null && postContent.length > 0)
-    property var rowEachWidthMult: 0.2
-    property var showImagePreview: (previewImage.length > 0)
-    property var showThumbnail: (!showImagePreview && thumbnail != null && thumbnail.length > 0)
+    readonly property int maxPostPreviewLength: 255
+    readonly property bool hasContent: Common.isNonEmptyString(postContent)
+    readonly property real rowEachWidthMult: 0.2
+    readonly property bool showImagePreview: (previewImage.length > 0)
+    readonly property bool showThumbnail: (!showImagePreview && Common.isNonEmptyString(thumbnail))
 
     contentItem: Item {
         implicitWidth: delegateLayout.implicitWidth
@@ -20,6 +22,7 @@ Kirigami.AbstractCard {
 
             ColumnLayout {
                 Kirigami.Heading {
+                    id: heading
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     level: 2
@@ -74,11 +77,11 @@ Kirigami.AbstractCard {
                     Layout.fillWidth: true
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     textFormat: TextEdit.MarkdownText
-                    text: postContent
+                    text: postContent.length > maxPostPreviewLength ? postContent.substr(0, maxPostPreviewLength) + "..." : postContent
                     visible: hasContent
 
                     onLinkActivated: {
-                        Qt.openUrlExternally(link);
+                        Common.openLink(link);
                     }
 
                 }
@@ -103,6 +106,21 @@ Kirigami.AbstractCard {
                 source: thumbnail
                 visible: showThumbnail
             }
+        }
+    }
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton
+
+        onDoubleClicked: {
+            console.log("clicked "+index);
+
+            const data = postsPage.getPostData(index);
+
+            Common.createComponent("PostPage.qml", {data: data})
+                .then(page => root.pageStack.push(page))
+                .catch(err => console.error(err))
+
         }
     }
 }

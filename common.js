@@ -1,4 +1,16 @@
-.pragma library
+.import QtQuick 2.1 as Quick
+
+function openLink(url) {
+    Qt.openUrlExternally(url);
+}
+
+function isString(txt) {
+    return typeof(txt) === 'string';
+}
+function isNonEmptyString(txt) {
+    return isString(txt) && txt.length > 0;
+}
+
 
 function toString(obj) {
     if (obj === null)
@@ -90,13 +102,14 @@ function loadPosts(url, postsModel, after) {
     }
 
     return getRedditJSON(url, params).then(data => {
-
+        let index = 0;
         for (const rawChild of data.data.children) {
             const child = rawChild.data;
             const previewData = child.preview;
             const previewDataImages = previewData ? previewData.images : null;
 
             let modelData = {
+                index: index++,
                 postTitle: child.title,
                 postContent: child.selftext,
                 author: child.author,
@@ -157,7 +170,31 @@ function loadSubs(subsModel) {
                 description: tidyDescription(child.public_description)
             });
         }
+                                                         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
         return data;
     });
+}
+
+function resolveComponent(path) {
+    console.log(`resolving comp: ${path}`);
+    return new Promise((resolve, reject) => {
+        const component = Qt.createComponent(path, Quick.Component.Asynchronous);
+
+        if (component.status === Quick.Component.Ready) {
+           resolve(component);
+        } else {
+           component.statusChanged.connect(() => {
+               if (component.status === Quick.Component.Ready) {
+                   resolve(component);
+               } else if (component.status === Quick.Component.Error) {
+                   reject(`Error loading component: ${component.errorString()}`);
+               }
+           });
+        }
+    });
+}
+
+function createComponent(path, props={}) {
+    return resolveComponent(path).then(comp => comp.createObject(root, props));
 }

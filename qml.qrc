@@ -5,5 +5,7 @@
         <file>SubredditList.qml</file>
         <file>PostCard.qml</file>
         <file>PostsPage.qml</file>
+        <file>PostPage.qml</file>
+        <file>IconAction.qml</file>
     </qresource>
 </RCC>
