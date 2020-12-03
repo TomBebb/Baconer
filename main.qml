@@ -5,6 +5,8 @@ import QtQuick.Controls 2.0 as Controls
 import org.kde.kirigami 2.11 as Kirigami
 import Ionicon 1.0
 import "common.js" as Common
+import "pages"
+import "common"
 
 Kirigami.ApplicationWindow {
     property bool assumeMobile: height > width * 1.5
@@ -47,4 +49,10 @@ Kirigami.ApplicationWindow {
     pageStack.initialPage: postsPage
 
     PostsPage    { id: postsPage }
+    SettingsPage { id: settingsPage }
+
+    function showSettings() {
+        if (pageStack.currentPage !== settingsPage)
+            pageStack.push(settingsPage)
+    }
 }

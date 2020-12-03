@@ -3,7 +3,8 @@ import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0 as Controls
 import org.kde.kirigami 2.11 as Kirigami
 import Ionicon 1.0
-import "common.js" as Common
+import "/common.js" as Common
+import "../actions"
 
 Kirigami.Card {
     readonly property int maxPostPreviewLength: 255
@@ -128,7 +129,7 @@ Kirigami.Card {
 
         const data = postsPage.getPostData(index);
 
-        Common.createComponent("PostPage.qml", {data: data})
+        Common.createComponent("pages/PostPage.qml", {data: data})
             .then(page => root.pageStack.push(page))
             .catch(err => console.error(err))
     }

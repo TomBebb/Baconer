@@ -2,12 +2,13 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>common.js</file>
-        <file>SubredditList.qml</file>
-        <file>PostCard.qml</file>
-        <file>PostsPage.qml</file>
-        <file>PostPage.qml</file>
-        <file>IconAction.qml</file>
-        <file>SettingsPage.qml</file>
-        <file>SortModel.qml</file>
+        <file>pages/PostPage.qml</file>
+        <file>pages/PostsPage.qml</file>
+        <file>pages/SettingsPage.qml</file>
+        <file>common/PostCard.qml</file>
+        <file>common/SortModel.qml</file>
+        <file>common/SubredditList.qml</file>
+        <file>actions/IconAction.qml</file>
+        <file>actions/BackAction.qml</file>
     </qresource>
 </RCC>

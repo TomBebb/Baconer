@@ -1,6 +1,8 @@
 import QtQuick 2.1
 import org.kde.kirigami 2.11 as Kirigami
-import "common.js" as Common
+import "/common.js" as Common
+import "../common"
+import "../actions"
 
 Kirigami.ScrollablePage {
     property var model: postsView.model
@@ -13,11 +15,7 @@ Kirigami.ScrollablePage {
         left: IconAction {
             text: "Settings"
             iconName: "settings"
-            onTriggered: {
-                Common.createComponent("SettingsPage.qml")
-                    .then(page => root.pageStack.push(page))
-                    .catch(err => console.error(err))
-            }
+            onTriggered: root.showSettings()
         }
     }
 

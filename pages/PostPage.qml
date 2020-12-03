@@ -2,18 +2,15 @@ import QtQuick 2.1
 import QtQuick.Controls 2.0 as Controls
 import org.kde.kirigami 2.11 as Kirigami
 import QtQuick.Layouts 1.2
-import "common.js" as Common
+import "/common.js" as Common
+import "../actions"
 
 Kirigami.ScrollablePage {
     property var data
     readonly property bool hasContent: Common.isNonEmptyString(data.postContent)
     title: data.postTitle
     actions {
-        main: IconAction {
-            text: "Back"
-            iconName: "arrow-left-b"
-            onTriggered: root.pageStack.pop()
-        }
+        main: BackAction {}
     }
 
 

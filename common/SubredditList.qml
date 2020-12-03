@@ -1,7 +1,7 @@
 import QtQuick 2.1
 import org.kde.kirigami 2.11 as Kirigami
 import QtQml.Models 2.15
-import "common.js" as Common
+import "/common.js" as Common
 
 ListView {
     property var currentData
