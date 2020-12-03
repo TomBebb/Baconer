@@ -5,10 +5,19 @@ import "common.js" as Common
 Kirigami.ScrollablePage {
     property var model: postsView.model
     actions {
-        left: IconAction {
+        main: IconAction {
             text: "Refresh"
             iconName: "refresh"
             onTriggered: reload()
+        }
+        left: IconAction {
+            text: "Settings"
+            iconName: "settings"
+            onTriggered: {
+                Common.createComponent("SettingsPage.qml")
+                    .then(page => root.pageStack.push(page))
+                    .catch(err => console.error(err))
+            }
         }
     }
 
