@@ -6,6 +6,11 @@ import "../actions"
 
 Kirigami.ScrollablePage {
     property var model: postsView.model
+    property string url: subsView.currentURL
+    property var info: null
+    Component.onCompleted: {
+        reload();
+    }
     actions {
         main: IconAction {
             text: "Refresh"
@@ -19,7 +24,7 @@ Kirigami.ScrollablePage {
         }
     }
 
-    title: subsView.currentData ? subsView.currentData.title : "???"
+    title: url
     Kirigami.CardsListView {
         id: postsView
         model: ListModel {
@@ -31,7 +36,6 @@ Kirigami.ScrollablePage {
         onContentYChanged: {
 
             if (atYEnd) {
-                const url = subsView.getURL();
                 Common.loadPostsAfter(url, model)
             }
         }
@@ -41,8 +45,30 @@ Kirigami.ScrollablePage {
         return postsView.model.get(index);
     }
 
+    onInfoChanged: {
+        title = info.title;
+    }
+
     function reload() {
         model.clear();
-        Common.loadPosts(subsView.currentData.url, model);
+        Common.loadPosts(url, model);
+        if (info && info.url !== url)
+            info = null;
+
+        if (info)
+            return;
+        if (url && url.length <= 1) {
+            info = {
+                title: "Frontpage",
+                url: url
+            };
+        } else {
+            let infoUrl = url;
+            if (url.charAt(url.length - 1) == '/')
+                infoUrl = infoUrl.substr(0, infoUrl.length - 1);
+            Common.getRedditJSON(`${infoUrl}/about`)
+                .then(rawData => info = rawData.data)
+                .catch(raw => console.log(`info error: ${Common.toString(raw)}`));
+        }
     }
 }

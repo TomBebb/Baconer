@@ -19,7 +19,7 @@ ListView {
         if (!currentData) {
             console.error(`no index ${currentIndex} in subs; got ${currentData}`);
         }
-
+        postsPage.info = currentData
         postsPage.reload();
     }
 }

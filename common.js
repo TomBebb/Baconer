@@ -1,9 +1,29 @@
 .import QtQuick 2.1 as Quick
 
+const redditRegex = /(?:https?)?(?:old\.|www\.)?reddit.com/;
+const subRedditRegex = /^\/r\/([a-zA-Z-_]+)\/?/;
+const postRegex = /^\/r\/([a-zA-Z-_]+)\/comments\/([a-zA-Z0-9]+)\/?/;
+
+
 function openLink(url) {
     //Qt.openUrlExternally(url);
+    const redditUrl = url.replace(redditRegex, "");
+    const subRedditMatch = redditUrl.match(subRedditRegex);
+
+    if (subRedditMatch && subRedditMatch.length >= 2) {
+        const name = subRedditMatch[1];
+        createComponent("/pages/PostsPage.qml", {url: `/r/${name}`}).then(page => {
+            root.pageStack.push(page);
+        });
+        return;
+    }
+
+    const postMatch = redditUrl.match(postRegex);
+    console.log(`Post match: ${toString(postMatch)}`);
+    if (url.indexOf("://") === -1)
+        url = "http://" + url;
+
     createComponent("/pages/WebPage.qml", {initialURL: url}).then(page => {
-        console.log("Loaded page");
         root.pageStack.push(page);
     });
 }
@@ -49,8 +69,7 @@ function rawGet(url, params) {
             url += `${encodeURI(key)}=${encodeURI(params[key])}&`;
         }
     }
-    console.log(`expanded url: ${url}`);
-
+    console.log(`get ${url}`);
     const xhr = new XMLHttpRequest();
     xhr.open("GET", url);
     xhr.timeout = 1000;

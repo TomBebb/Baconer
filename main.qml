@@ -19,8 +19,6 @@ Kirigami.ApplicationWindow {
         subsView.currentIndex = 0;
         Common.loadSubs(subsView.model).then(() => {
             subsView.reload();
-
-            Common.loadPosts(subsView.currentURL, postsPage.model);
         });
     }
 

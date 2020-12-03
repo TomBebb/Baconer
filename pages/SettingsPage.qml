@@ -24,9 +24,14 @@ Kirigami.ScrollablePage {
                 model: SortModel {}
                 Kirigami.FormData.label: "Default post sort:"
             }
+            TextField {
+                id: url
+                Kirigami.FormData.label: "URL to open:"
+            }
+
             Button {
-                text: "Open google"
-                onClicked: Common.openLink("https://www.google.com")
+                text: "Open URL"
+                onClicked: Common.openLink(url.text)
             }
         }
     }
