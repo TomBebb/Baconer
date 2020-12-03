@@ -6,7 +6,6 @@ const postRegex = /^\/r\/([a-zA-Z-_]+)\/comments\/([a-zA-Z0-9]+)\/?/;
 
 
 function openLink(url) {
-    //Qt.openUrlExternally(url);
     const redditUrl = url.replace(redditRegex, "");
     const subRedditMatch = redditUrl.match(subRedditRegex);
 
@@ -23,9 +22,13 @@ function openLink(url) {
     if (url.indexOf("://") === -1)
         url = "http://" + url;
 
-    createComponent("/pages/WebPage.qml", {initialURL: url}).then(page => {
-        root.pageStack.push(page);
-    });
+    if (settingsPage.settings.preferExternalBrowser) {
+        Qt.openUrlExternally(url);
+    } else {
+        createComponent("/pages/WebPage.qml", {initialURL: url}).then(page => {
+            root.pageStack.push(page);
+        });
+    }
 }
 
 function isString(txt) {

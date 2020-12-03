@@ -49,7 +49,9 @@ Kirigami.ApplicationWindow {
     PostsPage    { id: postsPage }
     SettingsPage { id: settingsPage }
 
+
     function showSettings() {
+        console.log(settingsPage.preferExternalBrowserInput);
         if (pageStack.currentPage !== settingsPage)
             pageStack.push(settingsPage)
     }

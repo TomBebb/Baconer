@@ -5,7 +5,7 @@ import "/common.js" as Common
 
 ListView {
     property var currentData
-    property string currentURL: currentData ? `${currentData.url}` : ""
+    property var currentURL: currentData ? `${currentData.url}` : ""
     model: ListModel { id: subsModel }
     delegate: Kirigami.BasicListItem {
         label: Common.isFrontpage(this) ? title: `${title} (${url})`

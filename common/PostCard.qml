@@ -13,6 +13,10 @@ Kirigami.Card {
     readonly property bool showImagePreview: (previewImage.length > 0)
     readonly property bool showThumbnail: (!showImagePreview && Common.isNonEmptyString(thumbnail))
 
+    banner {
+        title: postTitle
+    }
+
     actions: [
         IconAction {
             text: "Upvote"
@@ -39,18 +43,6 @@ Kirigami.Card {
             width: parent.width
 
             ColumnLayout {
-                Kirigami.Heading {
-                    id: heading
-                    Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
-                    level: 2
-                    text: postTitle
-                }
-
-                Kirigami.Separator {
-                    Layout.fillWidth: true
-                }
-
                 RowLayout {
                     width: parent.width
 
