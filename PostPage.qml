@@ -9,7 +9,7 @@ Kirigami.ScrollablePage {
     readonly property bool hasContent: Common.isNonEmptyString(data.postContent)
     title: data.postTitle
     actions {
-        left: IconAction {
+        main: IconAction {
             text: "Back"
             iconName: "arrow-left-b"
             onTriggered: root.pageStack.pop()

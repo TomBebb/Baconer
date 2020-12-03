@@ -5,12 +5,29 @@ import org.kde.kirigami 2.11 as Kirigami
 import Ionicon 1.0
 import "common.js" as Common
 
-Kirigami.AbstractCard {
+Kirigami.Card {
     readonly property int maxPostPreviewLength: 255
     readonly property bool hasContent: Common.isNonEmptyString(postContent)
     readonly property real rowEachWidthMult: 0.2
     readonly property bool showImagePreview: (previewImage.length > 0)
     readonly property bool showThumbnail: (!showImagePreview && Common.isNonEmptyString(thumbnail))
+
+    actions: [
+        IconAction {
+            text: "Upvote"
+            iconName: "arrow-up-a"
+        },
+        IconAction {
+            text: "Downvote"
+            iconName: "arrow-down-a"
+        },
+        IconAction {
+            text: "View comments"
+            iconName: "chatbubbles"
+            onTriggered: openPostInfoPage()
+        }
+
+    ]
 
     contentItem: Item {
         implicitWidth: delegateLayout.implicitWidth
@@ -36,18 +53,6 @@ Kirigami.AbstractCard {
                 RowLayout {
                     width: parent.width
 
-                    Ionicon {
-                        id: upvote
-                        source: "arrow-up-a"
-                        size: parent.height
-                        color: 'lightgreen'
-                    }
-                    Ionicon {
-                        id: downvote
-                        source: "arrow-down-a"
-                        size: parent.height
-                        color: 'orangered'
-                    }
                     Text {
                         Layout.minimumWidth: 100
                         Layout.preferredWidth: parent.width * rowEachWidthMult
@@ -114,13 +119,17 @@ Kirigami.AbstractCard {
 
         onDoubleClicked: {
             console.log("clicked "+index);
-
-            const data = postsPage.getPostData(index);
-
-            Common.createComponent("PostPage.qml", {data: data})
-                .then(page => root.pageStack.push(page))
-                .catch(err => console.error(err))
+            openPostInfoPage();
 
         }
+    }
+
+    function openPostInfoPage() {
+
+        const data = postsPage.getPostData(index);
+
+        Common.createComponent("PostPage.qml", {data: data})
+            .then(page => root.pageStack.push(page))
+            .catch(err => console.error(err))
     }
 }

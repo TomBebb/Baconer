@@ -7,6 +7,7 @@ import Ionicon 1.0
 import "common.js" as Common
 
 Kirigami.ApplicationWindow {
+    property bool assumeMobile: height > width * 1.5
     id: root
     title: `Baconer - ${subsView.currentURL}`
     controlsVisible: true
