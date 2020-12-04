@@ -1,15 +1,15 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QStringView>
-#include <QtWebView/QtWebView>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
-
-    QtWebView::initialize();
+    app.setOrganizationName("Baconer");
+    app.setOrganizationDomain("org.baconer");
+    app.setApplicationName("Baconer");
 
     QQmlApplicationEngine engine;
     QPM_INIT(engine);

@@ -1,13 +1,17 @@
 import QtQuick 2.1
-import org.kde.kirigami 2.11 as Kirigami
+import org.kde.kirigami 2.13 as Kirigami
+import QtQuick.Controls 2.0 as Controls
+import QtQuick.Layouts 1.2
 import "/common.js" as Common
 import "../common"
 import "../actions"
 
 Kirigami.ScrollablePage {
-    property var model: postsView.model
+    property ListModel model: postsView.model
     property string url: subsView.currentURL
+    property string sortUrl: "hot"
     property var info: null
+
     Component.onCompleted: {
         reload();
     }
@@ -22,6 +26,41 @@ Kirigami.ScrollablePage {
             iconName: "settings"
             onTriggered: root.showSettings()
         }
+        contextualActions: [
+            Kirigami.Action {
+                displayComponent:  RowLayout {
+                    Controls.Label {
+                        text: "Sort:"
+                    }
+
+                    Controls.ComboBox {
+                        id: sort
+                        model: [
+                            { name: "Hot", value: "hot" },
+                            { name: "New", value: "new" },
+                            { name: "Rising", value: "rising" },
+                            { name: "Controversial", value: "controversial" },
+                            { name: "Top today", value: "top?t=day" },
+                            { name: "Top last week", value: "top?t=week" },
+                            { name: "Top last month", value: "top?t=month" },
+                            { name: "Top last year", value: "top?t=year" },
+                            { name: "Top all-time", value: "top?t=all" },
+                        ]
+                        textRole: "name"
+                        valueRole: "value"
+                        currentIndex: 0
+
+                        onActivated: {
+                            sortUrl = currentValue;
+                            reload();
+                        }
+                    }
+                }
+
+                displayHint: Kirigami.DisplayHints.KeepVisible
+            }
+
+        ]
     }
 
     title: url
@@ -46,21 +85,21 @@ Kirigami.ScrollablePage {
     }
 
     onInfoChanged: {
-        title = info.title;
+        title = info ? url : info.title;
     }
 
     function reload() {
         model.clear();
-        Common.loadPosts(url, model);
+        console.log(`Reload info=${Common.toString(info)}; url=${url}; sorturl=${sortUrl}`);
+        Common.loadPosts(url + sortUrl, model);
         if (info && info.url !== url)
             info = null;
 
         if (info)
             return;
-        if (url && url.length <= 1) {
+        if (url.length <= 1) {
             info = {
-                title: "Frontpage",
-                url: url
+                title: "Frontpage"
             };
         } else {
             let infoUrl = url;

@@ -1,11 +1,11 @@
 import QtQuick 2.1
-import org.kde.kirigami 2.11 as Kirigami
+import org.kde.kirigami 2.13 as Kirigami
 import QtQml.Models 2.15
 import "/common.js" as Common
 
 ListView {
     property var currentData
-    property var currentURL: currentData ? `${currentData.url}` : ""
+    property string currentURL: currentData ? `${currentData.url}` : "/"
     model: ListModel { id: subsModel }
     delegate: Kirigami.BasicListItem {
         label: Common.isFrontpage(this) ? title: `${title} (${url})`

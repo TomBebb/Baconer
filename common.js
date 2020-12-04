@@ -4,6 +4,11 @@ const redditRegex = /(?:https?)?(?:old\.|www\.)?reddit.com/;
 const subRedditRegex = /^\/r\/([a-zA-Z-_]+)\/?/;
 const postRegex = /^\/r\/([a-zA-Z-_]+)\/comments\/([a-zA-Z0-9]+)\/?/;
 
+function decodeHtml(text) {
+    return text.replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">");
+}
 
 function openLink(url) {
     const redditUrl = url.replace(redditRegex, "");
@@ -67,10 +72,16 @@ function toString(obj) {
 
 function rawGet(url, params) {
     if (params) {
-        url += "?";
+        if (url.indexOf("?") === -1)
+            url += "?";
+        else if (url.charAt(url.length - 1) !== "&")
+            url += "&";
+
         for (let key of Object.keys(params)) {
             url += `${encodeURI(key)}=${encodeURI(params[key])}&`;
         }
+        if (url.charAt(url.length - 1) === "&")
+            url = url.substr(0, url.length - 1);
     }
     console.log(`get ${url}`);
     const xhr = new XMLHttpRequest();
@@ -140,14 +151,14 @@ function loadPosts(url, postsModel, after) {
                 postContent: child.selftext,
                 author: child.author,
                 score: child.score,
-                thumbnail: child.thumbnail,
+                thumbnail: decodeHtml(child.thumbnail),
                 commentCount: child.num_comments
             };
 
             if (previewDataImages !== null && previewDataImages.length > 0) {
                 const chosenImage = previewDataImages[0]
                 const chosenImageSource = chosenImage.source
-                modelData.previewImage = chosenImageSource.url
+                modelData.previewImage = decodeHtml(chosenImageSource.url)
                 modelData.imageWidth = chosenImageSource.width
                 modelData.imageHeight = chosenImageSource.height
             } else {

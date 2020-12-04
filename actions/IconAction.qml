@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import org.kde.kirigami 2.11 as Kirigami
+import org.kde.kirigami 2.13 as Kirigami
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0 as Controls
 import Ionicon 1.0
