@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0 as Controls
 import org.kde.kirigami 2.13 as Kirigami
 import Ionicon 1.0
-import "/common.js" as Common
+import "../common.js" as Common
 import "../actions"
 
 Kirigami.Card {
@@ -18,17 +18,17 @@ Kirigami.Card {
     }
 
     actions: [
-        IconAction {
-            text: "Upvote"
-            iconName: "arrow-up-a"
+        Kirigami.Action {
+            text: Common.formatNum(ups)
+            iconName: "arrow-up"
         },
-        IconAction {
-            text: "Downvote"
-            iconName: "arrow-down-a"
+        Kirigami.Action {
+            text: Common.formatNum(downs)
+            iconName: "arrow-down"
         },
-        IconAction {
-            text: "View comments"
-            iconName: "chatbubbles"
+        Kirigami.Action {
+            text: Common.formatNum(commentCount)
+            iconName: "dialog-messages"
             onTriggered: openPostInfoPage()
         }
 

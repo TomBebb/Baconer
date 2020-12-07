@@ -7,9 +7,9 @@ Kirigami.ScrollablePage {
     property string initialURL
     title: view.title
     actions {
-        main: IconAction {
+        main: Action {
             text: "Back"
-            iconName: "arrow-left-b"
+            iconName: "back"
             onTriggered: {
                 if (view.canGoBack) {
                     view.goBack();

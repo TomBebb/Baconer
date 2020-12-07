@@ -6,7 +6,6 @@ import Ionicon 1.0
 import "/common.js" as Common
 
 Kirigami.Action {
-    property string iconName
     id: action
     displayComponent: RowLayout {
         Ionicon {

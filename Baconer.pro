@@ -1,6 +1,4 @@
-QT += quick
-QT += webview
-
+QT += quick webview quickcontrols2
 
 CONFIG += c++11
 

@@ -11,5 +11,6 @@
         <file>actions/BackAction.qml</file>
         <file>pages/WebPage.qml</file>
         <file>common/SortModel.qml</file>
+        <file>common/Rest.qml</file>
     </qresource>
 </RCC>

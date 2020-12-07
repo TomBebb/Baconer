@@ -1,6 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QStringView>
+#include <QQuickStyle>
+
 
 int main(int argc, char *argv[])
 {
@@ -11,9 +13,13 @@ int main(int argc, char *argv[])
     app.setOrganizationDomain("org.baconer");
     app.setApplicationName("Baconer");
 
+
+
     QQmlApplicationEngine engine;
     QPM_INIT(engine);
     const QUrl url(QStringLiteral("qrc:/main.qml"));
+    QQuickStyle::setStyle("Material");
+
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)

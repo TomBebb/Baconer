@@ -13,17 +13,17 @@ Kirigami.ScrollablePage {
     property var info: null
 
     Component.onCompleted: {
-        reload();
+        refresh();
     }
     actions {
-        main: IconAction {
+        main: Kirigami.Action {
             text: "Refresh"
-            iconName: "refresh"
-            onTriggered: reload()
+            icon.name: "view-refresh"
+            onTriggered: refresh(true)
         }
-        left: IconAction {
+        left: Kirigami.Action {
             text: "Settings"
-            iconName: "settings"
+            iconName: "configuration"
             onTriggered: root.showSettings()
         }
         contextualActions: [
@@ -52,12 +52,10 @@ Kirigami.ScrollablePage {
 
                         onActivated: {
                             sortUrl = currentValue;
-                            reload();
+                            refresh();
                         }
                     }
                 }
-
-                displayHint: Kirigami.DisplayHints.KeepVisible
             }
 
         ]
@@ -85,13 +83,12 @@ Kirigami.ScrollablePage {
     }
 
     onInfoChanged: {
-        title = info ? url : info.title;
+        title = info ? info.title : url;
     }
 
-    function reload() {
+    function refresh(forceRefresh = false) {
         model.clear();
-        console.log(`Reload info=${Common.toString(info)}; url=${url}; sorturl=${sortUrl}`);
-        Common.loadPosts(url + sortUrl, model);
+        rest.loadPosts(url + sortUrl, model, null, forceRefresh);
         if (info && info.url !== url)
             info = null;
 
@@ -105,6 +102,8 @@ Kirigami.ScrollablePage {
             let infoUrl = url;
             if (url.charAt(url.length - 1) == '/')
                 infoUrl = infoUrl.substr(0, infoUrl.length - 1);
+
+
             Common.getRedditJSON(`${infoUrl}/about`)
                 .then(rawData => info = rawData.data)
                 .catch(raw => console.log(`info error: ${Common.toString(raw)}`));

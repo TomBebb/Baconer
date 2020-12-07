@@ -1,7 +1,8 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.2
-import QtQml.Models 2.15
+import QtQml.Models 2.12
 import QtQuick.Controls 2.0 as Controls
+
 import org.kde.kirigami 2.13 as Kirigami
 import Ionicon 1.0
 import "common.js" as Common
@@ -15,14 +16,12 @@ Kirigami.ApplicationWindow {
     controlsVisible: true
 
 
-    Component.onCompleted: {
-        subsView.currentIndex = 0;
-        Common.loadSubs(subsView.model).then(() => {
-            subsView.reload();
-        });
+    Rest {
+        id: rest
     }
 
     IoniconLoader {}
+
 
     globalDrawer: Kirigami.GlobalDrawer {
         title: "Baconer subreddits"
