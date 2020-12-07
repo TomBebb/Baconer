@@ -19,11 +19,10 @@ Kirigami.Card {
 
     actions: [
         Kirigami.Action {
-            text: Common.formatNum(ups)
+            text: Common.formatNum(score)
             iconName: "arrow-up"
         },
         Kirigami.Action {
-            text: Common.formatNum(downs)
             iconName: "arrow-down"
         },
         Kirigami.Action {
@@ -43,32 +42,11 @@ Kirigami.Card {
             width: parent.width
 
             ColumnLayout {
-                RowLayout {
-                    width: parent.width
-
-                    Text {
-                        Layout.minimumWidth: 100
-                        Layout.preferredWidth: parent.width * rowEachWidthMult
-                         color: 'orange'
-                        text: `<b>By</b> ${author}`
-                    }
-                    Text {
-                        Layout.minimumWidth: 100
-                        Layout.preferredWidth: parent.width * rowEachWidthMult
-                        Layout.alignment: Layout.Center
-                        horizontalAlignment: Text.AlignHCenter
-                        color: 'blue'
-                        text: `<b>Comments:</b> ${commentCount}`
-                    }
-
-                    Text {
-                        Layout.minimumWidth: 100
-                        Layout.preferredWidth: parent.width * rowEachWidthMult
-                        Layout.alignment: Layout.Right
-                        horizontalAlignment: Text.AlignRight
-                        color: 'green'
-                        text: `<b>${score}</b>`
-                    }
+                Text {
+                    Layout.minimumWidth: 100
+                    Layout.preferredWidth: parent.width * rowEachWidthMult
+                     color: 'orange'
+                    text: `<b>By</b> ${author}`
                 }
 
                 Controls.Label {
@@ -93,7 +71,7 @@ Kirigami.Card {
                     sourceSize.width: imageWidth
                     sourceSize.height: imageHeight
 
-                    Layout.preferredWidth: parent.width - 8
+                    Layout.fillWidth: true
                     Layout.preferredHeight: width * aspectRatio
 
                 }

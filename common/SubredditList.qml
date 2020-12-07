@@ -2,24 +2,26 @@ import QtQuick 2.1
 import org.kde.kirigami 2.13 as Kirigami
 import QtQuick.Layouts 1.2
 import QtQml.Models 2.15
-import "/common.js" as Common
+import "../common.js" as Common
 
 ListView {
-
     Layout.fillWidth: true
     property var currentData
     property string currentURL: currentData ? `${currentData.url}` : "/"
     model: ListModel { id: subsModel }
+
     delegate: Kirigami.BasicListItem {
         label: Common.isFrontpage(this) ? title: `${title} (${url})`
         subtitle: description
     }
 
+    header: Kirigami.ListSectionHeader {
+        text: "Subreddits"
+    }
+
     Component.onCompleted: {
         subsView.currentIndex = 0;
-        console.debug("loading subs");
         rest.loadSubs(subsModel).then(rawDatas => {
-            console.debug(`subs: ${subsModel.count}`);
             refresh();
         });
     }

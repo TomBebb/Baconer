@@ -2,6 +2,8 @@
 #include <QQmlApplicationEngine>
 #include <QStringView>
 #include <QQuickStyle>
+#include <QQmlProperty>
+#include <iostream>
 
 
 int main(int argc, char *argv[])
@@ -26,6 +28,15 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
+    if (engine.rootObjects().isEmpty())
+        return -1;
+
+    auto settingsPage = engine.rootObjects()[0]->findChild<QObject*>("settingsPage");
+
+    std::cout << "Settings page: " << QQmlProperty::read(settingsPage, "example").toString().toStdString() << std::endl;
+
+    auto styleOptions = QQuickStyle::stylePathList();
+    QMetaObject::invokeMethod(settingsPage, "loadThemes", Q_ARG(QStringList, styleOptions));
 
     return app.exec();
 }

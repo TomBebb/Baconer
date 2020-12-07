@@ -183,6 +183,8 @@ Item {
             subsModel.clear();
             const frontPage = "Frontpage";
             subsModel.append({
+                kind: "",
+                kindName: "",
                 name: frontPage,
                 title: frontPage,
                 url: "/",
@@ -193,6 +195,8 @@ Item {
                 let child = rawChild.data;
 
                 subsModel.append({
+                    kind: "sub",
+                    kindName: "Subreddits",
                     name: child.display_name,
                     title: child.title,
                     url: child.url,

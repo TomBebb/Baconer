@@ -8,8 +8,10 @@ import "../common"
 import "../actions"
 
 Kirigami.ScrollablePage {
+    property string example: "Hello"
     property Settings settings: settings
     title: "Settings"
+    objectName: "settingsPage"
     actions {
         main: BackAction {}
     }
@@ -37,5 +39,9 @@ Kirigami.ScrollablePage {
                 onClicked: Common.openLink(url.text)
             }
         }
+    }
+
+    function loadThemes(names) {
+        console.log(names.join(","));
     }
 }
