@@ -31,8 +31,8 @@ OverlaySheet {
         delegate: RadioDelegate {
             text: modelData.name
             checked: index === 0
-            anchors.right: parent.right
             onCheckedChanged: if (checked) sort.checkedIndex = index
+            width: parent.width
         }
     }
 
