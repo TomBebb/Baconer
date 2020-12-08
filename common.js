@@ -82,6 +82,19 @@ function openLink(url) {
     }
 }
 
+function searchValuesFor(obj, txt, caseSensitive=true) {
+    if (!caseSensitive)
+        txt = txt.toLowerCase();
+    for (let val of Object.values(obj)) {
+        val += "";
+        if (!caseSensitive)
+            val = val.toLowerCase();
+        if (val.includes(txt))
+            return true;
+    }
+    return false;
+}
+
 function isString(txt) {
     return typeof(txt) === 'string';
 }

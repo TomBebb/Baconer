@@ -25,12 +25,17 @@ Kirigami.ApplicationWindow {
         id: navDrawer
         showContentWhenCollapsed: true
 
+
+
         header: RowLayout {
             Layout.fillWidth: true
 
             Kirigami.SearchField {
                 visible: !navDrawer.collapsed
                 Layout.fillWidth: true
+                onAccepted: subsView.search(text)
+                onEditingFinished: console.log("Done")
+
             }
         }
 
@@ -50,5 +55,9 @@ Kirigami.ApplicationWindow {
     function showSettings() {
         settingsPage.loadThemes();
         pageStack.push(settingsPage)
+    }
+
+    function isCurrentPage(page) {
+        return page === pageStack.currentItem;
     }
 }

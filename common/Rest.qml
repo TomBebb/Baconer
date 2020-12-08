@@ -184,8 +184,8 @@ Item {
             subsModel.clear();
             const frontPage = "Frontpage";
             subsModel.append({
-                kind: "",
-                kindName: "",
+                isVisible: true,
+                category: "Multireddits",
                 name: frontPage,
                 title: frontPage,
                 url: "/",
@@ -196,8 +196,8 @@ Item {
                 let child = rawChild.data;
 
                 subsModel.append({
-                    kind: "sub",
-                    kindName: "Subreddits",
+                    isVisible: true,
+                    category: "Subreddits",
                     name: child.display_name,
                     title: child.title,
                     url: child.url,

@@ -46,7 +46,7 @@ Kirigami.ScrollablePage {
                 property var themeNamesMap: new Map()
                 id: themeInput
                 Kirigami.FormData.label: "Theme: "
-                onCurrentTextChanged: if(root.pageStack.currentItem === settingsPage) styleTools.setTheme(currentText)
+                onCurrentTextChanged: if(root.isCurrentPage(settingsPage)) styleTools.setTheme(currentText)
             }
 
             TextField {

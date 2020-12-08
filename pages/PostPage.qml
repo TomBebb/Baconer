@@ -5,19 +5,16 @@ import QtQuick.Layouts 1.2
 import "../common.js" as Common
 import "../actions"
 
-Kirigami.OverlaySheet {
+Kirigami.Page {
     property var data
     readonly property bool hasContent: Common.isNonEmptyString(data.postContent)
 
 
 
     Component.onCompleted: refresh();
+
+    title: data.postTitle
     ColumnLayout {
-        Kirigami.Heading {
-            Layout.fillWidth: true
-            text: data.postTitle
-            level: 1
-        }
         Controls.Label {
             id: contentLabel
             Layout.fillWidth: true

@@ -13,10 +13,12 @@ ListView {
     delegate: Kirigami.BasicListItem {
         label: Common.isFrontpage(this) ? title: `${title} (${url})`
         subtitle: description
+        visible: isVisible
     }
 
-    header: Kirigami.ListSectionHeader {
-        text: "Subreddits"
+    section.property: "category"
+    section.delegate: Kirigami.ListSectionHeader {
+        text: section
     }
 
     Component.onCompleted: {
@@ -35,5 +37,17 @@ ListView {
         }
         postsPage.info = currentData
         postsPage.refresh();
+    }
+
+    function search(text) {
+        text = text.trim();
+
+        console.log(`Search for: ${text}`);
+        for (let i = 0; i < subsModel.count; i++) {
+            const entry = subsModel.get(i);
+
+            entry.isVisible = (text.length === 0) || Common.searchValuesFor(entry, text, false);
+            console.log(`Result for ${JSON.stringify(entry)} => ${entry.visible}`);
+        }
     }
 }
