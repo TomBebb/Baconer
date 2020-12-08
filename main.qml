@@ -4,7 +4,6 @@ import QtQml.Models 2.12
 import QtQuick.Controls 2.0 as Controls
 
 import org.kde.kirigami 2.13 as Kirigami
-import Ionicon 1.0
 import "common.js" as Common
 import "pages"
 import "common"
@@ -19,8 +18,6 @@ Kirigami.ApplicationWindow {
     Rest {
         id: rest
     }
-
-    IoniconLoader {}
 
 
     globalDrawer: Kirigami.GlobalDrawer {
@@ -46,12 +43,12 @@ Kirigami.ApplicationWindow {
     pageStack.initialPage: postsPage
 
     PostsPage    { id: postsPage }
-    SettingsPage { id: settingsPage }
-
+    SettingsPage {
+        id: settingsPage
+    }
 
     function showSettings() {
-        console.log(settingsPage.preferExternalBrowserInput);
-        if (pageStack.currentPage !== settingsPage)
-            pageStack.push(settingsPage)
+        settingsPage.loadThemes();
+        pageStack.push(settingsPage)
     }
 }

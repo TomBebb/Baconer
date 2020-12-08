@@ -40,6 +40,22 @@ function fromUtcRaw(utcSecs) {
     return d;
 }
 
+function charAt(text, index) {
+    if (typeof text !== "string")
+        throw `charAt expects text, got ${typeof text}`;
+    if (typeof index !== "number")
+        throw "charAt expects num";
+    return text.substr(index, 1);
+}
+function isLowerCase(char) {
+    if (typeof char !== "string")
+        throw `isLowerCase expects text, got ${typeof text}`;
+    return char.toLowerCase() === char;
+}
+function isUpperCase(char) {
+    return !isLowerCase(char);
+}
+
 function openLink(url) {
     const redditUrl = url.replace(redditRegex, "");
     const subRedditMatch = redditUrl.match(subRedditRegex);

@@ -9,6 +9,7 @@ Item {
         running: true
         repeat: true
         onTriggered: {
+
             for (let [url, data] of cache) {
                 const sinceCachedMs = Date.now() - data.time;
                 if (sinceCachedMs > settingsPage.cacheTimeout * 1000) {

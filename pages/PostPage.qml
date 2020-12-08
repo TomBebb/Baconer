@@ -5,18 +5,19 @@ import QtQuick.Layouts 1.2
 import "../common.js" as Common
 import "../actions"
 
-Kirigami.ScrollablePage {
+Kirigami.OverlaySheet {
     property var data
     readonly property bool hasContent: Common.isNonEmptyString(data.postContent)
-    title: data.postTitle
-    actions {
-        main: BackAction {}
-    }
+
 
 
     Component.onCompleted: refresh();
-
     ColumnLayout {
+        Kirigami.Heading {
+            Layout.fillWidth: true
+            text: data.postTitle
+            level: 1
+        }
         Controls.Label {
             id: contentLabel
             Layout.fillWidth: true
@@ -35,7 +36,8 @@ Kirigami.ScrollablePage {
             Layout.fillWidth: true
             Layout.fillHeight: true
             delegate: Kirigami.BasicListItem {
-
+               text: body
+               subtitle: author
             }
         }
     }

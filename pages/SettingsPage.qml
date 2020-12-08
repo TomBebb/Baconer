@@ -3,22 +3,33 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.2
 import org.kde.kirigami 2.13 as Kirigami
 import Qt.labs.settings 1.0
-import "/common.js" as Common
+import "../common.js" as Common
 import "../common"
 import "../actions"
 
 Kirigami.ScrollablePage {
-    property string example: "Hello"
     property Settings settings: settings
+    property var rawThemes
     title: "Settings"
     objectName: "settingsPage"
     actions {
         main: BackAction {}
     }
 
+    function loadThemes() {
+        const rawThemes = styleTools.getThemes();
+
+        var themesModel = rawThemes.filter(raw => !Common.isLowerCase(Common.charAt(raw, 0)));
+        themeInput.model = themesModel
+        const theme = styleTools.getTheme();
+        console.debug(`Theme: ${theme};`);
+        themeInput.currentIndex = themesModel.indexOf(theme);
+    }
+
 
     Settings {
         id: settings
+        property alias themeName: themeInput.currentText
         property alias preferExternalBrowser: preferExternalBrowserInput.checked
     }
     ColumnLayout {
@@ -27,8 +38,17 @@ Kirigami.ScrollablePage {
 
             CheckBox {
                 id: preferExternalBrowserInput
+
                 Kirigami.FormData.label: "Prefer external browser:"
             }
+
+            ComboBox {
+                property var themeNamesMap: new Map()
+                id: themeInput
+                Kirigami.FormData.label: "Theme: "
+                onCurrentTextChanged: if(root.pageStack.currentItem === settingsPage) styleTools.setTheme(currentText)
+            }
+
             TextField {
                 id: url
                 Kirigami.FormData.label: "URL to open:"
@@ -39,9 +59,5 @@ Kirigami.ScrollablePage {
                 onClicked: Common.openLink(url.text)
             }
         }
-    }
-
-    function loadThemes(names) {
-        console.log(names.join(","));
     }
 }
