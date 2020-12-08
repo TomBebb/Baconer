@@ -57,6 +57,12 @@ Kirigami.ApplicationWindow {
         pageStack.push(settingsPage)
     }
 
+    function openPage(page) {
+        if (root.pageStack.currentItem.objectName === page.objectName)
+            root.pageStack.pop();
+        root.pageStack.push(page);
+    }
+
     function isCurrentPage(page) {
         return page === pageStack.currentItem;
     }

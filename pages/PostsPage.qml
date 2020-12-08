@@ -9,8 +9,11 @@ import "../actions"
 Kirigami.ScrollablePage {
     property ListModel model: postsView.model
     property string url: subsView.currentURL
-    property string sortUrl: "hot"
+    property string sortUrl: changeSortOverlay.selectedSortUrl
     property var info: null
+    objectName: "postsPage"
+
+    onSortUrlChanged: refresh()
 
     Component.onCompleted: {
         refresh();
@@ -28,40 +31,20 @@ Kirigami.ScrollablePage {
         }
         contextualActions: [
             Kirigami.Action {
-                displayComponent:  RowLayout {
-                    Controls.Label {
-                        text: "Sort:"
-                    }
-
-                    Controls.ComboBox {
-                        id: sort
-                        model: [
-                            { name: "Hot", value: "hot" },
-                            { name: "New", value: "new" },
-                            { name: "Rising", value: "rising" },
-                            { name: "Controversial", value: "controversial" },
-                            { name: "Top today", value: "top?t=day" },
-                            { name: "Top last week", value: "top?t=week" },
-                            { name: "Top last month", value: "top?t=month" },
-                            { name: "Top last year", value: "top?t=year" },
-                            { name: "Top all-time", value: "top?t=all" },
-                        ]
-                        textRole: "name"
-                        valueRole: "value"
-                        currentIndex: 0
-
-                        onActivated: {
-                            sortUrl = currentValue;
-                            refresh();
-                        }
-                    }
-                }
+                text: "Sort"
+                iconName: "dialog-filters"
+                onTriggered: changeSortOverlay.open()
             }
 
         ]
     }
 
     title: url
+
+    ChangeSortOverlay {
+        id: changeSortOverlay
+    }
+
     Kirigami.CardsListView {
         id: postsView
         model: ListModel {

@@ -170,7 +170,7 @@ Item {
                         author: child.author,
                         body: child.body,
                         score: child.score,
-                        commentId: child.commentId,
+                        commentId: child.id,
                         created: Common.fromUtcRaw(child.created)
                     };
                     commentsModel.append(modelData);

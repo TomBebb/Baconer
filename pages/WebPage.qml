@@ -5,6 +5,7 @@ import "../actions"
 
 Kirigami.ScrollablePage {
     property string initialURL
+    objectName: "webViewPage"
     title: view.title
     actions {
         main: Action {

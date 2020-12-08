@@ -12,9 +12,6 @@ Kirigami.ScrollablePage {
     property var rawThemes
     title: "Settings"
     objectName: "settingsPage"
-    actions {
-        main: BackAction {}
-    }
 
     function loadThemes() {
         const rawThemes = styleTools.getThemes();
@@ -22,10 +19,8 @@ Kirigami.ScrollablePage {
         var themesModel = rawThemes.filter(raw => !Common.isLowerCase(Common.charAt(raw, 0)));
         themeInput.model = themesModel
         const theme = styleTools.getTheme();
-        console.debug(`Theme: ${theme};`);
         themeInput.currentIndex = themesModel.indexOf(theme);
     }
-
 
     Settings {
         id: settings
@@ -48,15 +43,9 @@ Kirigami.ScrollablePage {
                 Kirigami.FormData.label: "Theme: "
                 onCurrentTextChanged: if(root.isCurrentPage(settingsPage)) styleTools.setTheme(currentText)
             }
-
-            TextField {
-                id: url
-                Kirigami.FormData.label: "URL to open:"
-            }
-
             Button {
-                text: "Open URL"
-                onClicked: Common.openLink(url.text)
+                text: "Done"
+                onClicked: root.pageStack.pop()
             }
         }
     }

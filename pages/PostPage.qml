@@ -6,22 +6,33 @@ import "../common.js" as Common
 import "../actions"
 
 Kirigami.Page {
-    property var data
-    readonly property bool hasContent: Common.isNonEmptyString(data.postContent)
+    property var postData
+    property var commentsData
+    readonly property bool hasContent: Common.isNonEmptyString(postData.postContent)
 
+    objectName: "postPage"
 
+    actions {
+        main: Kirigami.Action {
+            text: "Refresh"
+            icon.name: "view-refresh"
+            onTriggered: refresh(true)
+            enabled: !commentsModel.loadingComments
+        }
+    }
 
     Component.onCompleted: refresh();
 
-    title: data.postTitle
+    title: postData.postTitle
     ColumnLayout {
+        anchors.fill: parent
         Controls.Label {
             id: contentLabel
             Layout.fillWidth: true
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             textFormat: TextEdit.MarkdownText
             visible: hasContent
-            text: data.postContent
+            text: postData.postContent
 
             onLinkActivated: {
                 Common.openLink(link);
@@ -36,11 +47,14 @@ Kirigami.Page {
                text: body
                subtitle: author
             }
+            model: ListModel {
+                property bool loadingComments: false
+                id: commentsModel
+            }
         }
     }
 
     function refresh(forceRefresh = false) {
-        console.debug(`Refresh comments: force=${forceRefresh}`);
         rest.loadComments(postData, commentsModel, forceRefresh);
     }
 }

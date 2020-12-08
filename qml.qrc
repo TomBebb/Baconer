@@ -10,5 +10,6 @@
         <file>actions/BackAction.qml</file>
         <file>pages/WebPage.qml</file>
         <file>common/Rest.qml</file>
+        <file>common/ChangeSortOverlay.qml</file>
     </qresource>
 </RCC>

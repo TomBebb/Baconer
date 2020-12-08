@@ -18,16 +18,17 @@ Kirigami.Card {
 
     actions: [
         Kirigami.Action {
-            text: Common.formatNum(score)
+            text: Common.formatNum(ups)
             iconName: "arrow-up"
         },
         Kirigami.Action {
+            text: Common.formatNum(downs)
             iconName: "arrow-down"
         },
         Kirigami.Action {
             text: Common.formatNum(commentCount)
             iconName: "dialog-messages"
-            onTriggered: openPostInfoPage()
+            onTriggered: openPostInfoPage();
         }
 
     ]
@@ -83,23 +84,13 @@ Kirigami.Card {
             }
         }
     }
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.LeftButton
-
-        onDoubleClicked: {
-            console.log("clicked "+index);
-            openPostInfoPage();
-
-        }
-    }
 
     function openPostInfoPage() {
 
         const data = postsPage.getPostData(index);
 
-        Common.createComponent("pages/PostPage.qml", {data: data})
-            .then(page => root.pageStack.push(page))
+        Common.createComponent("pages/PostPage.qml", {postData: data})
+            .then(page => root.openPage(page))
             .catch(err => console.error(err))
     }
 }
