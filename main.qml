@@ -1,12 +1,13 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.2
 import QtQml.Models 2.12
-import QtQuick.Controls 2.0 as Controls
+import QtQuick.Controls 2.15 as Controls
 
 import org.kde.kirigami 2.13 as Kirigami
-import "common.js" as Common
+import "utils/common.js" as Common
 import "pages"
 import "common"
+import "utils"
 
 Kirigami.ApplicationWindow {
     property bool assumeMobile: height > width * 1.5
@@ -31,10 +32,9 @@ Kirigami.ApplicationWindow {
             Layout.fillWidth: true
 
             Kirigami.SearchField {
+                id: subsSearch
                 visible: !navDrawer.collapsed
                 Layout.fillWidth: true
-                onAccepted: subsView.search(text)
-                onEditingFinished: console.log("Done")
 
             }
         }
@@ -45,7 +45,17 @@ Kirigami.ApplicationWindow {
             Layout.fillHeight: true
         }
     }
-    pageStack.initialPage: postsPage
+
+    Connections {
+        target:  subsSearch
+        function onAccepted() {
+            subsView.search(text)
+        }
+
+        function onEditingFinished() {
+            console.debug("Search edit finished");
+        }
+    }
 
     PostsPage    { id: postsPage }
     SettingsPage {
@@ -58,12 +68,17 @@ Kirigami.ApplicationWindow {
     }
 
     function openPage(page) {
-        if (root.pageStack.currentItem.objectName === page.objectName)
-            root.pageStack.pop();
-        root.pageStack.push(page);
+        closePage(page);
+        pageStack.push(page);
+    }
+
+    function closePage(page) {
+        pageStack.removePage(page);
     }
 
     function isCurrentPage(page) {
         return page === pageStack.currentItem;
     }
+
+    Component.onCompleted: pageStack.push(postsPage)
 }

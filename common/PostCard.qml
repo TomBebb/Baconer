@@ -2,14 +2,15 @@ import QtQuick 2.1
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0 as Controls
 import org.kde.kirigami 2.13 as Kirigami
-import "../common.js" as Common
-import "../actions"
+import "../utils/common.js" as Common
 
 Kirigami.Card {
+    id: postCard
+
     readonly property int maxPostPreviewLength: 255
     readonly property bool hasContent: Common.isNonEmptyString(postContent)
     readonly property real rowEachWidthMult: 0.2
-    readonly property bool showImagePreview: (previewImage.length > 0)
+    readonly property bool showImagePreview: previewImage.isValid
     readonly property bool showThumbnail: (!showImagePreview && Common.isNonEmptyString(thumbnail))
 
     banner {
@@ -20,6 +21,7 @@ Kirigami.Card {
         Kirigami.Action {
             text: Common.formatNum(ups)
             iconName: "arrow-up"
+
         },
         Kirigami.Action {
             text: Common.formatNum(downs)
@@ -37,50 +39,40 @@ Kirigami.Card {
         implicitWidth: delegateLayout.implicitWidth
         implicitHeight: delegateLayout.implicitHeight
 
-        RowLayout {
+
+        ColumnLayout {
             id: delegateLayout
-            width: parent.width
+            Controls.Label {
+                Layout.preferredWidth: contentItem.width
+                text: `*${author}* - posted ${Common.timeSince(date)} ago - [/r/${subreddit}](http://reddit.com/r/${subreddit})`
+                textFormat: TextEdit.MarkdownText
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
-            ColumnLayout {
-                Text {
-                    Layout.minimumWidth: 100
-                    Layout.preferredWidth: parent.width * rowEachWidthMult
-                     color: 'orange'
-                    text: `<b>By</b> ${author}`
-                }
-
-                Controls.Label {
-                    Layout.fillWidth: true
-                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    textFormat: TextEdit.MarkdownText
-                    text: postContent.length > maxPostPreviewLength ? postContent.substr(0, maxPostPreviewLength) + "..." : postContent
-                    visible: hasContent
-
-                    onLinkActivated: {
-                        Common.openLink(link);
-                    }
-
-                }
-
-                Image {
-                    property var aspectRatio: imageHeight / imageWidth
-                    source: previewImage
-                    visible: showImagePreview
-                    fillMode: Image.PreserveAspectFit
-
-                    sourceSize.width: imageWidth
-                    sourceSize.height: imageHeight
-
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: width * aspectRatio
-
-                }
+                LinkHandlerConnection {}
             }
+
+            Controls.Label {
+                Layout.fillWidth: true
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                textFormat: TextEdit.MarkdownText
+                text: postContent.length > maxPostPreviewLength ? postContent.substr(0, maxPostPreviewLength) + "..." : postContent
+                visible: hasContent
+
+                LinkHandlerConnection {}
+            }
+
             Image {
-                Layout.alignment: Layout.Right
+                property var rawData: previewImage
+                property var aspectRatio: rawData.height / rawData.width
+                source: rawData.url ? rawData.url : ""
+                visible: showImagePreview
+                sourceSize.width: rawData.width
+                sourceSize.height: rawData.height
+
                 fillMode: Image.PreserveAspectFit
-                source: thumbnail
-                visible: showThumbnail
+
+                Layout.preferredWidth: postCard.width - 20
+                Layout.preferredHeight: width * aspectRatio
             }
         }
     }

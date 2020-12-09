@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import "../common.js" as Common
+import "common.js" as Common
 
 Item {
     property var cache: new Map()
@@ -90,10 +90,6 @@ Item {
         if (after) {
             params.after = after;
         }
-        postsModel.loadingPosts = true;
-        const afterLoadCb = () => {
-            postsModel.loadingPosts = false;
-        };
 
         return getRedditJSON(url, params, forceRefresh).then(data => {
             if (!after)
@@ -108,6 +104,7 @@ Item {
                 let modelData = {
                     postId: child.id,
                     postIndex: postsModel.count,
+                    date: Common.fromUtcRaw(child.created_utc),
                     subreddit: child.subreddit,
                     postTitle: child.title,
                     postContent: child.selftext,
@@ -116,17 +113,24 @@ Item {
                     ups: child.ups,
                     downs: child.downs,
                     thumbnail: Common.decodeHtml(child.thumbnail),
-                    commentCount: child.num_comments
+                    commentCount: child.num_comments,
+                    previewImages: [],
+                    previewImage: {isValid: false}
                 };
 
-                if (previewDataImages !== null && previewDataImages.length > 0) {
-                    const chosenImage = previewDataImages[0]
-                    const chosenImageSource = chosenImage.source
-                    modelData.previewImage = Common.decodeHtml(chosenImageSource.url)
-                    modelData.imageWidth = chosenImageSource.width
-                    modelData.imageHeight = chosenImageSource.height
-                } else {
-                    modelData.previewImage = ""
+                if (previewDataImages && previewDataImages.length > 0) {
+
+                    const previewImages = previewDataImages.map(rawImageData => {
+                        let images = [...rawImageData.resolutions];
+                        images.push(rawImageData.source);
+
+                        for (let resData of images)
+                            resData.url = Common.decodeHtml(resData.url)
+                        return images;
+                    });
+                    modelData.previewImage = Common.chooseImageSource(previewImages[0]);
+
+                    modelData.previewImage.isValid = true;
                 }
 
                 postsModel.append(modelData)
@@ -136,18 +140,13 @@ Item {
             postsModel.before = data.data.before
 
             return data
-        }).then(afterLoadCb, afterLoadCb);
+        });
     }
 
     function loadPostsAfter(url, postsModel, forceRefresh) {
         if (postsModel.loadingPosts)
             return;
-        postsModel.loadingPosts = true;
-        const afterLoadCb = () => {
-            postsModel.loadingPosts = false;
-        };
-        return loadPosts(url, postsModel, postsModel.finalId, forceRefresh)
-            .then(afterLoadCb, afterLoadCb);
+        return loadPosts(url, postsModel, postsModel.finalId, forceRefresh);
     }
 
     function loadComments(postData, commentsModel, forceRefresh) {

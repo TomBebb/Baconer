@@ -2,9 +2,9 @@ import QtQuick 2.1
 import org.kde.kirigami 2.13 as Kirigami
 import QtQuick.Controls 2.0 as Controls
 import QtQuick.Layouts 1.2
-import "/common.js" as Common
+import "../utils/common.js" as Common
 import "../common"
-import "../actions"
+import "../overlays"
 
 Kirigami.ScrollablePage {
     property ListModel model: postsView.model
@@ -12,6 +12,8 @@ Kirigami.ScrollablePage {
     property string sortUrl: changeSortOverlay.selectedSortUrl
     property var info: null
     objectName: "postsPage"
+
+    Layout.fillWidth: true
 
     onSortUrlChanged: refresh()
 
@@ -41,22 +43,29 @@ Kirigami.ScrollablePage {
 
     title: url
 
-    ChangeSortOverlay {
+    supportsRefreshing: true
+    onRefreshingChanged: {
+        if (refreshing && !postsModel.loadingPosts)
+            refresh(true);
+    }
+
+    SortChoiceOverlay {
         id: changeSortOverlay
     }
 
     Kirigami.CardsListView {
         id: postsView
+
         model: ListModel {
+            id: postsModel
             property string after
             property string before
             property bool loadingPosts
         }
         delegate: PostCard {}
         onContentYChanged: {
-
             if (atYEnd) {
-                Common.loadPostsAfter(url, model)
+                rest.loadPostsAfter(url, model)
             }
         }
     }
@@ -71,7 +80,18 @@ Kirigami.ScrollablePage {
 
     function refresh(forceRefresh = false) {
         model.clear();
-        rest.loadPosts(url + sortUrl, model, null, forceRefresh);
+
+        postsModel.loadingPosts = true;
+        refreshing = true;
+
+        let fullUrl = url;
+        if (!Common.endsWith(fullUrl, "/"))
+            fullUrl += "/";
+
+        fullUrl += sortUrl;
+        rest.loadPosts(fullUrl, postsModel, null, forceRefresh).then(() => {
+            refreshing = postsModel.loadingPosts = false;
+        });
         if (info && info.url !== url)
             info = null;
 
@@ -85,9 +105,7 @@ Kirigami.ScrollablePage {
             let infoUrl = url;
             if (url.charAt(url.length - 1) == '/')
                 infoUrl = infoUrl.substr(0, infoUrl.length - 1);
-
-
-            Common.getRedditJSON(`${infoUrl}/about`)
+            rest.getRedditJSON(`${infoUrl}/about`)
                 .then(rawData => info = rawData.data)
                 .catch(raw => console.log(`info error: ${Common.toString(raw)}`));
         }

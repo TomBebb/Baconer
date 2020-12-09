@@ -1,15 +1,16 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
-        <file>common.js</file>
         <file>pages/PostPage.qml</file>
         <file>pages/PostsPage.qml</file>
         <file>pages/SettingsPage.qml</file>
         <file>common/PostCard.qml</file>
         <file>common/SubredditList.qml</file>
-        <file>actions/BackAction.qml</file>
         <file>pages/WebPage.qml</file>
-        <file>common/Rest.qml</file>
-        <file>common/ChangeSortOverlay.qml</file>
+        <file>overlays/SortChoiceOverlay.qml</file>
+        <file>utils/Rest.qml</file>
+        <file>utils/common.js</file>
+        <file>main.cpp</file>
+        <file>main.qml</file>
+        <file>common/LinkHandlerConnection.qml</file>
     </qresource>
 </RCC>

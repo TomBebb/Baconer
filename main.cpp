@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     app.setOrganizationName("Baconer");
     app.setOrganizationDomain("org.baconer");
-    app.setApplicationName("Baconer");
+    app.setApplicationName("Baconer Reddit Client");
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));

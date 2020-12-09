@@ -2,7 +2,7 @@ import QtQuick 2.1
 import org.kde.kirigami 2.13 as Kirigami
 import QtQuick.Layouts 1.2
 import QtQml.Models 2.15
-import "../common.js" as Common
+import "../utils/common.js" as Common
 
 ListView {
     Layout.fillWidth: true
@@ -21,14 +21,18 @@ ListView {
         text: section
     }
 
-    Component.onCompleted: {
-        subsView.currentIndex = 0;
-        rest.loadSubs(subsModel).then(rawDatas => {
-            refresh();
-        });
-    }
+    Connections {
+        Component.onCompleted: {
+            subsView.currentIndex = 0;
+            rest.loadSubs(subsModel).then(rawDatas => {
+                refresh();
+            });
+        }
 
-    onCurrentItemChanged: () => refresh();
+        function onCurrentItemChanged() {
+            refresh();
+        }
+    }
 
     function refresh() {
         currentData = model.get(currentIndex);

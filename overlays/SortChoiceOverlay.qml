@@ -21,8 +21,8 @@ OverlaySheet {
         text: "Change sort"
     }
 
-
     ListView {
+
         property int checkedIndex: 0
         property var checked: sheet.sortModel[checkedIndex]
 

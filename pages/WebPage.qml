@@ -1,28 +1,44 @@
 import QtQuick 2.0
-import org.kde.kirigami 2.13 as Kirigami
 import QtWebView 1.1
-import "../actions"
+import org.kde.kirigami 2.13
+import "../utils/common.js" as Common
 
-Kirigami.ScrollablePage {
+ScrollablePage {
     property string initialURL
     objectName: "webViewPage"
+    id: page
     title: view.title
-    actions {
-        main: Action {
-            text: "Back"
-            iconName: "back"
-            onTriggered: {
-                if (view.canGoBack) {
-                    view.goBack();
-                } else {
-                    root.pageStack.pop();
-                }
-            }
+    actions.contextualActions: [
+        Action {
+            text: "Refresh"
+            iconName: "view-refresh"
+            onTriggered: view.reload()
+        }
+    ]
+
+    //Close the drawer with the back button
+    onBackRequested: {
+        event.accepted = true;
+        if (view.canGoBack) {
+            view.goBack();
+        } else {
+            root.closePage(page);
         }
     }
 
     contentItem: WebView {
         id: view
+        onUrlChanged: {
+            const urlText = url.toString();
+            const redditPage = Common.openRedditLink(urlText);
+
+            if (redditPage)
+                redditPage.then(page => root.openPage(page));
+        }
     }
-    Component.onCompleted: view.url = initialURL
+    Component.onCompleted: {
+        view.url = initialURL;
+
+        console.log("URL opened: "+view.url)
+    }
 }
