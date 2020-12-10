@@ -36,6 +36,7 @@ Kirigami.Card {
     ]
 
     contentItem: Item {
+        id: item
         implicitWidth: delegateLayout.implicitWidth
         implicitHeight: delegateLayout.implicitHeight
 
@@ -45,10 +46,10 @@ Kirigami.Card {
             Controls.Label {
                 property bool isActiveSub: subredditURL === root.pageStack.currentItem.url
                 Layout.fillWidth: true
-                text: qsTr("posted by %1 %2 ago" + (isActiveSub ? "" : " in %3"))
+                text: qsTr("posted by %1 %2 ago" + (isActiveSub ? "%3" : " in %3"))
                     .arg(`[${author}](http://reddit.com/u/${author})`)
                     .arg(Common.timeSince(date))
-                    .arg(`[/r/${subreddit}](http://reddit.com/r/${subreddit})`)
+                    .arg(isActiveSub ? "": `[/r/${subreddit}](http://reddit.com/r/${subreddit})`)
                 textFormat: TextEdit.MarkdownText
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
@@ -56,8 +57,8 @@ Kirigami.Card {
             }
 
             Controls.Label {
-                width: postCard.width - 20
                 Layout.fillWidth: true
+                Layout.preferredWidth: item.width
                 textFormat: TextEdit.MarkdownText
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 text: postContent.length > maxPostPreviewLength ? postContent.substr(0, maxPostPreviewLength) + "..." : postContent

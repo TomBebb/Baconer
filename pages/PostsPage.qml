@@ -34,11 +34,18 @@ Kirigami.ScrollablePage {
                 onTriggered: changeSortOverlay.open()
             },
             Kirigami.Action {
-                id: favoriteAction
+                id: favAction
                 iconName: "favorite"
-                text: !settingsPage.settings.favorites.has(url) ? qsTr("Add to favorites") : qsTr("Remove from favorites")
+                checkable: true
+                text: checked ? qsTr("Unfavorite") : qsTr("Favorite")
+                onCheckedChanged: settingsPage.setFav(url, checked)
+                visible: isSubreddit
 
-                onTriggered: settingsPage.toggleFav(url);
+                Component.onCompleted:  updateFav();
+
+                function updateFav() {
+                    checked = settingsPage.settings.favorites.has(url);
+                }
             }
         ]
     }
@@ -61,7 +68,7 @@ Kirigami.ScrollablePage {
 
         function onChanged() {
             console.debug("Settings changed");
-            favAction.update()
+            favAction.updateFav()
         }
     }
 

@@ -37,11 +37,10 @@ ListView {
         }
 
         function onCurrentItemChanged() {
-
-            console.debug(`${currentIndex} ${lastURL} => ${currentURL}`);
             if (currentURL != lastURL) {
-                refresh();
-                lastURL = currentURL
+                root.pageStack.pop(root.pageStack.get(0));
+                refreshSubInfo();
+                lastURL = currentURL;
             }
         }
     }
@@ -49,9 +48,7 @@ ListView {
     function refreshAll(refreshPosts) {
         const currentUrl = currentURL;
 
-        console.debug("SubList refresh all");
         rest.loadDrawerItems(subsModel).then(rawDatas => {
-            console.debug("SubList fetced: "+ model.count);
 
             let newUrlIndex = -1;
             for (let i = 0; i < model.count; i++) {
@@ -63,7 +60,7 @@ ListView {
                 }
             }
             currentIndex = newUrlIndex;
-            refresh(refreshPosts);
+            refreshSubInfo(refreshPosts);
         }).catch(err => console.error(err));
     }
 
@@ -71,7 +68,7 @@ ListView {
         return postsPage.refresh(forceRefresh)
     }
 
-    function refresh(shouldRefreshPosts = true) {
+    function refreshSubInfo(shouldRefreshPosts = true) {
         postsPage.info = currentData
 
         if (shouldRefreshPosts)
@@ -83,12 +80,10 @@ ListView {
     function search(text) {
         text = text.trim();
 
-        console.log(`Search for: ${text}`);
         for (let i = 0; i < subsModel.count; i++) {
             const entry = subsModel.get(i);
 
             entry.isVisible = (text.length === 0) || Common.searchValuesFor(entry, text, false);
-            console.log(`Result for ${JSON.stringify(entry)} => ${entry.visible}`);
         }
     }
 }

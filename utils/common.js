@@ -1,8 +1,27 @@
 .import QtQuick 2.1 as Quick
+.import org.kde.kirigami 2.13 as Kirigami
 
 const redditRegex = /^(?:https?:\/\/)?(?:old\.|www\.)?reddit.com/;
 const subRedditRegex = /^\/r\/([a-zA-Z-_]+)\/?/;
 const postRegex = /^\/r\/([a-zA-Z-_]+)\/comments\/([a-zA-Z0-9]+)\/?/;
+
+function nodeToStr(node) {
+    if (node.id && node.id.length > 0)
+        return node.id;
+    if (node.objectName && node.objectName.length > 0)
+        return node.objectName;
+
+    return "????";
+}
+
+function getPage(node) {
+    console.debug(`find page for: ${nodeToStr(node)}`);
+    while (node && !(node instanceof Kirigami.Page)) {
+        console.debug(`finding page for: ${nodeToStr(node)}`);
+        node = node.parent;
+    }
+    return node;
+}
 
 function decodeHtml(text) {
     return text.replace("&amp;", "&")

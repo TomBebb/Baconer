@@ -15,10 +15,10 @@ Kirigami.ScrollablePage {
     id: page
     objectName: "settingsPage"
 
-    function toggleFav(url) {
-        if (settings.favorites.has(url))
+    function setFav(url, isFav) {
+        if (settings.favorites.has(url) && !isFav)
             settings.favorites.delete(url);
-        else
+        else if (isFav)
             settings.favorites.add(url);
 
         settings.changed();
