@@ -40,19 +40,15 @@ Kirigami.ApplicationWindow {
 
         SubredditList {
             id: subsView
-            Layout.fillWidth: true
             Layout.fillHeight: true
         }
     }
 
     Connections {
-        target:  subsSearch
+        target: subsSearch
         function onAccepted() {
-            subsView.search(text)
-        }
-
-        function onEditingFinished() {
-            console.debug("Search edit finished");
+            console.debug(target.text);
+            subsView.search(target.text)
         }
     }
 

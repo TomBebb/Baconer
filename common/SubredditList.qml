@@ -5,16 +5,17 @@ import QtQml.Models 2.15
 import "../utils/common.js" as Common
 
 ListView {
-    Layout.fillWidth: true
     property var currentData: model.get(currentIndex)
     property string currentURL: currentData ? `${currentData.url}` : "/"
     property string lastURL
+    Layout.fillWidth: true
     model: ListModel { id: subsModel }
 
     delegate: Kirigami.BasicListItem {
         label: Common.isFrontpage(this) ? title: `${title} (${url})`
         subtitle: description
         visible: isVisible
+        icon : itemIcon.source
     }
 
     section.property: "category"

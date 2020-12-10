@@ -198,8 +198,6 @@ Item {
                 subItem.category =  subItem.isFavorite ? qsTr("Favorites") : qsTr("Subreddits");
                 subItem.isSub = true;
 
-                //console.debug(subItem);
-
                 (subItem.isFavorite ? favItems : subItems).push(subItem);
             }
 
@@ -213,8 +211,10 @@ Item {
     }
 
     function loadSubs(forceRefresh) {
+        console.debug(`loadSubs(${forceRefresh})`);
         return getRedditJSON("/subreddits/default", null, forceRefresh).then(data => {
 
+        console.debug(`got jsonn loadSubs(${forceRefresh})`);
             const subs = [];
             const frontPage = "Frontpage";
 
@@ -222,13 +222,24 @@ Item {
 
             for (const rawChild of data.data.children) {
                 const child = rawChild.data;
-
-                subs.push({
+                const subData = {
                     name: child.display_name,
                     title: child.title,
                     url: child.url,
-                    description: Common.tidyDescription(child.public_description)
-                });
+                    description: Common.tidyDescription(child.public_description),
+                    itemIcon: {}
+                };
+
+                if (child.icon_img && child.icon_size) {
+
+                    subData.itemIcon = {
+                        source: child.icon_img,
+                        width: child.icon_size[0],
+                        height: child.icon_size[1]
+                    }
+                }
+
+                subs.push(subData);
             }
 
             return subs;
