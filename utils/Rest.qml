@@ -110,7 +110,7 @@ Item {
                     ups: child.ups,
                     downs: child.downs,
                     thumbnail: Common.decodeHtml(child.thumbnail),
-                    url: child.url_overridden_by_dest ? Common.decodeHtml(child.url_overridden_by_dest): null,
+                    url: child.url_overridden_by_dest ? Common.decodeHtml(child.url_overridden_by_dest): "",
                     commentCount: child.num_comments,
                     previewImages: [],
                     previewImage: {isValid: false}
@@ -148,7 +148,6 @@ Item {
     }
 
     function loadComments(postData, commentsModel, forceRefresh) {
-        console.debug(`loadComments for ${postData.postId} in ${postData.subreddit}; force=${forceRefresh}`);
         commentsModel.loadingComments = true;
         const afterLoadCb = () => {
             commentsModel.loadingComments = false;
@@ -198,6 +197,8 @@ Item {
                 subItem.isFavorite = settingsPage.settings.favorites.has(subItem.url)
                 subItem.category =  subItem.isFavorite ? qsTr("Favorites") : qsTr("Subreddits");
                 subItem.isSub = true;
+
+                //console.debug(subItem);
 
                 (subItem.isFavorite ? favItems : subItems).push(subItem);
             }

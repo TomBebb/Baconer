@@ -72,7 +72,7 @@ Kirigami.Card {
                 text: `[Open URL](${url})`
                 textFormat: TextEdit.MarkdownText
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                visible: url != null
+                visible: url.length > 0
                 LinkHandlerConnection {}
             }
 
