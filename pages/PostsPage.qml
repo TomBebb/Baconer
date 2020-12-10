@@ -36,7 +36,7 @@ Kirigami.ScrollablePage {
             Kirigami.Action {
                 id: favoriteAction
                 iconName: "favorite"
-                text: !settingsPage.settings.favorites.has(url) ? qsTtr("Add to favorites") : qsTtr("Remove from favorites")
+                text: !settingsPage.settings.favorites.has(url) ? qsTr("Add to favorites") : qsTr("Remove from favorites")
 
                 onTriggered: settingsPage.toggleFav(url);
             }

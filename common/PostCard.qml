@@ -43,7 +43,6 @@ Kirigami.Card {
         ColumnLayout {
             id: delegateLayout
             Controls.Label {
-                Component.onCompleted: console.debug(`POST CARD subreddit=${subredditURL};url=${root.pageStack.currentItem.url}`)
                 property bool isActiveSub: subredditURL === root.pageStack.currentItem.url
                 Layout.fillWidth: true
                 text: qsTr("posted by %1 %2 ago" + (isActiveSub ? "" : " in %3"))
@@ -57,12 +56,22 @@ Kirigami.Card {
             }
 
             Controls.Label {
+                width: postCard.width - 20
                 Layout.fillWidth: true
                 textFormat: TextEdit.MarkdownText
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 text: postContent.length > maxPostPreviewLength ? postContent.substr(0, maxPostPreviewLength) + "..." : postContent
                 visible: hasContent
 
+                LinkHandlerConnection {}
+            }
+
+            Controls.Label {
+                Layout.fillWidth: true
+                text: `[Open URL](${url})`
+                textFormat: TextEdit.MarkdownText
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                visible: url != null
                 LinkHandlerConnection {}
             }
 

@@ -58,7 +58,7 @@ Kirigami.ScrollablePage {
         ListView {
             id: commentsList
             Layout.fillWidth: true
-
+            Layout.fillHeight: true
 
             delegate: Controls.Label {
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere

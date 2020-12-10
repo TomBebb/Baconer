@@ -110,6 +110,7 @@ Item {
                     ups: child.ups,
                     downs: child.downs,
                     thumbnail: Common.decodeHtml(child.thumbnail),
+                    url: child.url_overridden_by_dest ? Common.decodeHtml(child.url_overridden_by_dest): null,
                     commentCount: child.num_comments,
                     previewImages: [],
                     previewImage: {isValid: false}
