@@ -43,7 +43,7 @@ Kirigami.Card {
         ColumnLayout {
             id: delegateLayout
             Controls.Label {
-                Layout.preferredWidth: contentItem.width
+                Layout.fillWidth: true
                 text: `*${author}* - posted ${Common.timeSince(date)} ago - [/r/${subreddit}](http://reddit.com/r/${subreddit})`
                 textFormat: TextEdit.MarkdownText
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -53,8 +53,8 @@ Kirigami.Card {
 
             Controls.Label {
                 Layout.fillWidth: true
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 textFormat: TextEdit.MarkdownText
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 text: postContent.length > maxPostPreviewLength ? postContent.substr(0, maxPostPreviewLength) + "..." : postContent
                 visible: hasContent
 

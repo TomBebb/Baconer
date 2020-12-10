@@ -81,7 +81,7 @@ Kirigami.ScrollablePage {
         loadingComments = true;
         rest.loadComments(postData, commentsModel, forceRefresh)
             .then(() => {
-               loadingComments = refreshing = false;
+               loadingComments = refreshing = false;r
             });
     }
 }

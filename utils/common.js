@@ -105,10 +105,16 @@ function endsWith(text, sub) {
 function openRedditLink(url) {
     const redditUrl = url.replace(redditRegex, "");
     const subRedditMatch = redditUrl.match(subRedditRegex);
+    const page = root.pageStack.currentItem;
 
     if (subRedditMatch && subRedditMatch.length >= 2) {
         const name = subRedditMatch[1];
-        console.debug("Posts page from url");
+        const subRedditUrl = `/r/${name}`;
+
+        if (page.objectName === "postsPage" && page.url.toLowerCase() === subRedditUrl.toLowerCase()) {
+            return Promise.resolve({});
+        }
+
         return createComponent("/pages/PostsPage.qml", {url: `/r/${name}`});
     }
     const postMatch = redditUrl.match(postRegex);
@@ -118,9 +124,7 @@ function openLink(url) {
     console.debug(`open link: ${url}`);
     const redditPageForLink = openRedditLink(url);
     if (redditPageForLink) {
-        console.debug(`reddit page: ${url}`);
         return redditPageForLink.then(page => {
-            console.debug("open reddit page");
             root.openPage(page);
         }).catch(err => console.error(err));
     }
@@ -193,7 +197,7 @@ function resolveComponent(path) {
             console.debug(`Component ready: ${path}`);
            resolve(component);
         } else {
-        console.debug(`Waiting for ready: ${path}`);
+           console.debug(`Waiting for ready: ${path}`);
 
            component.statusChanged.connect(() => {
                 console.debug(`${path} status: ${statusToString(component.status)}`);

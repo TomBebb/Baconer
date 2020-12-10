@@ -22,7 +22,7 @@ ScrollablePage {
         if (view.canGoBack) {
             view.goBack();
         } else {
-            root.closePage(page);
+            root.pageStack.pop();
         }
     }
 
