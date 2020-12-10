@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import "common.js" as Common
+import "../utils"
 
 Item {
     property var cache: new Map()
@@ -39,16 +40,12 @@ Item {
         xhr.send();
 
         if (forceRefresh) {
-            console.debug(`${url} force refresh`);
             cache.delete(url);
         }
 
         if (cache.has(url)) {
-            console.debug(`${url} cached`);
             return Promise.resolve(cache.get(url));
         }
-        console.debug(`get ${url}`);
-
 
         return new Promise(function(resolve, reject) {
             xhr.onreadystatechange = function() {
@@ -178,25 +175,53 @@ Item {
         }).then(afterLoadCb, afterLoadCb);
     }
 
-    function loadSubs(subsModel, forceRefresh) {
-        return getRedditJSON("/subreddits/default", null, forceRefresh).then(data => {
-            subsModel.clear();
-            const frontPage = "Frontpage";
-            subsModel.append({
-                isVisible: true,
-                category: "Multireddits",
-                name: frontPage,
-                title: frontPage,
-                url: "/",
-                description: "Front page of the internet"
-            });
+    function loadDrawerItems(subsModel, forceRefresh) {
+        return loadSubs(forceRefresh).then(rawSubItems => {
 
-            for (let rawChild of data.data.children) {
-                let child = rawChild.data;
-
-                subsModel.append({
+            let favItems = [];
+            let subItems = [];
+            let multiItems = [
+                {
+                    isFavorite: true,
                     isVisible: true,
-                    category: "Subreddits",
+                    category: qsTr("Multireddits"),
+                    name: "Frontpage",
+                    title: "Frontpage",
+                    url: "/",
+                    description: "Front page of the internet",
+                    isSub: false
+                }
+            ];
+            for (const subItem of rawSubItems) {
+                subItem.isVisible = true;
+                subItem.isFavorite = settingsPage.settings.favorites.has(subItem.url)
+                subItem.category =  subItem.isFavorite ? qsTr("Favorites") : qsTr("Subreddits");
+                subItem.isSub = true;
+
+                (subItem.isFavorite ? favItems : subItems).push(subItem);
+            }
+
+            return favItems.concat(multiItems).concat(subItems);
+        }).then(items => {
+            subsModel.clear();
+
+            for (const item of items)
+                subsModel.append(item);
+        });
+    }
+
+    function loadSubs(forceRefresh) {
+        return getRedditJSON("/subreddits/default", null, forceRefresh).then(data => {
+
+            const subs = [];
+            const frontPage = "Frontpage";
+
+            const favorites = settingsPage.settings.favorites;
+
+            for (const rawChild of data.data.children) {
+                const child = rawChild.data;
+
+                subs.push({
                     name: child.display_name,
                     title: child.title,
                     url: child.url,
@@ -204,7 +229,7 @@ Item {
                 });
             }
 
-            return data;
+            return subs;
         });
     }
 }

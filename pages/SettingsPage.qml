@@ -15,6 +15,16 @@ Kirigami.ScrollablePage {
     id: page
     objectName: "settingsPage"
 
+    function toggleFav(url) {
+        if (settings.favorites.has(url))
+            settings.favorites.delete(url);
+        else
+            settings.favorites.add(url);
+
+        settings.changed();
+        settings.sync();
+    }
+
     function loadThemes() {
         const rawThemes = styleTools.getThemes();
 
@@ -26,9 +36,17 @@ Kirigami.ScrollablePage {
 
     Settings {
         id: settings
+        property var favorites: new Set()
         property alias themeName: themeInput.currentText
         property alias preferExternalBrowser: preferExternalBrowserInput.checked
         property alias imagePreviewChoice: imagePreviewChoiceBox.currentIndex
+
+        onThemeNameChanged: changed();
+        onPreferExternalBrowserChanged: changed();
+        onImagePreviewChoiceChanged: changed();
+        onChanged: console.debug("Settings changed")
+
+        signal changed()
     }
     ColumnLayout {
         Kirigami.FormLayout {

@@ -12,9 +12,8 @@ import "utils"
 Kirigami.ApplicationWindow {
     property bool assumeMobile: height > width * 1.5
     id: root
-    title: `Baconer - ${subsView.currentURL}`
+    title: `Baconer - ${pageStack.currentItem.title}`
     controlsVisible: true
-
 
     Rest {
         id: rest

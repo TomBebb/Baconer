@@ -10,6 +10,7 @@ Kirigami.ScrollablePage {
     property ListModel model: postsView.model
     property string url: subsView.currentURL
     property string sortUrl: changeSortOverlay.selectedSortUrl
+    property bool isSubreddit: url.indexOf("/r/") === 0;
     property var info: null
     objectName: "postsPage"
 
@@ -26,18 +27,19 @@ Kirigami.ScrollablePage {
             icon.name: "view-refresh"
             onTriggered: refresh(true)
         }
-        left: Kirigami.Action {
-            text: "Settings"
-            iconName: "configuration"
-            onTriggered: root.showSettings()
-        }
         contextualActions: [
             Kirigami.Action {
                 text: "Sort"
                 iconName: "dialog-filters"
                 onTriggered: changeSortOverlay.open()
-            }
+            },
+            Kirigami.Action {
+                id: favoriteAction
+                iconName: "favorite"
+                text: !settingsPage.settings.favorites.has(url) ? qsTtr("Add to favorites") : qsTtr("Remove from favorites")
 
+                onTriggered: settingsPage.toggleFav(url);
+            }
         ]
     }
 
@@ -52,6 +54,17 @@ Kirigami.ScrollablePage {
     SortChoiceOverlay {
         id: changeSortOverlay
     }
+
+
+    Connections {
+        target: settingsPage.settings
+
+        function onChanged() {
+            console.debug("Settings changed");
+            favAction.update()
+        }
+    }
+
 
     Kirigami.CardsListView {
         id: postsView
@@ -101,11 +114,12 @@ Kirigami.ScrollablePage {
             info = {
                 title: "Frontpage"
             };
+            return Promise.resolve(info);
         } else {
             let infoUrl = url;
             if (url.charAt(url.length - 1) == '/')
                 infoUrl = infoUrl.substr(0, infoUrl.length - 1);
-            rest.getRedditJSON(`${infoUrl}/about`)
+            return rest.getRedditJSON(`${infoUrl}/about`)
                 .then(rawData => info = rawData.data)
                 .catch(raw => console.log(`info error: ${Common.toString(raw)}`));
         }

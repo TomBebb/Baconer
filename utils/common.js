@@ -19,15 +19,15 @@ function decodeHtml(text) {
 function formatNum(num) {
 
     if (num < 1000)
-        return num;
+        return qsTr("%1").arg(num);
 
     if (num < 1000000)
-        return `${Math.round(num / 1000)}K`;
+        return qsTr("%L1K").arg(Math.round(num / 1000));
 
     if (num < 1000000000)
-        return `${Math.round(num / 1000000)}M`;
+        return qsTr("%L1M").arg(Math.round(num / 1000000));
 
-    return `${Math.round(num / 1000000)}B`;
+    return qsTr("%L1B").arg(Math.round(num / 1000000000));
 }
 
 function formatScore(num) {
@@ -52,31 +52,35 @@ function chooseImageSource(previewImages) {
     return previewImages[previewImages.length - 1];
 }
 
+function pluralize(amount, unit) {
+    return qsTr("%L1 %2").arg(amount | 0).arg(unit);
+}
+
 function timeSince(date) {
     const seconds = Math.floor((Date.now() - date) / 1000);
     let interval = seconds / 31536000;
 
     if (interval > 1) {
-        return `${Math.floor(interval)} years`;
+        return pluralize(interval, "years");
     }
     interval = seconds / 2592000;
     if (interval > 1) {
-        return `${Math.floor(interval)} months`;
+        return pluralize(interval, "months");
     }
     interval = seconds / 86400;
     if (interval > 1) {
-        return `${Math.floor(interval)} days`;
+        return pluralize(interval, "days");
     }
     interval = seconds / 3600;
     if (interval > 1) {
-        return `${Math.floor(interval)} hours`;
+        return pluralize(interval, "hours");
     }
     interval = seconds / 60;
     if (interval > 1) {
-        return `${Math.floor(interval)} minutes`;
+        return pluralize(interval, "mins");
     }
 
-    return `${Math.floor(seconds)} seconds`;
+    return pluralize(interval, "secs");
 }
 
 function charAt(text, index) {
@@ -194,7 +198,6 @@ function resolveComponent(path) {
         const component = Qt.createComponent(path, Quick.Component.Asynchronous);
 
         if (component.status === Quick.Component.Ready) {
-            console.debug(`Component ready: ${path}`);
            resolve(component);
         } else {
            console.debug(`Waiting for ready: ${path}`);
@@ -218,7 +221,7 @@ function resolveComponent(path) {
 
 function createComponent(path, props={}) {
     return resolveComponent(path).then(comp => {
-        console.debug(`Creating object for: ${path}`);
+        console.debug(`Creating object for: ${path} ${comp}`);
         const obj = comp.createObject(root, props);
         console.debug("Created object");
         return obj;

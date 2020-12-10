@@ -6,7 +6,7 @@ import "../utils/common.js" as Common
 
 Kirigami.Card {
     id: postCard
-
+    readonly property string subredditURL: `/r/${subreddit}`
     readonly property int maxPostPreviewLength: 255
     readonly property bool hasContent: Common.isNonEmptyString(postContent)
     readonly property real rowEachWidthMult: 0.2
@@ -43,8 +43,13 @@ Kirigami.Card {
         ColumnLayout {
             id: delegateLayout
             Controls.Label {
+                Component.onCompleted: console.debug(`POST CARD subreddit=${subredditURL};url=${root.pageStack.currentItem.url}`)
+                property bool isActiveSub: subredditURL === root.pageStack.currentItem.url
                 Layout.fillWidth: true
-                text: `*${author}* - posted ${Common.timeSince(date)} ago - [/r/${subreddit}](http://reddit.com/r/${subreddit})`
+                text: qsTr("posted by %1 %2 ago" + (isActiveSub ? "" : " in %3"))
+                    .arg(`[${author}](http://reddit.com/u/${author})`)
+                    .arg(Common.timeSince(date))
+                    .arg(`[/r/${subreddit}](http://reddit.com/r/${subreddit})`)
                 textFormat: TextEdit.MarkdownText
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
@@ -81,7 +86,7 @@ Kirigami.Card {
 
         const data = postsPage.getPostData(index);
 
-        Common.createComponent("pages/PostPage.qml", {postData: data})
+        Common.createComponent("/pages/PostPage.qml", {postData: data})
             .then(page => root.openPage(page))
             .catch(err => console.error(err))
     }

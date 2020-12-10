@@ -6,8 +6,9 @@ import "../utils/common.js" as Common
 
 ListView {
     Layout.fillWidth: true
-    property var currentData
+    property var currentData: model.get(currentIndex)
     property string currentURL: currentData ? `${currentData.url}` : "/"
+    property string lastURL
     model: ListModel { id: subsModel }
 
     delegate: Kirigami.BasicListItem {
@@ -22,25 +23,61 @@ ListView {
     }
 
     Connections {
-        Component.onCompleted: {
-            subsView.currentIndex = 0;
-            rest.loadSubs(subsModel).then(rawDatas => {
-                refresh();
-            });
-        }
-
-        function onCurrentItemChanged() {
-            refresh();
+        target: settingsPage.settings
+        function onChanged() {
+            console.debug(`changed: currentItem=${currentItem}; index = ${currentIndex}; data = ${model.get(currentIndex).url}`);
+            refreshAll(false)
         }
     }
 
-    function refresh() {
-        currentData = model.get(currentIndex);
-        if (!currentData) {
-            console.error(`no index ${currentIndex} in subs; got ${currentData}`);
+    Connections {
+        Component.onCompleted: {
+            lastURL = currentURL;
+            refreshAll();
         }
+
+        function onCurrentItemChanged() {
+
+            console.debug(`${currentIndex} ${lastURL} => ${currentURL}`);
+            if (currentURL != lastURL) {
+                refresh();
+                lastURL = currentURL
+            }
+        }
+    }
+
+    function refreshAll(refreshPosts) {
+        const currentUrl = currentURL;
+
+        console.debug("SubList refresh all");
+        rest.loadDrawerItems(subsModel).then(rawDatas => {
+            console.debug("SubList fetced: "+ model.count);
+
+            let newUrlIndex = -1;
+            for (let i = 0; i < model.count; i++) {
+                const itemData = model.get(i);
+                const url = itemData.url;
+                if (url === currentUrl) {
+                    newUrlIndex = i;
+                    break;
+                }
+            }
+            currentIndex = newUrlIndex;
+            refresh(refreshPosts);
+        }).catch(err => console.error(err));
+    }
+
+    function refreshPosts(forceRefresh) {
+        return postsPage.refresh(forceRefresh)
+    }
+
+    function refresh(shouldRefreshPosts = true) {
         postsPage.info = currentData
-        postsPage.refresh();
+
+        if (shouldRefreshPosts)
+            return refreshPosts();
+
+        return Promise.resolve();
     }
 
     function search(text) {
