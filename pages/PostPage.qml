@@ -12,9 +12,6 @@ Kirigami.ScrollablePage {
     readonly property bool hasContent: Common.isNonEmptyString(postData.postContent)
     property bool loadingComments: false
 
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-
 
     objectName: "postPage"
 
@@ -43,10 +40,9 @@ Kirigami.ScrollablePage {
 
     title: postData.postTitle
     ColumnLayout {
-        anchors.fill: parent
+        width: page.width
         id: layout
         visible: !refreshing
-       // spacing: Units.smallSpacing
         Controls.Label {
             id: contentLabel
             Layout.preferredWidth: layout.width
@@ -61,16 +57,24 @@ Kirigami.ScrollablePage {
 
         ListView {
             id: commentsList
-            Layout.fillWidth: true
-            Layout.fillHeight: true
             Layout.preferredWidth: layout.width
+            Layout.preferredHeight: root.height
 
-            delegate: Controls.Label {
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                text: body
-                textFormat: TextEdit.MarkdownText
-                onLinkActivated: Common.openLink(link)
+            delegate: Kirigami.AbstractListItem {
+                id: commentItem
+
+                Controls.Label {
+                    id: commentText
+                    color:  commentItem.textColor
+                    text: Common.decodeHtml(body)
+                    textFormat: TextEdit.MarkdownText
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                    onLinkActivated: {
+                        Common.openLink(url);
+                    }
+                }
             }
+
             model: ListModel {
                 property bool loadingComments: false
                 id: commentsModel

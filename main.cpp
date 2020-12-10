@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     app.setOrganizationDomain("org.baconer");
     app.setApplicationName("Baconer Reddit Client");
 
+
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 
