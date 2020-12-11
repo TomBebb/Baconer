@@ -98,6 +98,6 @@ Kirigami.Card {
 
         Common.createComponent("/pages/PostPage.qml", {postData: data})
             .then(page => root.openPage(page))
-            .catch(err => console.error(err))
+            .catch(err => console.error(`Error loading post: ${err}`));
     }
 }

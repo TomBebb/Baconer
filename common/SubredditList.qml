@@ -15,7 +15,7 @@ ListView {
         label: Common.isFrontpage(this) ? title: `${title} (${url})`
         subtitle: description
         visible: isVisible
-        icon : itemIcon.source
+        icon : itemIcon ? itemIcon.source: ""
     }
 
     section.property: "category"
@@ -62,7 +62,7 @@ ListView {
             }
             currentIndex = newUrlIndex;
             refreshSubInfo(refreshPosts);
-        }).catch(err => console.error(err));
+        }).catch(err => console.error(`Error loading subs: ${err}`));
     }
 
     function refreshPosts(forceRefresh) {

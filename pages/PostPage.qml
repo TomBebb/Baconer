@@ -69,9 +69,7 @@ Kirigami.ScrollablePage {
                     text: Common.decodeHtml(body)
                     textFormat: TextEdit.MarkdownText
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    onLinkActivated: {
-                        Common.openLink(url);
-                    }
+                    onLinkActivated: Common.openLink(url);
                 }
             }
 

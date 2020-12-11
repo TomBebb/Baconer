@@ -12,5 +12,7 @@
         <file>main.cpp</file>
         <file>main.qml</file>
         <file>common/LinkHandlerConnection.qml</file>
+        <file>overlays/SubInfoOverlay.qml</file>
+        <file>utils/dataConverters.js</file>
     </qresource>
 </RCC>

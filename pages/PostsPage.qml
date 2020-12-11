@@ -3,6 +3,7 @@ import org.kde.kirigami 2.13 as Kirigami
 import QtQuick.Controls 2.0 as Controls
 import QtQuick.Layouts 1.2
 import "../utils/common.js" as Common
+import "../utils/dataConverters.js" as DataConv
 import "../common"
 import "../overlays"
 
@@ -27,11 +28,17 @@ Kirigami.ScrollablePage {
             icon.name: "view-refresh"
             onTriggered: refresh(true)
         }
-        contextualActions: [
-            Kirigami.Action {
+            contextualActions: [
+                Kirigami.Action {
                 text: "Sort"
                 iconName: "dialog-filters"
                 onTriggered: changeSortOverlay.open()
+            },
+            Kirigami.Action {
+                text: "Info"
+                iconName: "help-about"
+                onTriggered: subInfoOverlay.open()
+                visible: isSubreddit
             },
             Kirigami.Action {
                 id: favAction
@@ -60,6 +67,11 @@ Kirigami.ScrollablePage {
 
     SortChoiceOverlay {
         id: changeSortOverlay
+    }
+
+    SubInfoOverlay {
+        id: subInfoOverlay
+        data: info
     }
 
 
@@ -119,7 +131,8 @@ Kirigami.ScrollablePage {
             return;
         if (url.length <= 1) {
             info = {
-                title: "Frontpage"
+                title: "Frontpage",
+                url: "/"
             };
             return Promise.resolve(info);
         } else {
@@ -127,7 +140,7 @@ Kirigami.ScrollablePage {
             if (url.charAt(url.length - 1) == '/')
                 infoUrl = infoUrl.substr(0, infoUrl.length - 1);
             return rest.getRedditJSON(`${infoUrl}/about`)
-                .then(rawData => info = rawData.data)
+                .then(rawData => info = DataConv.convertSub(rawData.data))
                 .catch(raw => console.log(`info error: ${Common.toString(raw)}`));
         }
     }

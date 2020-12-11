@@ -149,7 +149,7 @@ function openLink(url) {
     if (redditPageForLink) {
         return redditPageForLink.then(page => {
             root.openPage(page);
-        }).catch(err => console.error(err));
+        }).catch(err => console.error("Error opening reddit link: "+err));
     }
 
     if (url.indexOf("://") === -1)
@@ -186,6 +186,7 @@ function isNonEmptyString(txt) {
 }
 
 function tidyDescription(text, maxLength = 255) {
+    text = decodeHtml(text);
     const newlines = /[\r\n]/;
     const newlineIndex = text.search(newlines);
     if (newlineIndex !== -1)
@@ -235,7 +236,7 @@ function resolveComponent(path) {
 
 
         }
-    }).catch(err => console.error(err));
+    }).catch(err => console.error("error resolving comp:" +err));
 }
 
 function createComponent(path, props={}) {
@@ -244,5 +245,5 @@ function createComponent(path, props={}) {
         const obj = comp.createObject(root, props);
         console.debug("Created object");
         return obj;
-    }).catch(err => console.error(err));
+    }).catch(err => console.error("error making comp: "+err));
 }

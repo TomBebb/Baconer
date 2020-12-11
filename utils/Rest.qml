@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import "common.js" as Common
+import "dataConverters.js" as DataConverters
 import "../utils"
 
 Item {
@@ -37,7 +38,10 @@ Item {
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", url);
+        xhr.setRequestHeader("User-Agent", "Baconer by TopHattedCoder");
         xhr.send();
+
+        console.debug(`get ${url}`);
 
         if (forceRefresh) {
             cache.delete(url);
@@ -92,53 +96,16 @@ Item {
             if (!after)
                 postsModel.clear();
             for (const rawChild of data.data.children) {
-                const child = rawChild.data;
-                const previewData = child.preview;
-
-                const previewDataImages = previewData ? previewData.images : null;
-
-
-                let modelData = {
-                    postId: child.id,
-                    postIndex: postsModel.count,
-                    date: Common.fromUtcRaw(child.created_utc),
-                    subreddit: child.subreddit,
-                    postTitle: child.title,
-                    postContent: child.selftext,
-                    author: child.author,
-                    score: child.score,
-                    ups: child.ups,
-                    downs: child.downs,
-                    thumbnail: Common.decodeHtml(child.thumbnail),
-                    url: child.url_overridden_by_dest ? Common.decodeHtml(child.url_overridden_by_dest): "",
-                    commentCount: child.num_comments,
-                    previewImages: [],
-                    previewImage: {isValid: false}
-                };
-
-                if (previewDataImages && previewDataImages.length > 0) {
-
-                    const previewImages = previewDataImages.map(rawImageData => {
-                        let images = [...rawImageData.resolutions];
-                        images.push(rawImageData.source);
-
-                        for (let resData of images)
-                            resData.url = Common.decodeHtml(resData.url)
-                        return images;
-                    });
-                    modelData.previewImage = Common.chooseImageSource(previewImages[0]);
-
-                    modelData.previewImage.isValid = true;
-                }
-
-                postsModel.append(modelData)
+                const child = DataConverters.convertPost(rawChild);
+                child.postIndex = postsModel.count;
+                postsModel.append(child);
             }
 
             postsModel.after = data.data.after
             postsModel.before = data.data.before
 
             return data
-        });
+        }).catch(err => console.error(`Error loading posts: ${err}`));
     }
 
     function loadPostsAfter(url, postsModel, forceRefresh) {
@@ -157,18 +124,9 @@ Item {
 
             for (const rawRoot of children) {
                 for (const rawChild of rawRoot.data.children) {
-                    const child = rawChild.data;
-                    if (!child.body)
+                    const modelData = DataConverters.convertComment(rawChild);
+                    if (modelData === null)
                         continue;
-
-
-                    let modelData = {
-                        author: child.author,
-                        body: child.body,
-                        score: child.score,
-                        commentId: child.id,
-                        created: Common.fromUtcRaw(child.created)
-                    };
                     commentsModel.append(modelData);
                 }
             }
@@ -193,6 +151,7 @@ Item {
                 }
             ];
             for (const subItem of rawSubItems) {
+
                 subItem.isVisible = true;
                 subItem.isFavorite = settingsPage.settings.favorites.has(subItem.url)
                 subItem.category =  subItem.isFavorite ? qsTr("Favorites") : qsTr("Subreddits");
@@ -211,10 +170,7 @@ Item {
     }
 
     function loadSubs(forceRefresh) {
-        console.debug(`loadSubs(${forceRefresh})`);
         return getRedditJSON("/subreddits/default", null, forceRefresh).then(data => {
-
-        console.debug(`got jsonn loadSubs(${forceRefresh})`);
             const subs = [];
             const frontPage = "Frontpage";
 
@@ -227,7 +183,12 @@ Item {
                     title: child.title,
                     url: child.url,
                     description: Common.tidyDescription(child.public_description),
-                    itemIcon: {}
+                    fullDescription: Common.decodeHtml(child.description),
+                    submitText: Common.decodeHtml(child.submit_text),
+                    subscribers: child.subscribers,
+                    lang: child.lang,
+                    itemIcon: {},
+                    colors: {}
                 };
 
                 if (child.icon_img && child.icon_size) {
