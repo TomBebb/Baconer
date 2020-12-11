@@ -16,13 +16,18 @@ Kirigami.ScrollablePage {
     objectName: "settingsPage"
 
     function setFav(url, isFav) {
-        if (settings.favorites.has(url) && !isFav)
-            settings.favorites.delete(url);
-        else if (isFav)
-            settings.favorites.add(url);
+        const wasFav = isFav(url);
+        if (wasFav && !isFav)
+            settings.favorites.remove(url);
+        else if (isFav && !wasFav)
+            settings.favorites.push(url);
 
         settings.changed();
         settings.sync();
+    }
+
+    function isFav(url) {
+        return settings.favorites.indexOf(url) !== -1;
     }
 
     function loadThemes() {
@@ -36,17 +41,25 @@ Kirigami.ScrollablePage {
 
     Settings {
         id: settings
-        property var favorites: new Set()
+        property var favorites: []
         property alias themeName: themeInput.currentText
         property alias preferExternalBrowser: preferExternalBrowserInput.checked
         property alias imagePreviewChoice: imagePreviewChoiceBox.currentIndex
+        property string accessToken
+        property var accessTokenExpiry
 
         onThemeNameChanged: changed();
         onPreferExternalBrowserChanged: changed();
         onImagePreviewChoiceChanged: changed();
         onChanged: console.debug("Settings changed")
 
+        onAccessTokenChanged: console.debug(`Settings access token: ${accessToken}`);
+
+        onAccessTokenExpiryChanged: console.debug(`Settings access token expires: ${accessTokenExpiry}`);
+
+
         signal changed()
+
     }
     ColumnLayout {
         Kirigami.FormLayout {
@@ -104,6 +117,14 @@ Kirigami.ScrollablePage {
                 id: doneButton
                 text: "Done"
             }
+        }
+    }
+
+    Connections {
+        Component.onCompleted:  {
+            console.debug(`Settings inited: accessToken = ${settings.accessToken}; ${settings.accessTokenExpiry}`)
+            rest.accessToken = settings.accessToken;
+            rest.accessTokenExpiry = settings.accessTokenExpiry;
         }
     }
 

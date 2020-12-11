@@ -77,7 +77,7 @@ Kirigami.Page {
 
                     scopes.push(scopeData.id);
                 }
-                Common.authorize(scopes);
+                rest.authorize(scopes);
 
                 root.closePage(page);
             }

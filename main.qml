@@ -14,6 +14,7 @@ Kirigami.ApplicationWindow {
     id: root
     title: `Baconer - ${pageStack.currentItem.title}`
     controlsVisible: true
+    property Rest rest: rest
 
     Rest {
         id: rest
@@ -52,7 +53,9 @@ Kirigami.ApplicationWindow {
         }
     }
 
-    PostsPage    { id: postsPage }
+    PostsPage    {
+        id: postsPage
+    }
     SettingsPage {
         id: settingsPage
     }

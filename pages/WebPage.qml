@@ -5,9 +5,11 @@ import "../utils/common.js" as Common
 
 ScrollablePage {
     property string initialURL
+    property WebView webView: view
     objectName: "webViewPage"
     id: page
     title: view.title
+
     actions.contextualActions: [
         Action {
             text: "Refresh"

@@ -31,6 +31,15 @@ Kirigami.Card {
             text: Common.formatNum(commentCount)
             iconName: "dialog-messages"
             onTriggered: openPostInfoPage();
+        },
+
+        Kirigami.Action {
+            iconName: "favorite"
+            checkable: true
+            checked: saved
+            text: checked ? qsTr("Unsave") : qsTr("Save")
+            onCheckedChanged: rest.setSaved(fullName, checked)
+            visible: rest.isLoggedIn
         }
 
     ]

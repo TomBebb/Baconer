@@ -15,5 +15,7 @@
         <file>overlays/SubInfoOverlay.qml</file>
         <file>utils/dataConverters.js</file>
         <file>pages/LoginScopesPage.qml</file>
+        <file>urltools.h</file>
+        <file>urltools.cpp</file>
     </qresource>
 </RCC>

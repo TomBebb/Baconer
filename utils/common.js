@@ -4,8 +4,41 @@
 const redditRegex = /^(?:https?:\/\/)?(?:old\.|www\.)?reddit.com/;
 const subRedditRegex = /^\/r\/([a-zA-Z-_]+)\/?/;
 const postRegex = /^\/r\/([a-zA-Z-_]+)\/comments\/([a-zA-Z0-9]+)\/?/;
+const urlHashArgRegex = /(?:\#|&|;)([^=]+)=([^&|;]+)/g;
+const urlArgRegex = /(?:\?|&|;)([^=]+)=([^&|;]+)/g;
 const clientID = "QwuPozK5cW9cwA";
 const redirectURI = "http://locahost:8042/redirect";
+
+function parseURL(url) {
+    let hashArgs = {};
+    let urlArgs = {};
+    let matches = [];
+
+    const hashIndex = url.indexOf("#");
+    if (hashIndex !== -1) {
+        let hash = url.substr(hashIndex);
+        url = url.substr(0, hashIndex);
+
+
+        while (true) {
+            matches = urlHashArgRegex.exec(hash);
+            if (!matches)
+                break;
+            hashArgs[matches[1]] = matches[2];
+        }
+    }
+    while (true) {
+        matches = urlArgRegex.exec(url);
+        if (!matches)
+            break;
+        urlArgs[matches[1]] = matches[2];
+    }
+    const questionIndex = url.indexOf("?");
+    if (questionIndex !== -1)
+        url = url.substr(0, questionIndex);
+    return {url: url, args: urlArgs, hash: hashArgs};
+
+}
 
 function nodeToStr(node) {
     if (node.id && node.id.length > 0)
@@ -90,43 +123,34 @@ function fromUtcRaw(utcSecs) {
     return d;
 }
 
-function makeURLFromParts(url, params) {
-    if (params) {
-        if (url.indexOf("?") === -1)
-            url += "?";
-        else if (url.charAt(url.length - 1) !== "&")
-            url += "&";
-
-        for (let key of Object.keys(params)) {
-            url += `${encodeURI(key)}=${encodeURI(params[key])}&`;
-        }
-        if (url.charAt(url.length - 1) === "&")
-            url = url.substr(0, url.length - 1);
+function makeURLParams(params) {
+    let url = "";
+    for (let key of Object.keys(params)) {
+        url += `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}&`;
     }
     return url;
 }
 
+function makeURLFromParts(url, params) {
+    if (params) {
+        if (url.indexOf("?") === -1)
+            url += "?";
+        url += makeURLParams(params);
+    }
+    return url;
+}
 
-
-function genAuthorizeURL(scopes){
-    const state = randomString();
+function genAuthorizeURL(scopes, state){
 
     return makeURLFromParts("https://www.reddit.com/api/v1/authorize", {
         client_id: clientID         ,
-        response_type:  "code",
+        response_type:  "token",
         state: state,
         redirect_uri: redirectURI,
-        duration: "temporary",
         scope: scopes.join(" ")
     });
 }
 
-function authorize(scopes){
-    console.debug("authing: "+scopes.join(","));
-    const url = genAuthorizeURL(scopes);
-    console.debug("authed: "+scopes.join(","));
-    openLink(url);
-}
 
 function chooseImageSource(previewImages) {
 
@@ -218,6 +242,7 @@ function openLink(url) {
     if (redditPageForLink) {
         return redditPageForLink.then(page => {
             root.openPage(page);
+            return page;
         }).catch(err => console.error("Error opening reddit link: "+err));
     }
 
@@ -230,6 +255,7 @@ function openLink(url) {
         return createComponent("/pages/WebPage.qml", {initialURL: url}).then(page => {
             console.log("Page made");
             root.openPage(page);
+            return page;
         });
     }
 

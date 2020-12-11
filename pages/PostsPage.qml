@@ -32,10 +32,13 @@ Kirigami.ScrollablePage {
             Kirigami.Action {
                 text: "Login"
                 iconName: "im-user"
+                visible: !rest.isLoggedIn
                 onTriggered: {
+                /*
                     Common.createComponent("/pages/LoginScopesPage.qml", {})
                         .then(page => root.openPage(page))
-                        .catch(err => console.error(`Error making scopes page: ${err}`));
+                        .catch(err => console.error(`Error making scopes page: ${err}`));*/
+                     rest.authorize();
                 }
             },
 
@@ -61,7 +64,7 @@ Kirigami.ScrollablePage {
                 Component.onCompleted:  updateFav();
 
                 function updateFav() {
-                    checked = settingsPage.settings.favorites.has(url);
+                    checked = settingsPage.isFav(url);
                 }
             }
         ]

@@ -8,7 +8,9 @@ function convertPost(rawChild) {
 
 
     let modelData = {
+        saved: child.saved,
         postId: child.id,
+        fullName: child.name,
         date: Common.fromUtcRaw(child.created_utc),
         subreddit: child.subreddit,
         postTitle: child.title,

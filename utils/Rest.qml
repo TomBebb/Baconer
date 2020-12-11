@@ -4,7 +4,13 @@ import "dataConverters.js" as DataConverters
 import "../utils"
 
 Item {
+    id: rest
+    property string accessToken: settingsPage.settings.accessToken
+    property var accessTokenExpiry: settingsPage.settings.accessTokenExpiry
     property var cache: new Map()
+
+
+    property bool isLoggedIn: accessToken != null && Date.now() < accessTokenExpiry
 
     Timer {
         interval: 1000
@@ -22,15 +28,22 @@ Item {
         }
     }
 
+    function setDefaultHeaders(xhr) {
+        const platform = Qt.platform.os;
+        xhr.setRequestHeader("User-Agent", `${Qt.platform.os}: Baconer (by /u/TopHattedCoder)`);
+        if (isLoggedIn)
+            xhr.setRequestHeader("Authorization", `bearer ${rest.accessToken}`);
+
+
+    }
+
     function rawGet(url, params, forceRefresh, timeout) {
         url = Common.makeURLFromParts(url, params);
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", url);
-        xhr.setRequestHeader("User-Agent", "Baconer by TopHattedCoder");
+        setDefaultHeaders(xhr);
         xhr.send();
-
-        console.debug(`get ${url}`);
 
         if (forceRefresh) {
             cache.delete(url);
@@ -42,12 +55,51 @@ Item {
 
         return new Promise(function(resolve, reject) {
             xhr.onreadystatechange = function() {
+                console.debug(`${url} GET State changed: readyState=${xhr.readyState} status=${xhr.status}`);
                 if (xhr.readyState !== XMLHttpRequest.DONE)
                     return;
 
                 if (xhr.status >= 200 && xhr.status < 300) {
                     cache.set(url, xhr.responseText);
                     console.debug(`got: ${url}`);
+                    if (isLoggedIn)
+                    console.debug(`got: ${url}: ${xhr.responseText}`);
+                    resolve(xhr.responseText);
+                } else {
+                    reject({
+                        url: url,
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                    });
+                }
+            };
+        });
+    }
+
+    function rawPost(url, params, postParams, timeout) {
+        url = Common.makeURLFromParts(url, params);
+
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        const userNameAndPassword = Common.clientID + ":";
+
+        if (url.indexOf("access_token") !== -1) {
+            xhr.setRequestHeader("Authorization", `Basic ${Qt.btoa(userNameAndPassword)}`);
+        } else {
+
+            setDefaultHeaders(xhr);
+        }
+
+        xhr.send(postParams ? Common.makeURLParams(postParams) : undefined);
+
+        return new Promise(function(resolve, reject) {
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState !== XMLHttpRequest.DONE)
+                    return;
+
+                if (xhr.status >= 200 && xhr.status < 300) {
                     resolve(xhr.responseText);
                 } else {
                     reject({
@@ -64,10 +116,15 @@ Item {
         return rawGet(url, params, forceRefresh, timeout)
             .then(resp => JSON.parse(resp));
     }
+    function postJSON(url, params, postParams, timeout = 5000) {
+        return rawPost(url, params, postParams, timeout)
+            .then(resp => JSON.parse(resp));
+    }
 
 
     function getRedditJSON(url, params, forceRefresh = false) {
-        return getJSON("https://api.reddit.com" + url, params, forceRefresh);
+        const baseUrl = !isLoggedIn ? "https://api.reddit.com" : "https://oauth.reddit.com";
+        return getJSON(baseUrl + url, params, forceRefresh);
     }
 
     function getScopes() {
@@ -80,8 +137,17 @@ Item {
             });
     }
 
+    function setSaved(fullName, save = true) {
+        if (!fullName || fullName.length < 0)
+            throw `Set saved arg must be string!`;
+        const endPoint = save ? "save" : "unsave";
+        return postJSON(`https://oauth.reddit.com/api/${endPoint}`, null, {
+            id: fullName
+        }).catch(err => console.error(`Error saving post: ${JSON.stringify(err)}`));
+
+    }
+
     function loadPosts(url, postsModel, after, forceRefresh = false) {
-        console.log(`loadPosts: ${url}, ${postsModel}, ${after}`);
         const params = {};
 
         params.raw_json = 1;
@@ -103,7 +169,7 @@ Item {
             postsModel.before = data.data.before
 
             return data
-        }).catch(err => console.error(`Error loading posts: ${err}`));
+        }).catch(err => console.error(`Error loading posts: ${JSON.stringiy(err)}`));
     }
 
     function loadPostsAfter(url, postsModel, forceRefresh) {
@@ -151,7 +217,7 @@ Item {
             for (const subItem of rawSubItems) {
 
                 subItem.isVisible = true;
-                subItem.isFavorite = settingsPage.settings.favorites.has(subItem.url)
+                subItem.isFavorite = settingsPage.isFav(subItem.url);
                 subItem.category =  subItem.isFavorite ? qsTr("Favorites") : qsTr("Subreddits");
                 subItem.isSub = true;
 
@@ -171,8 +237,6 @@ Item {
         return getRedditJSON("/subreddits/default", null, forceRefresh).then(data => {
             const subs = [];
             const frontPage = "Frontpage";
-
-            const favorites = settingsPage.settings.favorites;
 
             for (const rawChild of data.data.children) {
                 const child = rawChild.data;
@@ -202,6 +266,43 @@ Item {
             }
 
             return subs;
+        });
+    }
+
+    function authorize(scopes){
+        const state = Common.randomString();
+        scopes = [
+            "identity", "edit", "flair", "history", "mysubreddits", "privatemessages", "read", "report", "save", "submit",
+            "subscribe", "vote", "wikiread"
+        ];
+        const url = Common.genAuthorizeURL(scopes, state);
+
+        Common.openLink(url).then(webPage => {
+            const view = webPage.webView;
+            view.urlChanged.connect(() => {
+                const urlText = view.url.toString();
+                console.debug("Web url: "+urlText);
+                if (Common.startsWith(urlText, Common.redirectURI)) {
+                    const urlDetails = Common.parseURL(urlText);
+                    const hashArgs = urlDetails.hash;
+                    console.debug(JSON.stringifyhashArgs);
+
+                    if (hashArgs.state !== state)
+                        console.error(`State mismatch from reddit: ${hashArgs.state} != ${state}`);
+
+                    // TODO: handle error
+
+                    const expireTime = new Date();
+                    expireTime.setSeconds(expireTime.getTime() / 1000 + hashArgs.expires_in);
+
+                    settingsPage.settings.accessTokenExpiry = expireTime;
+                    settingsPage.settings.accessToken = hashArgs.access_token.toString();
+
+                    console.debug(`expires: ${expireTime}`);
+
+                    root.closePage(webPage);
+                }
+            });
         });
     }
 }
