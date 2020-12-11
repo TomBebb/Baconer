@@ -22,10 +22,18 @@ Kirigami.Card {
             text: Common.formatNum(ups)
             iconName: "arrow-up"
 
+            onTriggered: {
+                rest.vote(fullName, 1);
+            }
+
         },
         Kirigami.Action {
             text: Common.formatNum(downs)
             iconName: "arrow-down"
+
+            onTriggered: {
+                rest.vote(fullName, -1);
+            }
         },
         Kirigami.Action {
             text: Common.formatNum(commentCount)

@@ -11,6 +11,7 @@ Item {
 
 
     property bool isLoggedIn: accessToken != null && Date.now() < accessTokenExpiry
+    property string baseURL: isLoggedIn ? "https://oauth.reddit.com" : "https://api.reddit.com";
 
     Timer {
         interval: 1000
@@ -62,8 +63,6 @@ Item {
                 if (xhr.status >= 200 && xhr.status < 300) {
                     cache.set(url, xhr.responseText);
                     console.debug(`got: ${url}`);
-                    if (isLoggedIn)
-                    console.debug(`got: ${url}: ${xhr.responseText}`);
                     resolve(xhr.responseText);
                 } else {
                     reject({
@@ -123,8 +122,7 @@ Item {
 
 
     function getRedditJSON(url, params, forceRefresh = false) {
-        const baseUrl = !isLoggedIn ? "https://api.reddit.com" : "https://oauth.reddit.com";
-        return getJSON(baseUrl + url, params, forceRefresh);
+        return getJSON(baseURL + url, params, forceRefresh);
     }
 
     function getScopes() {
@@ -138,13 +136,18 @@ Item {
     }
 
     function setSaved(fullName, save = true) {
-        if (!fullName || fullName.length < 0)
-            throw `Set saved arg must be string!`;
         const endPoint = save ? "save" : "unsave";
-        return postJSON(`https://oauth.reddit.com/api/${endPoint}`, null, {
+        return postJSON(`${baseURL}/api/${endPoint}`, null, {
             id: fullName
         }).catch(err => console.error(`Error saving post: ${JSON.stringify(err)}`));
+    }
 
+    function vote(fullName, dir = 1) {
+        return postJSON(`${baseURL}/api/vote`, null, {
+            id: fullName,
+            dir: dir,
+            rak: 2
+        }).catch(err => console.error(`Error voting on post: ${JSON.stringify(err)}`));
     }
 
     function loadPosts(url, postsModel, after, forceRefresh = false) {
@@ -234,7 +237,8 @@ Item {
     }
 
     function loadSubs(forceRefresh) {
-        return getRedditJSON("/subreddits/default", null, forceRefresh).then(data => {
+        const path = isLoggedIn ? "/subreddits/mine/subscriber" : "/subreddits/default";
+        return getRedditJSON(path, null, forceRefresh).then(data => {
             const subs = [];
             const frontPage = "Frontpage";
 
