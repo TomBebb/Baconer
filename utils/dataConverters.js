@@ -58,11 +58,31 @@ function convertComment(rawChild) {
     };
 }
 
+function convertMulti(rawChild) {
+    let child = rawChild;
+    if (child.data)
+        child = child.data;
+
+    const multiData = {
+        name: child.name,
+        title: child.display_name,
+        displayName: child.display_name,
+        url: child.path
+    };
+
+    if (child.icon_img) {
+
+        multiData.itemIcon = {
+            source: child.icon_img
+        }
+    }
+    return multiData;
+}
+
 function convertSub(rawChild)  {
     let child = rawChild;
     if (child.data)
         child = child.data;
-    console.debug(`raw fullName: ${child.name}; raw subscribed: ${child.user_is_subscriber}`);
     const subData = {
         subscribed: child.user_is_subscriber,
         name: child.display_name,

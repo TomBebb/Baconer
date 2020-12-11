@@ -10,6 +10,9 @@ ListView {
     property string lastURL
     Layout.fillWidth: true
     model: ListModel { id: subsModel }
+    clip: true
+    flickableDirection: Flickable.VerticalFlick
+    boundsBehavior: Flickable.StopAtBounds
 
     delegate: Kirigami.BasicListItem {
         label: Common.isFrontpage(this) ? title: `${title} (${url})`

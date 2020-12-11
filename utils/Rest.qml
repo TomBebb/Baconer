@@ -211,6 +211,7 @@ Item {
     }
 
     function loadDrawerItems(subsModel, forceRefresh) {
+
         return loadSubs(forceRefresh).then(rawSubItems => {
 
             let favItems = [];
@@ -219,7 +220,6 @@ Item {
                 {
                     isFavorite: true,
                     isVisible: true,
-                    category: qsTr("Multireddits"),
                     name: "Frontpage",
                     title: "Frontpage",
                     url: "/",
@@ -237,6 +237,21 @@ Item {
                 (subItem.isFavorite ? favItems : subItems).push(subItem);
             }
 
+            if (rest.isLoggedIn) {
+                return loadMultis(forceRefresh).then(rawMultiItems => {
+                    for (const multiItem of rawMultiItems) {
+                        multiItem.isVisible = true;
+                        multiItem.isFavorite = settingsPage.isFav(multiItem.url);
+                        multiItem.category =  multiItem.isFavorite ? qsTr("Favorites") : qsTr("Multireddits");
+                        multiItem.isSub = false;
+
+                        (multiItem.isFavorite ? favItems : multiItems).push(multiItem);
+
+                        return favItems.concat(multiItems).concat(subItems);
+                    }
+                });
+            }
+
             return favItems.concat(multiItems).concat(subItems);
         }).then(items => {
             subsModel.clear();
@@ -246,37 +261,26 @@ Item {
         });
     }
 
+    function loadMultis(forceRefresh) {
+        return getRedditJSON("/api/multi/mine").then(rawMultis => {
+            const multis = [];
+
+            for (const rawChild of rawMultis) {
+                multis.push(DataConverters.convertMulti(rawChild));
+            }
+
+            return multis;
+        });
+    }
+
     function loadSubs(forceRefresh) {
         const path = isLoggedIn ? "/subreddits/mine/subscriber" : "/subreddits/default";
         return getRedditJSON(path, null, forceRefresh).then(data => {
             const subs = [];
-            const frontPage = "Frontpage";
 
             for (const rawChild of data.data.children) {
-                const child = rawChild.data;
-                const subData = {
-                    name: child.display_name,
-                    title: child.title,
-                    url: child.url,
-                    description: Common.tidyDescription(child.public_description),
-                    fullDescription: Common.decodeHtml(child.description),
-                    submitText: Common.decodeHtml(child.submit_text),
-                    subscribers: child.subscribers,
-                    lang: child.lang,
-                    itemIcon: {},
-                    colors: {}
-                };
 
-                if (child.icon_img && child.icon_size) {
-
-                    subData.itemIcon = {
-                        source: child.icon_img,
-                        width: child.icon_size[0],
-                        height: child.icon_size[1]
-                    }
-                }
-
-                subs.push(subData);
+                subs.push(DataConverters.convertSub(rawChild));
             }
 
             return subs;

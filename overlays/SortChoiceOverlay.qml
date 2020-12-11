@@ -21,10 +21,11 @@ OverlaySheet {
         text: "Change sort"
     }
 
-    ListView {
 
+    ListView {
         property int checkedIndex: 0
         property var checked: sheet.sortModel[checkedIndex]
+        anchors.centerIn: parent
 
         id: sort
         model:sortModel
