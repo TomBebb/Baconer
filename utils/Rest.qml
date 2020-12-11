@@ -4,8 +4,6 @@ import "dataConverters.js" as DataConverters
 import "../utils"
 
 Item {
-    readonly property string clientID: "QwuPozK5cW9cwA"
-    readonly property string redirectURI: "http://locahost:8042/redirect"
     property var cache: new Map()
 
     Timer {
@@ -80,21 +78,6 @@ Item {
                     scopes.push(scope);
                 return scopes;
             });
-    }
-
-
-
-    function authorize(scopes){
-        const state = Common.randomString();
-
-        const url = Common.makeURLFromParts("https://www.reddit.com/api/v1/authorize", {
-            client_id: clientId,
-            response_type:  "code",
-            state: state,
-            redirect_uri: redirectURI,
-            duration: "permenant",
-            scope: scopes.join(",")
-        });
     }
 
     function loadPosts(url, postsModel, after, forceRefresh = false) {

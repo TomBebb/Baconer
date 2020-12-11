@@ -11,9 +11,25 @@ Kirigami.Page {
     title: "Login Scope Selection"
 
     property var scopesData
+    property bool globalChecked: true
+    onGlobalCheckedChanged: Common.setAll(scopesView, "checked", globalChecked)
 
     ColumnLayout {
         anchors.fill: parent
+
+        RowLayout {
+            Layout.alignment: Qt.AlignTop
+            Button {
+                Layout.alignment: Qt.AlignLeft
+                text: "Select all"
+                onPressed: globalChecked = true
+            }
+            Button {
+                Layout.alignment: Qt.AlignRight
+                text: "Select none"
+                onPressed: globalChecked = false
+            }
+        }
 
         ListView {
             Layout.fillWidth: true
@@ -22,19 +38,21 @@ Kirigami.Page {
             flickableDirection: Flickable.VerticalFlick
             boundsBehavior: Flickable.StopAtBounds
             spacing: Kirigami.Units.gridUnit * 0.5
+            id: scopesView
 
             model: ListModel {
                 id: scopesModel
             }
-            delegate: CheckBox {
-                text: name
-                checked: true
-                hoverEnabled: true
-
-                ToolTip {
-                    visible: hovered
+            delegate: Column {
+                property int index: scopeIndex
+                CheckBox {
+                    text: name
+                    checked: globalChecked
+                    font.bold: true
+                    onCheckedChanged: scopesData[index].checked = checked
+                }
+                Label {
                     text: description
-
                 }
             }
 
@@ -48,6 +66,21 @@ Kirigami.Page {
             Layout.maximumWidth: Kirigami.Units.gridUnit * 20
             Layout.minimumWidth: 200
             text: "Done"
+            onPressed: {
+
+                let scopes = [];
+                console.debug("Done picking scopes: ");
+                for (const scopeData of scopesData) {
+                    if (!scopeData.checked)
+                        continue;
+                    console.debug(`Scope: ${scopeData.id}`);
+
+                    scopes.push(scopeData.id);
+                }
+                Common.authorize(scopes);
+
+                root.closePage(page);
+            }
         }
     }
 
@@ -57,8 +90,12 @@ Kirigami.Page {
             return;
 
         scopesModel.clear();
-        for (const scopeData of scopesData)
+
+        let i = 0;
+        for (const scopeData of scopesData) {
+            scopeData.scopeIndex = i++;
             scopesModel.append(scopeData);
+        }
         console.debug(`scope #1: ${JSON.stringify(scopesData[0])}`);
     }
 

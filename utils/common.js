@@ -4,6 +4,8 @@
 const redditRegex = /^(?:https?:\/\/)?(?:old\.|www\.)?reddit.com/;
 const subRedditRegex = /^\/r\/([a-zA-Z-_]+)\/?/;
 const postRegex = /^\/r\/([a-zA-Z-_]+)\/comments\/([a-zA-Z0-9]+)\/?/;
+const clientID = "QwuPozK5cW9cwA";
+const redirectURI = "http://locahost:8042/redirect";
 
 function nodeToStr(node) {
     if (node.id && node.id.length > 0)
@@ -12,6 +14,15 @@ function nodeToStr(node) {
         return node.objectName;
 
     return "????";
+}
+
+function setAll(node, field, value) {
+
+    forAllIn(node, obj => {
+        const preValue = obj[field];
+        if (preValue !== null && preValue !== undefined)
+            obj[field] = value;
+    });
 }
 
 function getPage(node) {
@@ -33,6 +44,26 @@ function decodeHtml(text) {
     return text.replace("&amp;", "&")
         .replace("&lt;", "<")
         .replace("&gt;", ">");
+}
+
+function forAllIn(obj, func) {
+    const objectsToProcess = [obj];
+
+    while (objectsToProcess.length > 0) {
+        const curr = objectsToProcess.pop();
+        if (typeof curr !== "object")
+            continue;
+
+        func(curr);
+
+        if (curr.contentItem)
+            objectsToProcess.push(curr.contentItem);
+
+        if (curr.children && curr.children.length > 0)
+            for (let i = 0; i < curr.children.length; i++) {
+                objectsToProcess.push(curr.children[i]);
+            }
+    }
 }
 
 function formatNum(num) {
@@ -73,6 +104,28 @@ function makeURLFromParts(url, params) {
             url = url.substr(0, url.length - 1);
     }
     return url;
+}
+
+
+
+function genAuthorizeURL(scopes){
+    const state = randomString();
+
+    return makeURLFromParts("https://www.reddit.com/api/v1/authorize", {
+        client_id: clientID         ,
+        response_type:  "code",
+        state: state,
+        redirect_uri: redirectURI,
+        duration: "temporary",
+        scope: scopes.join(" ")
+    });
+}
+
+function authorize(scopes){
+    console.debug("authing: "+scopes.join(","));
+    const url = genAuthorizeURL(scopes);
+    console.debug("authed: "+scopes.join(","));
+    openLink(url);
 }
 
 function chooseImageSource(previewImages) {
@@ -174,11 +227,13 @@ function openLink(url) {
     if (settingsPage.settings.preferExternalBrowser) {
         Qt.openUrlExternally(url);
     } else {
-        createComponent("/pages/WebPage.qml", {initialURL: url}).then(page => {
+        return createComponent("/pages/WebPage.qml", {initialURL: url}).then(page => {
             console.log("Page made");
             root.openPage(page);
         });
     }
+
+    return Promise.resolve({});
 }
 
 function searchValuesFor(obj, txt, caseSensitive=true) {
