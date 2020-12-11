@@ -39,6 +39,10 @@ Kirigami.ScrollablePage {
         themeInput.currentIndex = themesModel.indexOf(theme);
     }
 
+    function logout() {
+        settings.accessToken = settings.accessTokenExpiry = null;
+    }
+
     Settings {
         id: settings
         property var favorites: []

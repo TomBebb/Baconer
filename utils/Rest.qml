@@ -56,7 +56,7 @@ Item {
 
         return new Promise(function(resolve, reject) {
             xhr.onreadystatechange = function() {
-                console.debug(`${url} GET State changed: readyState=${xhr.readyState} status=${xhr.status}`);
+                // console.debug(`${url} GET State changed: readyState=${xhr.readyState} status=${xhr.status}`);
                 if (xhr.readyState !== XMLHttpRequest.DONE)
                     return;
 
@@ -90,6 +90,8 @@ Item {
 
             setDefaultHeaders(xhr);
         }
+
+        console.debug(`POST ${url} w/ ${JSON.stringify(postParams)}`);
 
         xhr.send(postParams ? Common.makeURLParams(postParams) : undefined);
 
@@ -148,6 +150,14 @@ Item {
             dir: dir,
             rak: 2
         }).catch(err => console.error(`Error voting on post: ${JSON.stringify(err)}`));
+    }
+    function subscribe(subName, sub = true) {
+        console.debug("NAME: " + subName);
+        return postJSON(`${baseURL}/api/subscribe`, null, {
+            action: sub ? "sub" : "unsub",
+            action_source: "n",
+            sr_name: subName
+        }).catch(err => console.error(`Error subscribing: ${JSON.stringify(err)}`));
     }
 
     function loadPosts(url, postsModel, after, forceRefresh = false) {

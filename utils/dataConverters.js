@@ -59,8 +59,12 @@ function convertComment(rawChild) {
 }
 
 function convertSub(rawChild)  {
-    const child = rawChild.data;
+    let child = rawChild;
+    if (child.data)
+        child = child.data;
+    console.debug(`raw fullName: ${child.name}; raw subscribed: ${child.user_is_subscriber}`);
     const subData = {
+        subscribed: child.user_is_subscriber,
         name: child.display_name,
         title: child.title,
         url: child.url,

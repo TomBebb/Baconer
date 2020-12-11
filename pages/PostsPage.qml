@@ -30,15 +30,14 @@ Kirigami.ScrollablePage {
         }
         contextualActions: [
             Kirigami.Action {
-                text: "Login"
+                text: rest.isLoggedIn ? "Logout" : "Login"
                 iconName: "im-user"
-                visible: !rest.isLoggedIn
                 onTriggered: {
-                /*
-                    Common.createComponent("/pages/LoginScopesPage.qml", {})
-                        .then(page => root.openPage(page))
-                        .catch(err => console.error(`Error making scopes page: ${err}`));*/
-                     rest.authorize();
+                      if (rest.isLoggedIn) {
+                        settingsPage.logout();
+                      } else
+                        rest.authorize();
+
                 }
             },
 
@@ -154,7 +153,7 @@ Kirigami.ScrollablePage {
                 infoUrl = infoUrl.substr(0, infoUrl.length - 1);
             return rest.getRedditJSON(`${infoUrl}/about`)
                 .then(rawData => info = DataConv.convertSub(rawData.data))
-                .catch(raw => console.log(`info error: ${Common.toString(raw)}`));
+                .catch(raw => console.log(`info error: ${JSON.stringify(raw)}`));
         }
     }
 }
