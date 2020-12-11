@@ -14,5 +14,6 @@
         <file>common/LinkHandlerConnection.qml</file>
         <file>overlays/SubInfoOverlay.qml</file>
         <file>utils/dataConverters.js</file>
+        <file>pages/LoginScopesPage.qml</file>
     </qresource>
 </RCC>

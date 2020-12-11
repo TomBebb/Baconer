@@ -59,6 +59,22 @@ function fromUtcRaw(utcSecs) {
     return d;
 }
 
+function makeURLFromParts(url, params) {
+    if (params) {
+        if (url.indexOf("?") === -1)
+            url += "?";
+        else if (url.charAt(url.length - 1) !== "&")
+            url += "&";
+
+        for (let key of Object.keys(params)) {
+            url += `${encodeURI(key)}=${encodeURI(params[key])}&`;
+        }
+        if (url.charAt(url.length - 1) === "&")
+            url = url.substr(0, url.length - 1);
+    }
+    return url;
+}
+
 function chooseImageSource(previewImages) {
 
     switch (settingsPage.imagePreviewChoiceName) {
@@ -210,6 +226,14 @@ function statusToString(status) {
         case Quick.Component.Error: return "error";
     }
     return "???";
+}
+
+function randomString(len = 10) {
+    let result = "";
+    const chars = "abcdefghijklmnopqrstuvqxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    for (let i  = 0; i < len; i++)
+        result += charAt(chars, Math.floor(chars.length * Math.random()));
+    return result;
 }
 
 function resolveComponent(path) {

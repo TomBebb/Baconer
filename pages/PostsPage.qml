@@ -28,8 +28,18 @@ Kirigami.ScrollablePage {
             icon.name: "view-refresh"
             onTriggered: refresh(true)
         }
-            contextualActions: [
-                Kirigami.Action {
+        contextualActions: [
+            Kirigami.Action {
+                text: "Login"
+                iconName: "im-user"
+                onTriggered: {
+                    Common.createComponent("/pages/LoginScopesPage.qml", {})
+                        .then(page => root.openPage(page))
+                        .catch(err => console.error(`Error making scopes page: ${err}`));
+                }
+            },
+
+            Kirigami.Action {
                 text: "Sort"
                 iconName: "dialog-filters"
                 onTriggered: changeSortOverlay.open()

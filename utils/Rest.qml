@@ -4,6 +4,8 @@ import "dataConverters.js" as DataConverters
 import "../utils"
 
 Item {
+    readonly property string clientID: "QwuPozK5cW9cwA"
+    readonly property string redirectURI: "http://locahost:8042/redirect"
     property var cache: new Map()
 
     Timer {
@@ -23,18 +25,7 @@ Item {
     }
 
     function rawGet(url, params, forceRefresh, timeout) {
-        if (params) {
-            if (url.indexOf("?") === -1)
-                url += "?";
-            else if (url.charAt(url.length - 1) !== "&")
-                url += "&";
-
-            for (let key of Object.keys(params)) {
-                url += `${encodeURI(key)}=${encodeURI(params[key])}&`;
-            }
-            if (url.charAt(url.length - 1) === "&")
-                url = url.substr(0, url.length - 1);
-        }
+        url = Common.makeURLFromParts(url, params);
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", url);
@@ -81,6 +72,30 @@ Item {
         return getJSON("https://api.reddit.com" + url, params, forceRefresh);
     }
 
+    function getScopes() {
+        return getRedditJSON("/api/v1/scopes")
+            .then(scopesData => {
+                let scopes = [];
+                for (const scope of Object.values(scopesData))
+                    scopes.push(scope);
+                return scopes;
+            });
+    }
+
+
+
+    function authorize(scopes){
+        const state = Common.randomString();
+
+        const url = Common.makeURLFromParts("https://www.reddit.com/api/v1/authorize", {
+            client_id: clientId,
+            response_type:  "code",
+            state: state,
+            redirect_uri: redirectURI,
+            duration: "permenant",
+            scope: scopes.join(",")
+        });
+    }
 
     function loadPosts(url, postsModel, after, forceRefresh = false) {
         console.log(`loadPosts: ${url}, ${postsModel}, ${after}`);
