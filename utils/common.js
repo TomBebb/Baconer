@@ -9,6 +9,17 @@ const urlArgRegex = /(?:\?|&|;)([^=]+)=([^&|;]+)/g;
 const clientID = "QwuPozK5cW9cwA";
 const redirectURI = "http://locahost:8042/redirect";
 
+
+function convertColor(color, isBg) {
+    if (color == null || color.length === 0)
+        return isBg ? "white" : "black";
+    switch(color) {
+        case "dark": return "black";
+        case "light": return "white";
+        default: return color;
+    }
+}
+
 function parseURL(url) {
     let hashArgs = {};
     let urlArgs = {};

@@ -41,6 +41,7 @@ Kirigami.ScrollablePage {
 
     function logout() {
         settings.accessToken = settings.accessTokenExpiry = null;
+        root.reload();
     }
 
     Settings {

@@ -319,6 +319,8 @@ Item {
                     console.debug(`expires: ${expireTime}`);
 
                     root.closePage(webPage);
+
+                    root.reload();
                 }
             });
         });

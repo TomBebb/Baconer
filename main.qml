@@ -48,7 +48,6 @@ Kirigami.ApplicationWindow {
     Connections {
         target: subsSearch
         function onAccepted() {
-            console.debug(target.text);
             subsView.search(target.text)
         }
     }
@@ -58,6 +57,11 @@ Kirigami.ApplicationWindow {
     }
     SettingsPage {
         id: settingsPage
+    }
+
+    function reload() {
+        pageStack.pop(postsPage);
+        subsView.refreshAll(true);
     }
 
     function showSettings() {

@@ -125,6 +125,8 @@ Kirigami.ScrollablePage {
     function refresh(forceRefresh = false) {
         model.clear();
 
+
+
         postsModel.loadingPosts = true;
         refreshing = true;
 

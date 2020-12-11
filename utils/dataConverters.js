@@ -23,8 +23,32 @@ function convertPost(rawChild) {
         url: child.url_overridden_by_dest ? Common.decodeHtml(child.url_overridden_by_dest): "",
         commentCount: child.num_comments,
         previewImages: [],
-        previewImage: {isValid: false}
+        previewImage: {isValid: false},
+        flairs: []
     };
+
+
+    if (child.link_flair_text && child.link_flair_text.length > 0) {
+        modelData.flairs.push({
+            flairText: child.link_flair_text,
+            type: child.link_flair_type,
+            colors: {
+                text: child.link_flair_text_color,
+                bg: child.link_flair_background_color
+            }
+        });
+    }
+
+    if (child.author_flair_text && child.author_flair_text.length > 0) {
+        modelData.flairs.push({
+            flairText: child.author_flair_text,
+            type: child.author_flair_type,
+            colors: {
+                text: child.author_flair_text_color,
+                bg: child.author_flair_background_color
+            }
+        });
+    }
 
     if (previewDataImages && previewDataImages.length > 0) {
 
@@ -84,7 +108,6 @@ function convertSub(rawChild)  {
     if (child.data)
         child = child.data;
     const subData = {
-        subscribed: child.user_is_subscriber,
         name: child.display_name,
         title: child.title,
         url: child.url,
@@ -94,8 +117,12 @@ function convertSub(rawChild)  {
         subscribers: child.subscribers,
         lang: child.lang,
         itemIcon: {},
-        colors: {}
+        colors: {},
+        subscribed: false
     };
+
+    if (rawChild.user_is_subscriber)
+        subData.subscribed = rawChild.user_is_subscriber;
 
     if (child.icon_img && child.icon_size) {
 

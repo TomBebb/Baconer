@@ -52,6 +52,26 @@ Kirigami.Card {
 
     ]
 
+    footer: RowLayout {
+        Repeater {
+            model: ListModel {id: flairsModel}
+            delegate: Controls.Label {
+                elide:  Text.ElideRight
+                padding: Kirigami.Units.smallSpacing * 3
+                text: flairText
+                color: Common.convertColor(colors.text, false)
+                font.bold: true
+
+                background: Rectangle {
+                    color: Common.convertColor(colors.bg, true)
+                    border.color: Kirigami.Theme.positiveTextColor
+                    border.width: Kirigami.Units.smallSpacing
+                    radius: Kirigami.Units.gridUnit
+                }
+            }
+        }
+    }
+
     contentItem: Item {
         id: item
         implicitWidth: delegateLayout.implicitWidth
@@ -108,6 +128,14 @@ Kirigami.Card {
             }
         }
     }
+    Component.onCompleted: {
+        console.debug(`Card flairs: ${flairs.count}`);
+        for (let i = 0; i < flairs.count; i++) {
+            const flair = flairs.get(i);
+            console.debug(`Card flair ${flair.text}`);
+            flairsModel.append(flair);
+        }
+    }
 
     function openPostInfoPage() {
 
@@ -117,4 +145,5 @@ Kirigami.Card {
             .then(page => root.openPage(page))
             .catch(err => console.error(`Error loading post: ${err}`));
     }
+
 }

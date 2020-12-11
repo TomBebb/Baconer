@@ -16,7 +16,7 @@ ListView {
 
     delegate: Kirigami.BasicListItem {
         label: Common.isFrontpage(this) ? title: `${title} (${url})`
-        subtitle: description
+        subtitle: description || ""
         visible: isVisible
         icon : itemIcon ? itemIcon.source: ""
     }
@@ -65,7 +65,7 @@ ListView {
             }
             currentIndex = newUrlIndex;
             refreshSubInfo(refreshPosts);
-        }).catch(err => console.error(`Error loading subs: ${err}`));
+        }).catch(err => console.error(`Error loading subs: ${JSON.stringify(err)}`));
     }
 
     function refreshPosts(forceRefresh) {
