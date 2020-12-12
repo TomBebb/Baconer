@@ -60,6 +60,7 @@ Kirigami.ScrollablePage {
             Layout.preferredWidth: layout.width
             Layout.preferredHeight: root.height
 
+
             delegate: Kirigami.AbstractListItem {
                 id: commentItem
 

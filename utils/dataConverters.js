@@ -1,5 +1,9 @@
 .import "common.js" as Common
 
+function isValidFlair(flairText) {
+    return flairText && flairText.length > 0 //&& (flairText.length <= 2 || (flairText.substr(1, 1) !== ":" && flairText.substr(flairText.length - 1, 1) != ":"));
+}
+
 function convertPost(rawChild) {
     const child = rawChild.data;
     const previewData = child.preview;
@@ -28,7 +32,7 @@ function convertPost(rawChild) {
     };
 
 
-    if (child.link_flair_text && child.link_flair_text.length > 0) {
+    if (isValidFlair(child.link_flair_text)) {
         modelData.flairs.push({
             flairText: child.link_flair_text,
             type: child.link_flair_type,
@@ -39,7 +43,7 @@ function convertPost(rawChild) {
         });
     }
 
-    if (child.author_flair_text && child.author_flair_text.length > 0) {
+    if (isValidFlair(child.author_flair_text)) {
         modelData.flairs.push({
             flairText: child.author_flair_text,
             type: child.author_flair_type,
@@ -64,6 +68,8 @@ function convertPost(rawChild) {
 
         modelData.previewImage.isValid = true;
     }
+    modelData.numFlairs = modelData.flairs.length;
+    console.debug(modelData.numFlairs);
 
     return modelData;
 }

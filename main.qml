@@ -61,7 +61,8 @@ Kirigami.ApplicationWindow {
 
     function reload() {
         pageStack.pop(postsPage);
-        subsView.refreshAll(true);
+        subsView.refreshAll(false);
+        postsPage.refresh(true);
     }
 
     function showSettings() {

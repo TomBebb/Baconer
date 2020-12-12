@@ -12,6 +12,7 @@ Kirigami.Card {
     readonly property real rowEachWidthMult: 0.2
     readonly property bool showImagePreview: previewImage.isValid
     readonly property bool showThumbnail: (!showImagePreview && Common.isNonEmptyString(thumbnail))
+    property int voteValue: 0
 
     banner {
         title: postTitle
@@ -19,20 +20,25 @@ Kirigami.Card {
 
     actions: [
         Kirigami.Action {
-            text: Common.formatNum(ups)
+            text: Common.formatNum(score + voteValue)
+        },
+
+        Kirigami.Action {
             iconName: "arrow-up"
+            enabled: voteValue !== 1
 
             onTriggered: {
                 rest.vote(fullName, 1);
+                voteValue++;
             }
 
         },
         Kirigami.Action {
-            text: Common.formatNum(downs)
             iconName: "arrow-down"
-
+            enabled: voteValue !== -1
             onTriggered: {
                 rest.vote(fullName, -1);
+                voteValue--;
             }
         },
         Kirigami.Action {
@@ -49,26 +55,20 @@ Kirigami.Card {
             onCheckedChanged: rest.setSaved(fullName, checked)
             visible: rest.isLoggedIn
         }
-
     ]
 
-    footer: RowLayout {
-        Repeater {
-            model: ListModel {id: flairsModel}
-            delegate: Controls.Label {
-                elide:  Text.ElideRight
-                padding: Kirigami.Units.smallSpacing * 3
-                text: flairText
-                color: Common.convertColor(colors.text, false)
-                font.bold: true
+    header: Controls.Label {
+        font.bold: true
 
-                background: Rectangle {
-                    color: Common.convertColor(colors.bg, true)
-                    border.color: Kirigami.Theme.positiveTextColor
-                    border.width: Kirigami.Units.smallSpacing
-                    radius: Kirigami.Units.gridUnit
-                }
+        Component.onCompleted: {
+            visible = flairs.count > 0;
+            let newText = "";
+            for (let i = 0; i < flairs.count; i++) {
+                if (i > 0)
+                    newText += ", ";
+                newText += flairs.get(i).flairText;
             }
+             text = newText;
         }
     }
 
@@ -80,9 +80,10 @@ Kirigami.Card {
 
         ColumnLayout {
             id: delegateLayout
+
             Controls.Label {
                 property bool isActiveSub: subredditURL === root.pageStack.currentItem.url
-                Layout.fillWidth: true
+                Layout.preferredWidth: item.width
                 text: qsTr("posted by %1 %2 ago" + (isActiveSub ? "%3" : " in %3"))
                     .arg(`[${author}](http://reddit.com/u/${author})`)
                     .arg(Common.timeSince(date))
@@ -92,6 +93,7 @@ Kirigami.Card {
 
                 LinkHandlerConnection {}
             }
+
 
             Controls.Label {
                 Layout.fillWidth: true
@@ -103,7 +105,6 @@ Kirigami.Card {
 
                 LinkHandlerConnection {}
             }
-
             Controls.Label {
                 Layout.fillWidth: true
                 text: `[Open URL](${url})`
@@ -130,11 +131,13 @@ Kirigami.Card {
     }
     Component.onCompleted: {
         console.debug(`Card flairs: ${flairs.count}`);
+        /*
+        flairsModel.clear();
         for (let i = 0; i < flairs.count; i++) {
             const flair = flairs.get(i);
             console.debug(`Card flair ${flair.text}`);
             flairsModel.append(flair);
-        }
+        }*/
     }
 
     function openPostInfoPage() {
