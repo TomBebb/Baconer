@@ -1,10 +1,10 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0 as Controls
-import org.kde.kirigami 2.13 as Kirigami
+import org.kde.kirigami 2.13
 import "../utils/common.js" as Common
 
-Kirigami.Card {
+Card {
     id: postCard
     readonly property string subredditURL: `/r/${subreddit}`
     readonly property int maxPostPreviewLength: 255
@@ -21,11 +21,11 @@ Kirigami.Card {
         source: previewImage.url ? previewImage.url : ""
     }
     actions: [
-        Kirigami.Action {
+        Action {
             text: Common.formatNum(score + voteValue)
         },
 
-        Kirigami.Action {
+        Action {
             iconName: "arrow-up"
             enabled: voteValue !== -1
             visible: rest.isLoggedIn
@@ -37,7 +37,7 @@ Kirigami.Card {
             }
 
         },
-        Kirigami.Action {
+        Action {
             iconName: "arrow-down"
             enabled: voteValue !== 1
             visible: rest.isLoggedIn
@@ -47,14 +47,14 @@ Kirigami.Card {
                 rest.vote(fullName, voteValue);
             }
         },
-        Kirigami.Action {
+        Action {
             text: Common.formatNum(commentCount)
             iconName: "dialog-messages"
             onTriggered: openPostInfoPage()
             tooltip: qsTr("View comments")
         },
 
-        Kirigami.Action {
+        Action {
             iconName: "favorite"
             checkable: true
             checked: saved
@@ -64,7 +64,7 @@ Kirigami.Card {
         }
     ]
 
-    onClicked: {console.debug("Post clicked")
+    onClicked: {
         if (url)
             Common.openLink(url);
         else
@@ -79,12 +79,6 @@ Kirigami.Card {
 
         ColumnLayout {
             id: delegateLayout
-
-            MouseArea {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                onClicked: console.debug("Post body click")
-            }
 
             Controls.Label {
                 property bool isActiveSub: subredditURL === root.pageStack.currentItem.url
@@ -102,7 +96,6 @@ Kirigami.Card {
 
             Controls.Label {
                 Layout.fillWidth: true
-                //Layout.preferredWidth: item.width
                 textFormat: TextEdit.MarkdownText
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 text: postContent.length > maxPostPreviewLength ? postContent.substr(0, maxPostPreviewLength) + "..." : postContent
@@ -112,9 +105,11 @@ Kirigami.Card {
             }
             Controls.Label {
                 font.bold: true
+                visible: false
 
                 Component.onCompleted: {
-                    visible = flairs.count > 0;
+                    if (flairs.count > 0)
+                        visible = true;
                     let newText = "";
                     for (let i = 0; i < flairs.count; i++) {
                         if (i > 0)

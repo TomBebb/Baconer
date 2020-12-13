@@ -11,6 +11,7 @@ ScrollablePage {
     property var commentsData
     readonly property bool hasContent: Common.isNonEmptyString(postData.postContent)
     property bool loadingComments: false
+    property int voteValue: 0
 
 
     objectName: "postPage"
@@ -49,6 +50,7 @@ ScrollablePage {
             textFormat: TextEdit.MarkdownText
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             text: postData.postContent
+            visible: Common.isNonEmptyString(text)
 
             LinkHandlerConnection {
 
@@ -60,17 +62,58 @@ ScrollablePage {
             Layout.preferredWidth: layout.width
             Layout.preferredHeight: root.height
 
+            PlaceholderMessage {
+                anchors.centerIn: parent
+                width: parent.width - Units.largeSpacing * 2
+                visible:  commentsList.count === 0
+                text: "No comments"
+            }
+
 
             delegate: AbstractListItem {
                 id: commentItem
 
-                Controls.Label {
-                    id: commentText
-                    color:  commentItem.textColor
-                    text: Common.decodeHtml(body)
-                    textFormat: TextEdit.MarkdownText
-                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    onLinkActivated: Common.openLink(url);
+                Column {
+                    width: commentItem.width
+                    Controls.Label {
+                        id: commentText
+                        color:  commentItem.textColor
+                        text: Common.decodeHtml(body)
+                        textFormat: TextEdit.MarkdownText
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        onLinkActivated: Common.openLink(url);
+                        width: parent.width
+                    }
+                    ActionToolBar {
+                        actions: [
+                            Action {
+                                text: Common.formatNum(score)
+                            },
+
+                            Action {
+                                iconName: "arrow-up"
+                                visible: rest.isLoggedIn
+                            },
+                            Action {
+                                iconName: "arrow-down"
+                                visible: rest.isLoggedIn
+                            },
+                            Action {
+                                text: Common.formatNum(commentCount)
+                                iconName: "dialog-messages"
+                                tooltip: qsTr("Reply")
+                                visible: rest.isLoggedIn
+                            },
+
+                            Action {
+                                iconName: "favorite"
+                                checkable: true
+                                tooltip: checked ? qsTr("Unsave") : qsTr("Save")
+                                visible: rest.isLoggedIn
+                            }
+                        ]
+                    }
+
                 }
 
                 background: Rectangle {
