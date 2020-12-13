@@ -25,33 +25,38 @@ Kirigami.Card {
 
         Kirigami.Action {
             iconName: "arrow-up"
-            enabled: voteValue !== 1
+            enabled: voteValue !== -1
+            visible: rest.isLoggedIn
+            tooltip: voteValue == 1 ? qsTr("Cancel upvote") : qsTr("Upvote")
 
             onTriggered: {
-                rest.vote(fullName, 1);
-                voteValue++;
+                voteValue = voteValue == 1 ? 0 : 1;
+                rest.vote(fullName, voteValue);
             }
 
         },
         Kirigami.Action {
             iconName: "arrow-down"
-            enabled: voteValue !== -1
+            enabled: voteValue !== 1
+            visible: rest.isLoggedIn
+            tooltip: voteValue == -1 ? qsTr("Cancel downvote") : qsTr("Downvote")
             onTriggered: {
-                rest.vote(fullName, -1);
-                voteValue--;
+                voteValue = voteValue == -1 ? 0 : -1;
+                rest.vote(fullName, voteValue);
             }
         },
         Kirigami.Action {
             text: Common.formatNum(commentCount)
             iconName: "dialog-messages"
-            onTriggered: openPostInfoPage();
+            onTriggered: openPostInfoPage()
+            tooltip: qsTr("View comments")
         },
 
         Kirigami.Action {
             iconName: "favorite"
             checkable: true
             checked: saved
-            text: checked ? qsTr("Unsave") : qsTr("Save")
+            tooltip: checked ? qsTr("Unsave") : qsTr("Save")
             onCheckedChanged: rest.setSaved(fullName, checked)
             visible: rest.isLoggedIn
         }
