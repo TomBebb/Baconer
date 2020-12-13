@@ -9,6 +9,7 @@ import "../common"
 Kirigami.ScrollablePage {
     property Settings settings: settings
     property var imagePreviewChoiceName: imagePreviewModel.get(imagePreviewChoiceBox.currentIndex).name
+
     property real cacheTimeout: 60
     title: "Settings"
     property var rawThemes

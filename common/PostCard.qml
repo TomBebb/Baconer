@@ -14,10 +14,17 @@ Kirigami.Card {
     readonly property bool showThumbnail: (!showImagePreview && Common.isNonEmptyString(thumbnail))
     property int voteValue: 0
 
+
+    footer: Controls.ProgressBar {
+        value: imagePreview.progress
+        visible: showImagePreview && imagePreview.status === Image.Loading
+        width: imagePreview.width
+        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignHCenter
+    }
     banner {
         title: postTitle
     }
-
     actions: [
         Kirigami.Action {
             text: Common.formatNum(score + voteValue)
@@ -118,11 +125,13 @@ Kirigami.Card {
                 visible: url.length > 0
                 LinkHandlerConnection {}
             }
-
             Image {
+                id: imagePreview
                 property var rawData: previewImage
                 property var aspectRatio: rawData.height / rawData.width
                 source: rawData.url ? rawData.url : ""
+                asynchronous: true
+                cache: settingsPage.imagePreviewChoiceName !== "max"
                 visible: showImagePreview
                 sourceSize.width: rawData.width
                 sourceSize.height: rawData.height
@@ -134,16 +143,7 @@ Kirigami.Card {
             }
         }
     }
-    Component.onCompleted: {
-        console.debug(`Card flairs: ${flairs.count}`);
-        /*
-        flairsModel.clear();
-        for (let i = 0; i < flairs.count; i++) {
-            const flair = flairs.get(i);
-            console.debug(`Card flair ${flair.text}`);
-            flairsModel.append(flair);
-        }*/
-    }
+
 
     function openPostInfoPage() {
 

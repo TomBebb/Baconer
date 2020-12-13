@@ -72,6 +72,14 @@ Kirigami.ScrollablePage {
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     onLinkActivated: Common.openLink(url);
                 }
+
+                background: Rectangle {
+                    color: Theme.backgroundColor
+                    border.color: Theme.positiveBackgroundColor
+                    border.width: dp(5)
+                    radius: dp(3)
+
+                }
             }
 
             model: ListModel {

@@ -316,8 +316,6 @@ Item {
                     settingsPage.settings.accessTokenExpiry = expireTime;
                     settingsPage.settings.accessToken = hashArgs.access_token.toString();
 
-                    console.debug(`expires: ${expireTime}`);
-
                     root.closePage(webPage);
 
                     root.reload();

@@ -11,7 +11,7 @@ const redirectURI = "http://locahost:8042/redirect";
 
 
 function convertColor(color, isBg) {
-    if (color == null || color.length === 0)
+    if (color === null || color.length === 0)
         return isBg ? "white" : "black";
     switch(color) {
         case "dark": return "black";

@@ -17,5 +17,6 @@
         <file>pages/LoginScopesPage.qml</file>
         <file>urltools.h</file>
         <file>urltools.cpp</file>
+        <file>images/reddit.png</file>
     </qresource>
 </RCC>

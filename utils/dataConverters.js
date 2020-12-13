@@ -1,5 +1,8 @@
 .import "common.js" as Common
 
+const redditIconPath = "qrc:///images/reddit.png";
+const redditIconSize = 32;
+
 function isValidFlair(flairText) {
     return flairText && flairText.length > 0 //&& (flairText.length <= 2 || (flairText.substr(1, 1) !== ":" && flairText.substr(flairText.length - 1, 1) != ":"));
 }
@@ -69,7 +72,6 @@ function convertPost(rawChild) {
         modelData.previewImage.isValid = true;
     }
     modelData.numFlairs = modelData.flairs.length;
-    console.debug(modelData.numFlairs);
 
     return modelData;
 }
@@ -105,7 +107,14 @@ function convertMulti(rawChild) {
         multiData.itemIcon = {
             source: child.icon_img
         }
+    } else {
+        multiData.itemIcon = {
+            source: redditIconPath,
+            width: redditIconSize,
+            height: redditIconSize
+        };
     }
+
     return multiData;
 }
 
@@ -137,6 +146,12 @@ function convertSub(rawChild)  {
             width: child.icon_size[0],
             height: child.icon_size[1]
         }
+    } else {
+        subData.itemIcon = {
+            source: redditIconPath,
+            width: redditIconSize,
+            height: redditIconSize
+        };
     }
 
     return subData;

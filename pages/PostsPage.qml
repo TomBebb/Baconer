@@ -15,6 +15,8 @@ Kirigami.ScrollablePage {
     property var info: null
     objectName: "postsPage"
 
+    title: url
+
     Layout.fillWidth: true
 
     onSortUrlChanged: refresh()
@@ -69,8 +71,6 @@ Kirigami.ScrollablePage {
         ]
     }
 
-    title: url
-
     supportsRefreshing: true
     onRefreshingChanged: {
         if (refreshing && !postsModel.loadingPosts)
@@ -119,34 +119,16 @@ Kirigami.ScrollablePage {
     }
 
     onInfoChanged: {
+        console.debug(`Info changed: `+info);
         title = info ? info.title : url;
     }
 
-    function refresh(forceRefresh = false) {
-        model.clear();
-
-
-
-        postsModel.loadingPosts = true;
-        refreshing = true;
-
-        let fullUrl = url;
-        if (!Common.endsWith(fullUrl, "/"))
-            fullUrl += "/";
-
-        fullUrl += sortUrl;
-        rest.loadPosts(fullUrl, postsModel, null, forceRefresh).then(() => {
-            refreshing = postsModel.loadingPosts = false;
-        });
-        if (info && info.url !== url)
-            info = null;
-
-        if (info)
-            return;
+    function getInfo() {
         if (url.length <= 1) {
+            console.debug("Frontpage");
             info = {
                 title: "Frontpage",
-                url: "/"
+                url: url
             };
             return Promise.resolve(info);
         } else {
@@ -157,5 +139,29 @@ Kirigami.ScrollablePage {
                 .then(rawData => info = DataConv.convertSub(rawData.data))
                 .catch(raw => console.log(`info error: ${JSON.stringify(raw)}`));
         }
+    }
+
+    function refresh(forceRefresh = false) {
+        model.clear();
+
+        postsModel.loadingPosts = true;
+        refreshing = true;
+
+        let fullUrl = url;
+        if (!Common.endsWith(fullUrl, "/"))
+            fullUrl += "/";
+
+        fullUrl += sortUrl;
+
+        const fetchInfo = () => {
+            if (info && info.url !== url)
+                info = null;
+           if (!info)
+                getInfo();
+        }
+
+        rest.loadPosts(fullUrl, postsModel, null, forceRefresh).then(() => {
+            refreshing = postsModel.loadingPosts = false;
+        }).then(fetchInfo, fetchInfo);
     }
 }
