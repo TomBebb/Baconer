@@ -1,13 +1,13 @@
 import QtQuick 2.1
-import org.kde.kirigami 2.13 as Kirigami
 import QtQuick.Controls 2.0 as Controls
 import QtQuick.Layouts 1.2
+import org.kde.kirigami 2.13
 import "../utils/common.js" as Common
 import "../utils/dataConverters.js" as DataConv
 import "../common"
 import "../overlays"
 
-Kirigami.ScrollablePage {
+ScrollablePage {
     property ListModel model: postsView.model
     property string url: subsView.currentURL
     property string sortUrl: changeSortOverlay.selectedSortUrl
@@ -26,13 +26,13 @@ Kirigami.ScrollablePage {
     }
 
     actions {
-        main: Kirigami.Action {
+        main: Action {
             text: "Refresh"
             icon.name: "view-refresh"
             onTriggered: refresh(true)
         }
         contextualActions: [
-            Kirigami.Action {
+            Action {
                 text: rest.isLoggedIn ? "Logout" : "Login"
                 iconName: "im-user"
                 onTriggered: {
@@ -44,18 +44,18 @@ Kirigami.ScrollablePage {
                 }
             },
 
-            Kirigami.Action {
+            Action {
                 text: "Sort"
                 iconName: "dialog-filters"
                 onTriggered: changeSortOverlay.open()
             },
-            Kirigami.Action {
+            Action {
                 text: "Info"
                 iconName: "help-about"
                 onTriggered: subInfoOverlay.open()
                 visible: isSubreddit
             },
-            Kirigami.Action {
+            Action {
                 id: favAction
                 iconName: "favorite"
                 checkable: true
@@ -99,7 +99,11 @@ Kirigami.ScrollablePage {
     }
 
 
-    Kirigami.CardsListView {
+    CardsListView {
+        //maximumColumnWidth: Units.gridUnit * 40
+        //minimumColumnWidth: Units.gridUnit * 20
+        //maximumColumns: 4
+
         id: postsView
 
         model: ListModel {
@@ -108,7 +112,8 @@ Kirigami.ScrollablePage {
             property string before
             property bool loadingPosts
         }
-        delegate: PostCard {}
+        delegate: PostCard {
+        }
         onContentYChanged: {
             if (atYEnd) {
                 rest.loadPostsAfter(url, model)

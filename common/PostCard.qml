@@ -96,9 +96,10 @@ Card {
 
             Controls.Label {
                 Layout.fillWidth: true
+                Layout.preferredWidth:  item.width
                 textFormat: TextEdit.MarkdownText
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                text: postContent.length > maxPostPreviewLength ? postContent.substr(0, maxPostPreviewLength) + "..." : postContent
+                text: postContent
                 visible: hasContent
 
                 LinkHandlerConnection {}

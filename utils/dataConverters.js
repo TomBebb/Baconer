@@ -4,7 +4,13 @@ const redditIconPath = "qrc:///images/reddit.png";
 const redditIconSize = 32;
 
 function isValidFlair(flairText) {
-    return flairText && flairText.length > 0 //&& (flairText.length <= 2 || (flairText.substr(1, 1) !== ":" && flairText.substr(flairText.length - 1, 1) != ":"));
+    if (flairText.length <= 0)
+        return false;
+
+    const firstChar = flairText.substr(0, 1);
+    const lastChar = flairText.substr(flairText.length - 1, 1);
+
+    return firstChar !== ':' || lastChar !== ':';
 }
 
 function convertPost(rawChild) {
@@ -35,7 +41,7 @@ function convertPost(rawChild) {
     };
 
 
-    if (isValidFlair(child.link_flair_text)) {
+    if (child.link_flair_text &&  isValidFlair(child.link_flair_text)) {
         modelData.flairs.push({
             flairText: child.link_flair_text,
             type: child.link_flair_type,
@@ -46,7 +52,7 @@ function convertPost(rawChild) {
         });
     }
 
-    if (isValidFlair(child.author_flair_text)) {
+    if (child.author_flair_text && isValidFlair(child.author_flair_text)) {
         modelData.flairs.push({
             flairText: child.author_flair_text,
             type: child.author_flair_type,

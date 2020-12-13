@@ -3,17 +3,17 @@ import QtQuick.Layouts 1.2
 import QtQml.Models 2.12
 import QtQuick.Controls 2.15 as Controls
 
-import org.kde.kirigami 2.13 as Kirigami
+import org.kde.kirigami 2.13
 import "utils/common.js" as Common
 import "pages"
 import "common"
 import "utils"
 
-Kirigami.ApplicationWindow {
+ApplicationWindow {
     property bool assumeMobile: height > width * 1.5
     id: root
     title: `Baconer - ${pageStack.currentItem.title}`
-    controlsVisible: true
+    //controlsVisible: true
     property Rest rest: rest
 
     Rest {
@@ -21,7 +21,7 @@ Kirigami.ApplicationWindow {
     }
 
 
-    globalDrawer: Kirigami.GlobalDrawer {
+    globalDrawer: GlobalDrawer {
         title: "Baconer subreddits"
         id: navDrawer
         showContentWhenCollapsed: true
@@ -31,7 +31,7 @@ Kirigami.ApplicationWindow {
         header: RowLayout {
             Layout.fillWidth: true
 
-            Kirigami.SearchField {
+            SearchField {
                 id: subsSearch
                 visible: !navDrawer.collapsed
                 Layout.fillWidth: true
