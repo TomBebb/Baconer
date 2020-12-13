@@ -84,6 +84,12 @@ ScrollablePage {
                         onLinkActivated: Common.openLink(url);
                         width: parent.width
                     }
+                    Controls.Label {
+                        text: `${Common.timeSince(date)} ago`
+                        color: Theme.disabledTextColor
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        width: parent.width
+                    }
                     ActionToolBar {
                         actions: [
                             Action {

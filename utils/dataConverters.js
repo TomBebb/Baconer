@@ -81,12 +81,16 @@ function convertComment(rawChild) {
     if (!child.body)
         return null;
 
+
+    console.debug(JSON.stringify(child));
+
     return {
         author: child.author,
         body: child.body,
         score: child.score,
         commentId: child.id,
-        created: Common.fromUtcRaw(child.created)
+        date: Common.fromUtcRaw(child.created_utc),
+        fullName: child.name
     };
 }
 
