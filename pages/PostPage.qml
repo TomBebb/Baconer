@@ -16,7 +16,7 @@ ScrollablePage {
     objectName: "postPage"
 
     actions {
-        main: Kirigami.Action {
+        main: Action {
             text: "Refresh"
             icon.name: "view-refresh"
             onTriggered: refresh(true)
@@ -76,8 +76,8 @@ ScrollablePage {
                 background: Rectangle {
                     color: Theme.backgroundColor
                     border.color: Theme.positiveBackgroundColor
-                    border.width: dp(5)
-                    radius: dp(3)
+                    border.width: Units.smallSpacing
+                    radius: Units.smallSpacing* 2
 
                 }
             }

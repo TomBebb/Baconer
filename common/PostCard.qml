@@ -16,6 +16,9 @@ Kirigami.Card {
 
     banner {
         title: postTitle
+        titleLevel: 2
+        titleWrapMode: Text.WrapAtWordBoundaryOrAnywhere
+        source: previewImage.url ? previewImage.url : ""
     }
     actions: [
         Kirigami.Action {
@@ -68,14 +71,6 @@ Kirigami.Card {
             openPostInfoPage();
     }
 
-    header: Controls.ProgressBar {
-        value: imagePreview.progress
-        visible: showImagePreview && imagePreview.status === Image.Loading
-        width: imagePreview.width
-        Layout.fillWidth: true
-        Layout.alignment: Qt.AlignHCenter
-    }
-
     contentItem: Item {
         id: item
         implicitWidth: delegateLayout.implicitWidth
@@ -107,7 +102,7 @@ Kirigami.Card {
 
             Controls.Label {
                 Layout.fillWidth: true
-                Layout.preferredWidth: item.width
+                //Layout.preferredWidth: item.width
                 textFormat: TextEdit.MarkdownText
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 text: postContent.length > maxPostPreviewLength ? postContent.substr(0, maxPostPreviewLength) + "..." : postContent
@@ -128,22 +123,6 @@ Kirigami.Card {
                     }
                      text = newText;
                 }
-            }
-            Image {
-                id: imagePreview
-                property var rawData: previewImage
-                property var aspectRatio: rawData.height / rawData.width
-                source: rawData.url ? rawData.url : ""
-                asynchronous: true
-                cache: settingsPage.imagePreviewChoiceName !== "max"
-                visible: showImagePreview
-                sourceSize.width: rawData.width
-                sourceSize.height: rawData.height
-
-                fillMode: Image.PreserveAspectFit
-
-                Layout.preferredWidth: postCard.width - 20
-                Layout.preferredHeight: width * aspectRatio
             }
         }
     }
