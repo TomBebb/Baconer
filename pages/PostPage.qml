@@ -1,11 +1,11 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.0 as Controls
-import org.kde.kirigami 2.13 as Kirigami
+import org.kde.kirigami 2.13
 import QtQuick.Layouts 1.2
 import "../utils/common.js" as Common
 import "../common"
 
-Kirigami.ScrollablePage {
+ScrollablePage {
     id: page
     property var postData
     property var commentsData
@@ -61,7 +61,7 @@ Kirigami.ScrollablePage {
             Layout.preferredHeight: root.height
 
 
-            delegate: Kirigami.AbstractListItem {
+            delegate: AbstractListItem {
                 id: commentItem
 
                 Controls.Label {

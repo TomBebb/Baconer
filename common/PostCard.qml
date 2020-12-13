@@ -14,14 +14,6 @@ Kirigami.Card {
     readonly property bool showThumbnail: (!showImagePreview && Common.isNonEmptyString(thumbnail))
     property int voteValue: 0
 
-
-    footer: Controls.ProgressBar {
-        value: imagePreview.progress
-        visible: showImagePreview && imagePreview.status === Image.Loading
-        width: imagePreview.width
-        Layout.fillWidth: true
-        Layout.alignment: Qt.AlignHCenter
-    }
     banner {
         title: postTitle
     }
@@ -69,19 +61,19 @@ Kirigami.Card {
         }
     ]
 
-    header: Controls.Label {
-        font.bold: true
+    onClicked: {console.debug("Post clicked")
+        if (url)
+            Common.openLink(url);
+        else
+            openPostInfoPage();
+    }
 
-        Component.onCompleted: {
-            visible = flairs.count > 0;
-            let newText = "";
-            for (let i = 0; i < flairs.count; i++) {
-                if (i > 0)
-                    newText += ", ";
-                newText += flairs.get(i).flairText;
-            }
-             text = newText;
-        }
+    header: Controls.ProgressBar {
+        value: imagePreview.progress
+        visible: showImagePreview && imagePreview.status === Image.Loading
+        width: imagePreview.width
+        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignHCenter
     }
 
     contentItem: Item {
@@ -92,6 +84,12 @@ Kirigami.Card {
 
         ColumnLayout {
             id: delegateLayout
+
+            MouseArea {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                onClicked: console.debug("Post body click")
+            }
 
             Controls.Label {
                 property bool isActiveSub: subredditURL === root.pageStack.currentItem.url
@@ -118,12 +116,18 @@ Kirigami.Card {
                 LinkHandlerConnection {}
             }
             Controls.Label {
-                Layout.fillWidth: true
-                text: `[Open URL](${url})`
-                textFormat: TextEdit.MarkdownText
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                visible: url.length > 0
-                LinkHandlerConnection {}
+                font.bold: true
+
+                Component.onCompleted: {
+                    visible = flairs.count > 0;
+                    let newText = "";
+                    for (let i = 0; i < flairs.count; i++) {
+                        if (i > 0)
+                            newText += ", ";
+                        newText += flairs.get(i).flairText;
+                    }
+                     text = newText;
+                }
             }
             Image {
                 id: imagePreview

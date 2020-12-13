@@ -24,6 +24,7 @@ Kirigami.ScrollablePage {
     Component.onCompleted: {
         refresh();
     }
+
     actions {
         main: Kirigami.Action {
             text: "Refresh"
@@ -70,6 +71,7 @@ Kirigami.ScrollablePage {
             }
         ]
     }
+
 
     supportsRefreshing: true
     onRefreshingChanged: {
