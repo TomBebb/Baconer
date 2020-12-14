@@ -2,11 +2,13 @@ import QtQuick 2.1
 import org.kde.kirigami 2.13 as Kirigami
 import QtQuick.Layouts 1.2
 import QtQml.Models 2.15
+import QtQuick.Controls 2.0 as Controls
 import "../utils/common.js" as Common
 
 ListView {
     property var currentData: model.get(currentIndex)
     property string currentURL: currentData ? `${currentData.url}` : "/"
+    property bool awaitingSearchData: false
     property string lastURL
     property string searchText
     ListModel {
@@ -17,7 +19,17 @@ ListView {
         id: subsModel
     }
 
+
     Layout.fillWidth: true
+
+    header: Controls.ProgressBar {
+        visible: awaitingSearchData
+        indeterminate: true
+        padding: 0
+        width: parent.width
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+
     model: Common.isNonEmptyString(searchText) ? searchModel : subsModel
     clip: true
     flickableDirection: Flickable.VerticalFlick
@@ -91,32 +103,40 @@ ListView {
     }
 
     onSearchTextChanged:  {
-        if (!Common.isNonEmptyString(searchText))
+        if (!Common.isNonEmptyString(searchText)) {
+            awaitingSearchData = false;
             return;
-
-
-        searchModel.clear();
-
-        for (let i = 0; i < subsModel.count; i++) {
-            const entry = subsModel.get(i);
-
-            if (entry.category !== "Subreddits" && Common.searchValuesFor(entry, searchText, false)) {
-                const searchData = Object.assign({}, entry);
-                searchData.category = "Search results";
-                searchModel.append(searchData);
-            }
         }
+
+
+        awaitingSearchData = true;
 
         rest.searchSubs(searchText)
             .then(subSearchResults => {
+                awaitingSearchData = false;
 
+                searchModel.clear();
                 for (const searchData of subSearchResults) {
                     searchData.category = "Search results";
                     searchData.isVisible = true;
                     searchModel.append(searchData);
                 }
+
+
+                for (let i = 0; i < subsModel.count; i++) {
+                    const entry = subsModel.get(i);
+
+                    if (entry.category !== "Subreddits" && Common.searchValuesFor(entry, searchText, false)) {
+                        const searchData = Object.assign({}, entry);
+                        searchData.category = "Search results";
+                        searchModel.append(searchData);
+                    }
+                }
             })
-            .catch(err => console.error(`Error searching subs: ${err}`));
+            .catch(err => {
+                awaitingSearchData = false;
+                console.error(`Error searching subs: ${err}`);
+            });
 
     }
 
