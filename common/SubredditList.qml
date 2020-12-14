@@ -8,8 +8,17 @@ ListView {
     property var currentData: model.get(currentIndex)
     property string currentURL: currentData ? `${currentData.url}` : "/"
     property string lastURL
+    property string searchText
+    ListModel {
+        id: searchModel
+    }
+
+    ListModel {
+        id: subsModel
+    }
+
     Layout.fillWidth: true
-    model: ListModel { id: subsModel }
+    model: Common.isNonEmptyString(searchText) ? searchModel : subsModel
     clip: true
     flickableDirection: Flickable.VerticalFlick
     boundsBehavior: Flickable.StopAtBounds
@@ -81,13 +90,37 @@ ListView {
         return Promise.resolve();
     }
 
-    function search(text) {
-        text = text.trim();
+    onSearchTextChanged:  {
+        if (!Common.isNonEmptyString(searchText))
+            return;
+
+
+        searchModel.clear();
 
         for (let i = 0; i < subsModel.count; i++) {
             const entry = subsModel.get(i);
 
-            entry.isVisible = (text.length === 0) || Common.searchValuesFor(entry, text, false);
+            if (entry.category !== "Subreddits" && Common.searchValuesFor(entry, searchText, false)) {
+                const searchData = Object.assign({}, entry);
+                searchData.category = "Search results";
+                searchModel.append(searchData);
+            }
         }
+
+        rest.searchSubs(searchText)
+            .then(subSearchResults => {
+
+                for (const searchData of subSearchResults) {
+                    searchData.category = "Search results";
+                    searchData.isVisible = true;
+                    searchModel.append(searchData);
+                }
+            })
+            .catch(err => console.error(`Error searching subs: ${err}`));
+
+    }
+
+    function search(text) {
+        searchText = text.trim();
     }
 }

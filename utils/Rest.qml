@@ -287,6 +287,16 @@ Item {
         });
     }
 
+    function searchSubs(query) {
+        return getRedditJSON("/subreddits/search", {q: query}).then(data => {
+            const subs = [];
+            for (const rawChild of data.data.children) {
+                subs.push(DataConverters.convertSub(rawChild));
+            }
+            return subs;
+        });
+    }
+
     function authorize(scopes){
         const state = Common.randomString();
         scopes = [

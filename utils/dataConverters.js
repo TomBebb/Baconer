@@ -87,9 +87,6 @@ function convertComment(rawChild) {
     if (!child.body)
         return null;
 
-
-    console.debug(JSON.stringify(child));
-
     return {
         author: child.author,
         body: child.body,
@@ -132,13 +129,14 @@ function convertSub(rawChild)  {
     let child = rawChild;
     if (child.data)
         child = child.data;
+
     const subData = {
         name: child.display_name,
         title: child.title,
         url: child.url,
         description: Common.tidyDescription(child.public_description),
-        fullDescription: Common.decodeHtml(child.description),
-        submitText: Common.decodeHtml(child.submit_text),
+        fullDescription: Common.isNonEmptyString(child.description) ? Common.decodeHtml(child.description) : "",
+        submitText: Common.isNonEmptyString(child.submit_text) ? Common.decodeHtml(child.submit_text) : qsTr("Submit post"),
         subscribers: child.subscribers,
         lang: child.lang,
         itemIcon: {},

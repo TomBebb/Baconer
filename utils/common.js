@@ -77,14 +77,9 @@ function getPage(node) {
     }
     return node;
 }
-
 function decodeHtml(text) {
-    return text.replace("&amp;", "&")
-        .replace("&lt;", "<")
-        .replace("&gt;", ">");
-}
-
-function decodeHtml(text) {
+    if (typeof text !== "string")
+        throw `Invalid  'decodeHtml'param ${text}`;
     return text.replace("&amp;", "&")
         .replace("&lt;", "<")
         .replace("&gt;", ">");
