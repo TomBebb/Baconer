@@ -13,7 +13,6 @@ ApplicationWindow {
     property bool assumeMobile: height > width * 1.5
     id: root
     title: `Baconer - ${pageStack.currentItem.title}`
-    //controlsVisible: true
     property Rest rest: rest
 
     Rest {

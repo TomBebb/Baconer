@@ -12,6 +12,7 @@ Card {
     readonly property real rowEachWidthMult: 0.2
     readonly property bool showImagePreview: previewImage.isValid
     readonly property bool showThumbnail: (!showImagePreview && Common.isNonEmptyString(thumbnail))
+    readonly property bool isActiveSub: subredditURL === root.pageStack.currentItem.url
     property int voteValue: 0
 
     banner {
@@ -80,17 +81,45 @@ Card {
         ColumnLayout {
             id: delegateLayout
 
-            Controls.Label {
-                property bool isActiveSub: subredditURL === root.pageStack.currentItem.url
-                Layout.preferredWidth: item.width
-                text: qsTr("posted by %1 %2 ago" + (isActiveSub ? "%3" : " in %3"))
-                    .arg(`[${author}](http://reddit.com/u/${author})`)
-                    .arg(Common.timeSince(date))
-                    .arg(isActiveSub ? "": `[/r/${subreddit}](http://reddit.com/r/${subreddit})`)
-                textFormat: TextEdit.MarkdownText
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
-                LinkHandlerConnection {}
+            RowLayout {
+                Layout.preferredWidth: item.width
+
+                Controls.Label {
+                    id: label
+                    Layout.preferredWidth: parent.width / parent.visibleChildren.count
+                    text: qsTr("by %1")
+                        .arg(`[${author}](http://reddit.com/u/${author})`)
+                    textFormat: TextEdit.MarkdownText
+
+                    LinkHandlerConnection {}
+                }
+
+                Row {
+                    Layout.preferredWidth: label.width
+
+
+                    Icon {
+                        source: "clock"
+                        height: label.height
+                    }
+
+                    Controls.Label {
+
+                        text: qsTr("%1 ago").arg(Common.timeSince(date))
+                    }
+
+                }
+                Controls.Label {
+                    Layout.preferredWidth: label.width
+                    visible: !isActiveSub
+
+                    text: `[${subreddit}](http://reddit.com/r/${subreddit})`
+                    textFormat: TextEdit.MarkdownText
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+
+                    LinkHandlerConnection {}
+                }
             }
 
 

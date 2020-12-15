@@ -258,14 +258,18 @@ function openLink(url) {
     if (settingsPage.settings.preferExternalBrowser) {
         Qt.openUrlExternally(url);
     } else {
-        return createComponent("/pages/WebPage.qml", {initialURL: url}).then(page => {
-            console.log("Page made");
-            root.openPage(page);
-            return page;
-        });
+        return openLinkWebView(url);
     }
 
     return Promise.resolve({});
+}
+
+function openLinkWebView(url) {
+    return createComponent("/pages/WebPage.qml", {initialURL: url}).then(page => {
+        console.log("Page made");
+        root.openPage(page);
+        return page;
+    }).catch(err => console.error(`Error opening web page: ${url}`));
 }
 
 function searchValuesFor(obj, txt, caseSensitive=true) {

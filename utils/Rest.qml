@@ -5,12 +5,22 @@ import "../utils"
 
 Item {
     id: rest
-    property string accessToken: settingsPage.settings.accessToken
-    property var accessTokenExpiry: settingsPage.settings.accessTokenExpiry
+    property string accessToken
+    property var accessTokenExpiry
     property var cache: new Map()
+
+    onAccessTokenChanged: settingsPage.settings.accessToken = accessToken
+    onAccessTokenExpiryChanged: settingsPage.settings.accessTokenExpiry = accessTokenExpiry
+
+    Component.onCompleted: {
+        accessToken = settingsPage.settings.accessToken;
+        accessTokenExpiry = settingsPage.accessTokenExpiry;
+
+    }
 
 
     property bool isLoggedIn: accessToken != null && Date.now() < accessTokenExpiry
+    onIsLoggedInChanged: console.debug(`Logged in changed: ${isLoggedIn}`);
     property string baseURL: isLoggedIn ? "https://oauth.reddit.com" : "https://api.reddit.com";
 
     Timer {
@@ -18,6 +28,11 @@ Item {
         running: true
         repeat: true
         onTriggered: {
+
+            if (isLoggedIn && Date.now() > accessTokenExpiry) {
+                console.debug("Log-in token expired");
+                isLoggedIn = false;
+            }
 
             for (let [url, data] of cache) {
                 const sinceCachedMs = Date.now() - data.time;
@@ -305,7 +320,7 @@ Item {
         ];
         const url = Common.genAuthorizeURL(scopes, state);
 
-        Common.openLink(url).then(webPage => {
+        Common.openLinkWebView(url).then(webPage => {
             const view = webPage.webView;
             view.urlChanged.connect(() => {
                 const urlText = view.url.toString();
@@ -323,8 +338,10 @@ Item {
                     const expireTime = new Date();
                     expireTime.setSeconds(expireTime.getTime() / 1000 + hashArgs.expires_in);
 
-                    settingsPage.settings.accessTokenExpiry = expireTime;
-                    settingsPage.settings.accessToken = hashArgs.access_token.toString();
+                    accessTokenExpiry = expireTime;
+                    accessToken = hashArgs.access_token.toString();
+
+                    isLoggedIn = true;
 
                     root.closePage(webPage);
 

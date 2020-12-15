@@ -7,7 +7,28 @@ import "../utils/common.js" as Common
 import "../common"
 
 Kirigami.ScrollablePage {
-    property Settings settings: settings
+    property Settings settings: Settings {
+            id: settings
+            property var favorites: []
+            property alias themeName: themeInput.currentText
+            property alias preferExternalBrowser: preferExternalBrowserInput.checked
+            property alias imagePreviewChoice: imagePreviewChoiceBox.currentIndex
+            property string accessToken
+            property var accessTokenExpiry
+
+            onThemeNameChanged: changed();
+            onPreferExternalBrowserChanged: changed();
+            onImagePreviewChoiceChanged: changed();
+            onChanged: console.debug("Settings changed")
+
+            onAccessTokenChanged: console.debug(`Settings access token: ${accessToken}`);
+
+            onAccessTokenExpiryChanged: console.debug(`Settings access token expires: ${accessTokenExpiry}`);
+
+
+            signal changed()
+
+        }
     property var imagePreviewChoiceName: imagePreviewModel.get(imagePreviewChoiceBox.currentIndex).name
 
     property real cacheTimeout: 60
@@ -41,32 +62,11 @@ Kirigami.ScrollablePage {
     }
 
     function logout() {
-        settings.accessToken = settings.accessTokenExpiry = null;
+        rest.accessToken = rest.accessTokenExpiry = null;
+        rest.isLoggedIn = false;
         root.reload();
     }
 
-    Settings {
-        id: settings
-        property var favorites: []
-        property alias themeName: themeInput.currentText
-        property alias preferExternalBrowser: preferExternalBrowserInput.checked
-        property alias imagePreviewChoice: imagePreviewChoiceBox.currentIndex
-        property string accessToken
-        property var accessTokenExpiry
-
-        onThemeNameChanged: changed();
-        onPreferExternalBrowserChanged: changed();
-        onImagePreviewChoiceChanged: changed();
-        onChanged: console.debug("Settings changed")
-
-        onAccessTokenChanged: console.debug(`Settings access token: ${accessToken}`);
-
-        onAccessTokenExpiryChanged: console.debug(`Settings access token expires: ${accessTokenExpiry}`);
-
-
-        signal changed()
-
-    }
     ColumnLayout {
         Kirigami.FormLayout {
             Layout.fillWidth: true
