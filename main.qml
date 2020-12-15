@@ -21,11 +21,9 @@ ApplicationWindow {
 
 
     globalDrawer: GlobalDrawer {
-        title: "Baconer subreddits"
+        title:  subsView.searchText ? qsTr("Search results") : (rest.isLoggedIn ? qsTr("My subscriptions") : qsTr("Subreddits"))
         id: navDrawer
         showContentWhenCollapsed: true
-
-
 
         header: RowLayout {
             Layout.fillWidth: true

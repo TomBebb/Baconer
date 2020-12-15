@@ -11,6 +11,7 @@ ListView {
     property bool awaitingSearchData: false
     property string lastURL
     property string searchText
+
     ListModel {
         id: searchModel
     }
@@ -48,14 +49,6 @@ ListView {
     }
 
     Connections {
-        target: settingsPage.settings
-        function onChanged() {
-            console.debug(`changed: currentItem=${currentItem}; index = ${currentIndex}; data = ${model.get(currentIndex).url}`);
-            refreshAll(false)
-        }
-    }
-
-    Connections {
         Component.onCompleted: {
             lastURL = currentURL;
             refreshAll();
@@ -63,6 +56,7 @@ ListView {
 
         function onCurrentItemChanged() {
             if (currentURL != lastURL) {
+                navDrawer.close();
                 root.pageStack.pop(root.pageStack.get(0));
                 refreshSubInfo();
                 lastURL = currentURL;
@@ -117,7 +111,6 @@ ListView {
 
                 searchModel.clear();
                 for (const searchData of subSearchResults) {
-                    searchData.category = "Search results";
                     searchData.isVisible = true;
                     searchModel.append(searchData);
                 }
