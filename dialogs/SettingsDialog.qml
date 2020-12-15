@@ -2,14 +2,30 @@ import QtQuick 2.1
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.2
 import org.kde.kirigami 2.13 as Kirigami
-import Qt.labs.settings 1.0
 import QtQuick.Dialogs 1.3
+import Qt.labs.settings 1.0
 
 import "../utils/common.js" as Common
 import "../common"
 
 Dialog {
-    property Settings settings: Settings {
+    property var imagePreviewChoiceName: imagePreviewModel.get(imagePreviewChoiceBox.currentIndex).name
+    property Settings settings: settings
+
+    property real cacheTimeout: 60
+    property bool hasInit: false
+    property var rawThemes
+
+    title: "Settings"
+
+    id: dialog
+    objectName: "settingsDialog"
+
+    standardButtons: StandardButton.Ok
+
+    onVisibilityChanged: console.debug(`Settings dialog visible: ${visible}`);
+
+    Settings {
         id: settings
         property var favorites: []
         property alias themeName: themeInput.currentText
@@ -31,20 +47,6 @@ Dialog {
         signal changed()
 
     }
-    property var imagePreviewChoiceName: imagePreviewModel.get(imagePreviewChoiceBox.currentIndex).name
-
-    property real cacheTimeout: 60
-    property bool hasInit: false
-    property var rawThemes
-
-    title: "Settings"
-
-    id: dialog
-    objectName: "settingsDialog"
-
-    standardButtons: StandardButton.Ok
-
-    onVisibilityChanged: console.debug(`Settings dialog visible: ${visible}`);
 
     function setFav(url, isFav) {
         const wasFav = settings.favorites.indexOf(url) !== -1;

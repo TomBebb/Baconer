@@ -13,6 +13,7 @@ ScrollablePage {
     property bool loadingComments: false
     property int voteValue: 0
 
+    Layout.fillWidth: true
 
     objectName: "postPage"
 
@@ -32,7 +33,6 @@ ScrollablePage {
 
     Component.onCompleted: refresh();
 
-
     supportsRefreshing: true
     onRefreshingChanged: {
         if (refreshing && !loadingComments)
@@ -41,7 +41,8 @@ ScrollablePage {
 
     title: postData.postTitle
     ColumnLayout {
-        width: page.width
+        Layout.fillWidth: true
+        Layout.fillHeight: true
         id: layout
         visible: !refreshing
         Controls.Label {
@@ -59,8 +60,12 @@ ScrollablePage {
 
         ListView {
             id: commentsList
-            Layout.preferredWidth: layout.width
-            Layout.preferredHeight: root.height
+            Layout.fillWidth: true
+            flickableDirection: Flickable.VerticalFlick
+            boundsBehavior: Flickable.StopAtBounds
+            spacing: Units.gridUnit * 0.5
+            implicitHeight: childrenRect.height
+
 
             PlaceholderMessage {
                 anchors.centerIn: parent

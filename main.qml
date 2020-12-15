@@ -2,7 +2,6 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.2
 import QtQml.Models 2.12
 import QtQuick.Controls 2.15 as Controls
-
 import org.kde.kirigami 2.13
 import "utils/common.js" as Common
 import "pages"
@@ -58,6 +57,8 @@ ApplicationWindow {
     PostsPage    {
         id: postsPage
     }
+
+
     SettingsDialog {
         id: settingsDialog
     }

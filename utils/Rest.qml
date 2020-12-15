@@ -196,14 +196,14 @@ Item {
             postsModel.after = data.data.after
             postsModel.before = data.data.before
 
+            console.debug(postsModel.after);
+
             return data
         }).catch(err => console.error(`Error loading posts: ${JSON.stringiy(err)}`));
     }
 
     function loadPostsAfter(url, postsModel, forceRefresh) {
-        if (postsModel.loadingPosts)
-            return;
-        return loadPosts(url, postsModel, postsModel.finalId, forceRefresh);
+        return loadPosts(url, postsModel, postsModel.after, forceRefresh);
     }
 
     function loadComments(postData, commentsModel, forceRefresh) {

@@ -8,12 +8,13 @@ import "../common"
 import "../overlays"
 
 ScrollablePage {
-    property ListModel model: postsView.model
+    property ListModel model: postsModel
     property string url: subsView.currentURL
     property string sortUrl: changeSortOverlay.selectedSortUrl
-    property bool isSubreddit: url.indexOf("/r/") === 0;
+    property bool isSubreddit: url.indexOf("/r/") === 0
     property var info: null
     objectName: "postsPage"
+    id: postsPage
 
     title: url
 
@@ -23,6 +24,14 @@ ScrollablePage {
 
     Component.onCompleted: {
         refresh();
+    }
+
+    Connections {
+        target: flickable
+        function onContentYChanged() {
+            if (flickable.atYEnd)
+                loadPostsAfter();
+        }
     }
 
     actions {
@@ -104,30 +113,28 @@ ScrollablePage {
     }
 
 
-    CardsListView {
+    CardsLayout {
+        maximumColumnWidth: Units.gridUnit * 40
         //maximumColumnWidth: Units.gridUnit * 40
         //minimumColumnWidth: Units.gridUnit * 20
-        //maximumColumns: 4
+        maximumColumns: 4
 
-        id: postsView
+        Repeater {
 
-        model: ListModel {
-            id: postsModel
-            property string after
-            property string before
-            property bool loadingPosts
-        }
-        delegate: PostCard {
-        }
-        onContentYChanged: {
-            if (atYEnd) {
-                rest.loadPostsAfter(url, model)
+
+            model: ListModel {
+                id: postsModel
+                property string after
+                property string before
+                property bool loadingPosts
+            }
+            delegate: PostCard {
             }
         }
     }
 
     function getPostData(index) {
-        return postsView.model.get(index);
+        return postsModel.get(index);
     }
 
     onInfoChanged: {
@@ -154,7 +161,9 @@ ScrollablePage {
     }
 
     function refresh(forceRefresh = false) {
-        model.clear();
+        root.pageStack.pop(postsPage);
+
+        postsModel.clear();
 
         postsModel.loadingPosts = true;
         refreshing = true;
@@ -175,5 +184,20 @@ ScrollablePage {
         rest.loadPosts(fullUrl, postsModel, null, forceRefresh).then(() => {
             refreshing = postsModel.loadingPosts = false;
         }).then(fetchInfo, fetchInfo);
+    }
+
+    function loadPostsAfter() {
+        console.debug("loadPostsAfter");
+        if (postsModel.loadingPosts)
+            return;
+        let fullUrl = url;
+        if (!Common.endsWith(fullUrl, "/"))
+            fullUrl += "/";
+
+        fullUrl += sortUrl;
+
+
+        rest.loadPostsAfter(fullUrl, postsModel, false).catch(err => console.error(`Error loading next posts: ${err}`));
+
     }
 }

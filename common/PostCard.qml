@@ -15,6 +15,7 @@ Card {
     readonly property bool isActiveSub: subredditURL === root.pageStack.currentItem.url
     property int voteValue: 0
 
+
     banner {
         title: postTitle
         titleLevel: 2
@@ -80,6 +81,8 @@ Card {
 
         ColumnLayout {
             id: delegateLayout
+            width: parent.width
+            height: parent.height
 
 
             RowLayout {
