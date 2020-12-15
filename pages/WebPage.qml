@@ -40,7 +40,5 @@ ScrollablePage {
     }
     Component.onCompleted: {
         view.url = initialURL;
-
-        console.log("URL opened: "+view.url)
     }
 }

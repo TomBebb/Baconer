@@ -9,12 +9,12 @@ Item {
     property var accessTokenExpiry
     property var cache: new Map()
 
-    onAccessTokenChanged: settingsPage.settings.accessToken = accessToken
-    onAccessTokenExpiryChanged: settingsPage.settings.accessTokenExpiry = accessTokenExpiry
+    onAccessTokenChanged: settingsDialog.settings.accessToken = accessToken
+    onAccessTokenExpiryChanged: settingsDialog.settings.accessTokenExpiry = accessTokenExpiry
 
     Component.onCompleted: {
-        accessToken = settingsPage.settings.accessToken;
-        accessTokenExpiry = settingsPage.accessTokenExpiry;
+        accessToken = settingsDialog.settings.accessToken;
+        accessTokenExpiry = settingsDialog.accessTokenExpiry;
 
     }
 
@@ -36,7 +36,7 @@ Item {
 
             for (let [url, data] of cache) {
                 const sinceCachedMs = Date.now() - data.time;
-                if (sinceCachedMs > settingsPage.cacheTimeout * 1000) {
+                if (sinceCachedMs > settingsDialog.cacheTimeout * 1000) {
                     console.debug(`${url} cache timeout`);
                     cache.delete(url);
                 }
@@ -245,7 +245,7 @@ Item {
             for (const subItem of rawSubItems) {
 
                 subItem.isVisible = true;
-                subItem.isFavorite = settingsPage.isFav(subItem.url);
+                subItem.isFavorite = settingsDialog.isFav(subItem.url);
                 subItem.category =  subItem.isFavorite ? qsTr("Favorites") : qsTr("Subreddits");
                 subItem.isSub = true;
 
@@ -256,7 +256,7 @@ Item {
                 return loadMultis(forceRefresh).then(rawMultiItems => {
                     for (const multiItem of rawMultiItems) {
                         multiItem.isVisible = true;
-                        multiItem.isFavorite = settingsPage.isFav(multiItem.url);
+                        multiItem.isFavorite = settingsDialog.isFav(multiItem.url);
                         multiItem.category =  multiItem.isFavorite ? qsTr("Favorites") : qsTr("Multireddits");
                         multiItem.isSub = false;
 

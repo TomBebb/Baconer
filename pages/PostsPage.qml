@@ -37,7 +37,7 @@ ScrollablePage {
                 iconName: "im-user"
                 onTriggered: {
                       if (rest.isLoggedIn) {
-                        settingsPage.logout();
+                        settingsDialog.logout();
                       } else
                         rest.authorize();
 
@@ -56,17 +56,22 @@ ScrollablePage {
                 visible: isSubreddit
             },
             Action {
+                text: "Setting"
+                iconName: "gtk-preferences"
+                onTriggered: root.showSettings()
+            },
+            Action {
                 id: favAction
                 iconName: "favorite"
                 checkable: true
                 text: checked ? qsTr("Unfavorite") : qsTr("Favorite")
-                onCheckedChanged: settingsPage.setFav(url, checked)
+                onCheckedChanged: settingsDialog.setFav(url, checked)
                 visible: isSubreddit
 
                 Component.onCompleted:  updateFav();
 
                 function updateFav() {
-                    checked = settingsPage.isFav(url);
+                    checked = settingsDialog.isFav(url);
                 }
             }
         ]
@@ -90,7 +95,7 @@ ScrollablePage {
 
 
     Connections {
-        target: settingsPage.settings
+        target: settingsDialog.settings
 
         function onChanged() {
             console.debug("Settings changed");

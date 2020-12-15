@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>pages/PostPage.qml</file>
         <file>pages/PostsPage.qml</file>
-        <file>pages/SettingsPage.qml</file>
         <file>common/PostCard.qml</file>
         <file>common/SubredditList.qml</file>
         <file>pages/WebPage.qml</file>
@@ -18,5 +17,6 @@
         <file>urltools.h</file>
         <file>urltools.cpp</file>
         <file>images/reddit.png</file>
+        <file>dialogs/SettingsDialog.qml</file>
     </qresource>
 </RCC>

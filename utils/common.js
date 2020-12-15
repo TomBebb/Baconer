@@ -160,7 +160,7 @@ function genAuthorizeURL(scopes, state){
 
 function chooseImageSource(previewImages) {
 
-    switch (settingsPage.imagePreviewChoiceName) {
+    switch (settingsDialog.imagePreviewChoiceName) {
         case "min":
             return previewImages[0];
         case "max":
@@ -255,7 +255,7 @@ function openLink(url) {
     if (url.indexOf("://") === -1)
         url = "http://" + url;
 
-    if (settingsPage.settings.preferExternalBrowser) {
+    if (settingsDialog.settings.preferExternalBrowser) {
         Qt.openUrlExternally(url);
     } else {
         return openLinkWebView(url);
@@ -284,6 +284,7 @@ function searchValuesFor(obj, txt, caseSensitive=true) {
     }
     return false;
 }
+
 
 function isString(txt) {
     return typeof(txt) === 'string';

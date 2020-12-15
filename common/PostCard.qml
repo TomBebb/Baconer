@@ -157,6 +157,12 @@ Card {
 
         const data = postsPage.getPostData(index);
 
+        const pages = root.pageStack;
+        console.debug(`Pages: ${pages.items}`);
+        const nextItem = pages.lastItem;
+        if (nextItem.className === "PostsPage") {
+            nextItem.postData = data;
+        }
         Common.createComponent("/pages/PostPage.qml", {postData: data})
             .then(page => root.openPage(page))
             .catch(err => console.error(`Error loading post: ${err}`));

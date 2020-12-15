@@ -13,8 +13,6 @@ Kirigami.OverlaySheet {
     onDataChanged: {
         if (!data || !data.name || !data.title || !data.subscribers)
             return;
-
-        console.debug(`data: ${JSON.stringify(data)}`);
         header.text = `${data.url} - ${data.title}`;
         desc.text = data.fullDescription;
         subs.text = qsTr("%1 subscribers").arg(Common.formatNum(data.subscribers))

@@ -1,4 +1,4 @@
-import QtQuick 2.1
+import QtQuick 2.15
 import QtQuick.Layouts 1.2
 import QtQml.Models 2.12
 import QtQuick.Controls 2.15 as Controls
@@ -7,6 +7,7 @@ import org.kde.kirigami 2.13
 import "utils/common.js" as Common
 import "pages"
 import "common"
+import "dialogs"
 import "utils"
 
 ApplicationWindow {
@@ -42,6 +43,11 @@ ApplicationWindow {
         }
     }
 
+    Shortcut {
+        sequence: StandardKey.Cancel
+        onActivated: navDrawer.visible = !navDrawer.visible
+    }
+
     Connections {
         target: subsSearch
         function onAccepted() {
@@ -52,8 +58,8 @@ ApplicationWindow {
     PostsPage    {
         id: postsPage
     }
-    SettingsPage {
-        id: settingsPage
+    SettingsDialog {
+        id: settingsDialog
     }
 
     function reload() {
@@ -63,8 +69,8 @@ ApplicationWindow {
     }
 
     function showSettings() {
-        settingsPage.loadThemes();
-        pageStack.push(settingsPage)
+        settingsDialog.open();
+        settingsDialog.loadThemes();
     }
 
     function openPage(page) {
