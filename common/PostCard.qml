@@ -18,7 +18,7 @@ Card {
 
     banner {
         title: postTitle
-        titleLevel: 2
+        titleLevel: 4
         titleWrapMode: Text.WrapAtWordBoundaryOrAnywhere
         source: previewImage.url ? previewImage.url : ""
     }
@@ -113,15 +113,25 @@ Card {
                     }
 
                 }
-                Controls.Label {
-                    Layout.preferredWidth: label.width
+
+                Row {
                     visible: !isActiveSub
+                    Layout.preferredWidth: label.width
 
-                    text: `[${subreddit}](http://reddit.com/r/${subreddit})`
-                    textFormat: TextEdit.MarkdownText
-                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                    Icon {
+                        source: hasIcon ? subIcon.source : ""
+                        height: label.height
+                        visible: hasIcon
+                    }
 
-                    LinkHandlerConnection {}
+                    Controls.Label {
+
+                        text: `[${subreddit}](http://reddit.com/r/${subreddit})`
+                        textFormat: TextEdit.MarkdownText
+
+                        LinkHandlerConnection {}
+                    }
+
                 }
             }
 

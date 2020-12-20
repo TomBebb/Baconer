@@ -151,12 +151,7 @@ ScrollablePage {
             };
             return Promise.resolve(info);
         } else {
-            let infoUrl = url;
-            if (url.charAt(url.length - 1) == '/')
-                infoUrl = infoUrl.substr(0, infoUrl.length - 1);
-            return rest.getRedditJSON(`${infoUrl}/about`)
-                .then(rawData => info = DataConv.convertSub(rawData.data))
-                .catch(raw => console.log(`info error: ${JSON.stringify(raw)}`));
+            return rest.loadSubInfo(url).then(newInfo => info = newInfo);
         }
     }
 
@@ -182,6 +177,7 @@ ScrollablePage {
         }
 
         rest.loadPosts(fullUrl, postsModel, null, forceRefresh).then(() => {
+            console.debug("Done loading (posts page)");
             refreshing = postsModel.loadingPosts = false;
         }).then(fetchInfo, fetchInfo);
     }

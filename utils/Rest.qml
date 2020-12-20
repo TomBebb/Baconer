@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import "common.js" as Common
-import "dataConverters.js" as DataConverters
+import "dataConverters.js" as DataConv
 import "../utils"
 
 Item {
@@ -183,23 +183,48 @@ Item {
         if (after) {
             params.after = after;
         }
+        const isSub = Common.startsWith(url, "/r/");
+
+        console.debug(`load posts: ${url}`);
 
         return getRedditJSON(url, params, forceRefresh).then(data => {
             if (!after)
                 postsModel.clear();
+
+            const posts = [];
             for (const rawChild of data.data.children) {
-                const child = DataConverters.convertPost(rawChild);
+                const child = DataConv.convertPost(rawChild);
                 child.postIndex = postsModel.count;
-                postsModel.append(child);
+                child.hasIcon = false;
+                child.subIcon = {source: ""};
+                posts.push(child);
             }
 
             postsModel.after = data.data.after
             postsModel.before = data.data.before
 
-            console.debug(postsModel.after);
+            return posts
+        }).then(data => {
+            // load sub icons
+            if (isSub)
+                return data;
 
-            return data
-        }).catch(err => console.error(`Error loading posts: ${JSON.stringiy(err)}`));
+            const postPromises = data.map(postData => {
+                 return loadSubInfo("/r/"+postData.subreddit)
+                     .then(info => {
+                          postData.subIcon = info.itemIcon;
+                          postData.hasIcon = info.itemIcon && Common.isNonEmptyString(info.itemIcon.source);
+                      })
+                     .catch(err => console.error(`Error getting sub icon: ${err}`));
+            });
+            return Promise.all(postPromises).then(postPromises => data);
+        }).then(posts => {
+            for (const post of posts) {
+                postsModel.append(post);
+            }
+            return posts;
+        })
+        .catch(err => console.error(`Error loading posts: ${JSON.stringiy(err)}`));
     }
 
     function loadPostsAfter(url, postsModel, forceRefresh) {
@@ -216,13 +241,22 @@ Item {
 
             for (const rawRoot of children) {
                 for (const rawChild of rawRoot.data.children) {
-                    const modelData = DataConverters.convertComment(rawChild);
+                    const modelData = DataConv.convertComment(rawChild);
                     if (modelData === null)
                         continue;
                     commentsModel.append(modelData);
                 }
             }
         }).then(afterLoadCb, afterLoadCb);
+    }
+    function loadSubInfo(url) {
+        let infoUrl = url;
+        if (url.charAt(url.length - 1) === '/')
+            infoUrl = infoUrl.substr(0, infoUrl.length - 1);
+
+        return getRedditJSON(`${infoUrl}/about`)
+            .then(rawData => DataConv.convertSub(rawData.data))
+            .catch(raw => console.log(`info error: ${raw}`));
     }
 
     function loadDrawerItems(subsModel, forceRefresh) {
@@ -281,7 +315,7 @@ Item {
             const multis = [];
 
             for (const rawChild of rawMultis) {
-                multis.push(DataConverters.convertMulti(rawChild));
+                multis.push(DataConv.convertMulti(rawChild));
             }
 
             return multis;
@@ -295,7 +329,7 @@ Item {
 
             for (const rawChild of data.data.children) {
 
-                subs.push(DataConverters.convertSub(rawChild));
+                subs.push(DataConv.convertSub(rawChild));
             }
 
             return subs;
@@ -306,7 +340,7 @@ Item {
         return getRedditJSON("/subreddits/search", {q: query}).then(data => {
             const subs = [];
             for (const rawChild of data.data.children) {
-                subs.push(DataConverters.convertSub(rawChild));
+                subs.push(DataConv.convertSub(rawChild));
             }
             return subs;
         });

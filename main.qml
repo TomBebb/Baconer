@@ -19,7 +19,6 @@ ApplicationWindow {
         id: rest
     }
 
-
     globalDrawer: GlobalDrawer {
         title:  subsView.searchText ? qsTr("Search results") : (rest.isLoggedIn ? qsTr("My subscriptions") : qsTr("Subreddits"))
         id: navDrawer

@@ -1,7 +1,10 @@
 .import "common.js" as Common
 
-const redditIconPath = "qrc:///images/reddit.png";
-const redditIconSize = 32;
+const redditIcon = {
+    source: "qrc:///images/reddit.png",
+    width: 32,
+    height: 32
+};
 
 function isValidFlair(flairText) {
     if (flairText.length <= 0)
@@ -106,7 +109,8 @@ function convertMulti(rawChild) {
         name: child.name,
         title: child.display_name,
         displayName: child.display_name,
-        url: child.path
+        url: child.path,
+        itemIcon: redditIcon
     };
 
     if (child.icon_img) {
@@ -114,12 +118,6 @@ function convertMulti(rawChild) {
         multiData.itemIcon = {
             source: child.icon_img
         }
-    } else {
-        multiData.itemIcon = {
-            source: redditIconPath,
-            width: redditIconSize,
-            height: redditIconSize
-        };
     }
 
     return multiData;
@@ -139,7 +137,7 @@ function convertSub(rawChild)  {
         submitText: Common.isNonEmptyString(child.submit_text) ? Common.decodeHtml(child.submit_text) : qsTr("Submit post"),
         subscribers: child.subscribers,
         lang: child.lang,
-        itemIcon: {},
+        itemIcon: redditIcon,
         colors: {},
         subscribed: false
     };
@@ -154,12 +152,6 @@ function convertSub(rawChild)  {
             width: child.icon_size[0],
             height: child.icon_size[1]
         }
-    } else {
-        subData.itemIcon = {
-            source: redditIconPath,
-            width: redditIconSize,
-            height: redditIconSize
-        };
     }
 
     return subData;
