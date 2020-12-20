@@ -13,6 +13,8 @@ ScrollablePage {
     property string sortUrl: changeSortOverlay.selectedSortUrl
     property bool isSubreddit: url.indexOf("/r/") === 0
     property var info: null
+    property bool hasHeader: info && info.hasHeader != null ? info.hasHeader : false
+    property var headerImage: hasHeader ? info.headerImage : {}
     objectName: "postsPage"
     id: postsPage
 
@@ -33,6 +35,8 @@ ScrollablePage {
                 loadPostsAfter();
         }
     }
+
+
 
     actions {
         main: Action {
@@ -112,10 +116,23 @@ ScrollablePage {
         }
     }
 
-    RowLayout {
+    ColumnLayout {
         id: layout
         Layout.fillWidth: true
         Layout.fillHeight: true
+
+        Image {
+            property real aspectRatio: sourceSize.width / sourceSize.height
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+            //Layout.preferredWidth: sourceSize.width
+            //Layout.preferredHeight: width / aspectRatio
+            clip: false
+            source: hasHeader ? headerImage.source : ""
+            sourceSize.width: hasHeader ? headerImage.width : 0
+            sourceSize.height: hasHeader ? headerImage.height : 0
+            fillMode: Image.PreserveAspectCrop
+            visible: hasHeader
+        }
 
         CardsListView {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop

@@ -110,8 +110,12 @@ function convertMulti(rawChild) {
         title: child.display_name,
         displayName: child.display_name,
         url: child.path,
-        itemIcon: redditIcon
+        itemIcon: redditIcon,
+        hasHeader: rawChild.hasHeader || false
     };
+
+    if (rawChild.hasHeader)
+        multiData.headerImage = rawChild.headerImage;
 
     if (child.icon_img) {
 
@@ -127,7 +131,7 @@ function convertSub(rawChild)  {
     let child = rawChild;
     if (child.data)
         child = child.data;
-
+    const headerSize = child.header_size;
     const subData = {
         name: child.display_name,
         title: child.title,
@@ -136,11 +140,25 @@ function convertSub(rawChild)  {
         fullDescription: Common.isNonEmptyString(child.description) ? Common.decodeHtml(child.description) : "",
         submitText: Common.isNonEmptyString(child.submit_text) ? Common.decodeHtml(child.submit_text) : qsTr("Submit post"),
         subscribers: child.subscribers,
+        hasHeader: false,
+        headerImage: {},
         lang: child.lang,
         itemIcon: redditIcon,
         colors: {},
         subscribed: false
     };
+
+
+    if (headerSize && headerSize.length === 2 && Common.isNonEmptyString(child.header_img)) {
+        subData.hasHeader = true;
+        subData.headerImage = {
+            source: child.header_img,
+            width: headerSize[0],
+            height: headerSize[1]
+        };
+    }
+
+    console.debug("HEADER: "+JSON.stringify(subData.headerImage));
 
     if (rawChild.user_is_subscriber)
         subData.subscribed = rawChild.user_is_subscriber;

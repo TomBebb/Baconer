@@ -82,7 +82,7 @@ ListView {
             }
             currentIndex = newUrlIndex;
             refreshSubInfo(refreshPosts);
-        }).catch(err => console.error(`Error loading subs: ${JSON.stringify(err)}`));
+        }).catch(err => console.error(`Error loading subs: ${err}`));
     }
 
     function refreshPosts(forceRefresh) {

@@ -12,7 +12,7 @@ Card {
     readonly property real rowEachWidthMult: 0.2
     readonly property bool showImagePreview: previewImage.isValid
     readonly property bool showThumbnail: (!showImagePreview && Common.isNonEmptyString(thumbnail))
-    readonly property bool isActiveSub: root.currentPage.url != null && subredditURL === root.currentPage.url
+    readonly property bool isActiveSub: root.currentPage && root.currentPage.url != null && subredditURL === root.currentPage.url
     property int voteValue: 0
 
 

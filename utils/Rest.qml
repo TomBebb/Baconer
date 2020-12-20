@@ -206,7 +206,7 @@ Item {
                  return loadSubInfo("/r/"+postData.subreddit)
                      .then(info => {
                           postData.subIcon = info.itemIcon;
-                          postData.hasIcon = info.itemIcon && Common.isNonEmptyString(info.itemIcon.source);
+                          postData.hasIcon = info.itemIcon && info.itemIcon.source && Common.isNonEmptyString(info.itemIcon.source);
                       })
                      .catch(err => console.error(`Error getting sub icon: ${err}`));
             });
@@ -305,8 +305,11 @@ Item {
         }).then(items => {
             subsModel.clear();
 
-            for (const item of items)
+            for (const item of items) {
+                console.debug(`Append to subs: ${JSON.stringify(item)}`);
                 subsModel.append(item);
+                        console.debug(`Appended to subs: ${JSON.stringify(item)}`);
+                    }
         });
     }
 
@@ -328,13 +331,17 @@ Item {
             const subs = [];
 
             for (const rawChild of data.data.children) {
+                console.debug("Converting subreddit...");
                 const subData = DataConv.convertSub(rawChild);
+
+                console.debug("Pushing subreddit...");
                 subs.push(subData);
+                                                                    console.debug("Pushing subreddit...");
                 subInfoCache.set(subData.url, subData);
             }
 
             return subs;
-        }).catch(err => `Error loading subs: ${err}`);
+        }).catch(err => console.error(`Error fetching subs: ${err}`));
     }
 
     function searchSubs(query) {
