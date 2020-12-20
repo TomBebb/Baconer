@@ -112,15 +112,19 @@ ScrollablePage {
         }
     }
 
+    RowLayout {
+        id: layout
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
-    CardsLayout {
-        maximumColumnWidth: Units.gridUnit * 40
-        //maximumColumnWidth: Units.gridUnit * 40
-        //minimumColumnWidth: Units.gridUnit * 20
-        maximumColumns: 4
-
-        Repeater {
-
+        CardsListView {
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+            Layout.maximumWidth: Units.gridUnit * 40
+            Layout.fillWidth: true
+            flickableDirection: Flickable.VerticalFlick
+            boundsBehavior: Flickable.StopAtBounds
+            spacing: Units.gridUnit * 0.5
+            implicitHeight: childrenRect.height
 
             model: ListModel {
                 id: postsModel
