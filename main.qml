@@ -11,8 +11,9 @@ import "utils"
 
 ApplicationWindow {
     property bool assumeMobile: height > width * 1.5
+    property Page currentPage: root.pageStack.currentItem
     id: root
-    title: `Baconer - ${pageStack.currentItem.title}`
+    title: `Baconer - ${currentPage.title}`
     property Rest rest: rest
 
     Rest {
@@ -83,7 +84,7 @@ ApplicationWindow {
     }
 
     function isCurrentPage(page) {
-        return page === pageStack.currentItem;
+        return page === currentPage;
     }
 
     Component.onCompleted: pageStack.push(postsPage)

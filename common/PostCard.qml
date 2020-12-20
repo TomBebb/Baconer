@@ -12,7 +12,7 @@ Card {
     readonly property real rowEachWidthMult: 0.2
     readonly property bool showImagePreview: previewImage.isValid
     readonly property bool showThumbnail: (!showImagePreview && Common.isNonEmptyString(thumbnail))
-    readonly property bool isActiveSub: subredditURL === root.pageStack.currentItem.url
+    readonly property bool isActiveSub: root.currentPage.url != null && subredditURL === root.currentPage.url
     property int voteValue: 0
 
 
@@ -170,12 +170,6 @@ Card {
 
         const data = postsPage.getPostData(index);
 
-        const pages = root.pageStack;
-        console.debug(`Pages: ${pages.items}`);
-        const nextItem = pages.lastItem;
-        if (nextItem.className === "PostsPage") {
-            nextItem.postData = data;
-        }
         Common.createComponent("/pages/PostPage.qml", {postData: data})
             .then(page => root.openPage(page))
             .catch(err => console.error(`Error loading post: ${err}`));

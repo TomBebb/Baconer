@@ -55,9 +55,11 @@ ListView {
         }
 
         function onCurrentItemChanged() {
+            console.debug(`Item changed: lastURL=${lastURL}; currentURL=${currentURL}`);
             if (currentURL != lastURL) {
                 navDrawer.close();
-                root.pageStack.pop(root.pageStack.get(0));
+                root.pageStack.clear();
+                root.pageStack.push(postsPage);
                 refreshSubInfo();
                 lastURL = currentURL;
             }

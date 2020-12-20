@@ -15,7 +15,7 @@ ScrollablePage {
 
     Layout.fillWidth: true
 
-    objectName: "postPage"
+    objectName: "PostPage"
 
     actions {
         main: Action {

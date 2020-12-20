@@ -158,7 +158,6 @@ ScrollablePage {
     }
 
     function refresh(forceRefresh = false) {
-        root.pageStack.pop(postsPage);
 
         postsModel.clear();
 
