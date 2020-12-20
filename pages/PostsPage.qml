@@ -119,7 +119,7 @@ ScrollablePage {
 
         CardsListView {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.maximumWidth: Units.gridUnit * 40
+            Layout.maximumWidth: root.pageStack.defaultColumnWidth
             Layout.fillWidth: true
             flickableDirection: Flickable.VerticalFlick
             boundsBehavior: Flickable.StopAtBounds
