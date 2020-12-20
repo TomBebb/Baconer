@@ -1,6 +1,6 @@
 QT += quick webview quickcontrols2
 
-CONFIG += c++11
+CONFIG += c++11 qtquickcompiler
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
