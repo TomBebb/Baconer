@@ -7,7 +7,7 @@ Item {
     id: rest
     property string accessToken
     property var accessTokenExpiry
-    property var cache: new Map()
+    property var subInfoCache: new Map()
 
     onAccessTokenChanged: settingsDialog.settings.accessToken = accessToken
     onAccessTokenExpiryChanged: settingsDialog.settings.accessTokenExpiry = accessTokenExpiry
@@ -33,6 +33,8 @@ Item {
                 console.debug("Log-in token expired");
                 isLoggedIn = false;
             }
+
+            const cache = subInfoCache;
 
             for (let [url, data] of cache) {
                 const sinceCachedMs = Date.now() - data.time;
@@ -61,14 +63,6 @@ Item {
         setDefaultHeaders(xhr);
         xhr.send();
 
-        if (forceRefresh) {
-            cache.delete(url);
-        }
-
-        if (cache.has(url)) {
-            return Promise.resolve(cache.get(url));
-        }
-
         return new Promise(function(resolve, reject) {
             xhr.onreadystatechange = function() {
                 // console.debug(`${url} GET State changed: readyState=${xhr.readyState} status=${xhr.status}`);
@@ -76,7 +70,6 @@ Item {
                     return;
 
                 if (xhr.status >= 200 && xhr.status < 300) {
-                    cache.set(url, xhr.responseText);
                     console.debug(`got: ${url}`);
                     resolve(xhr.responseText);
                 } else {
@@ -249,13 +242,20 @@ Item {
             }
         }).then(afterLoadCb, afterLoadCb);
     }
-    function loadSubInfo(url) {
-        let infoUrl = url;
+    function loadSubInfo(url, forceRefresh = false) {
+        let infoUrl = url + "";
         if (url.charAt(url.length - 1) === '/')
             infoUrl = infoUrl.substr(0, infoUrl.length - 1);
 
+        if (subInfoCache.has(infoUrl)) {
+            return Promise.resolve(subInfoCache.get(infoUrl));
+        }
         return getRedditJSON(`${infoUrl}/about`)
-            .then(rawData => DataConv.convertSub(rawData.data))
+            .then(rawData => {
+                const data = DataConv.convertSub(rawData.data);
+                subInfoCache.set(infoUrl, data);
+                return data;
+             })
             .catch(raw => console.log(`info error: ${raw}`));
     }
 
@@ -328,19 +328,22 @@ Item {
             const subs = [];
 
             for (const rawChild of data.data.children) {
-
-                subs.push(DataConv.convertSub(rawChild));
+                const subData = DataConv.convertSub(rawChild);
+                subs.push(subData);
+                subInfoCache.set(subData.url, subData);
             }
 
             return subs;
-        });
+        }).catch(err => `Error loading subs: ${err}`);
     }
 
     function searchSubs(query) {
         return getRedditJSON("/subreddits/search", {q: query}).then(data => {
             const subs = [];
             for (const rawChild of data.data.children) {
-                subs.push(DataConv.convertSub(rawChild));
+                const subData = DataConv.convertSub(rawChild);
+                subs.push(subData);
+                subInfoCache.set(subData.url, subData);
             }
             return subs;
         });
@@ -358,7 +361,6 @@ Item {
             const view = webPage.webView;
             view.urlChanged.connect(() => {
                 const urlText = view.url.toString();
-                console.debug("Web url: "+urlText);
                 if (Common.startsWith(urlText, Common.redirectURI)) {
                     const urlDetails = Common.parseURL(urlText);
                     const hashArgs = urlDetails.hash;

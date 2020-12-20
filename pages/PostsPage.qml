@@ -151,7 +151,9 @@ ScrollablePage {
             };
             return Promise.resolve(info);
         } else {
-            return rest.loadSubInfo(url).then(newInfo => info = newInfo);
+            return rest.loadSubInfo(url)
+                .then(newInfo => info = newInfo)
+                .catch(err => console.error(`Error getting info: ${err}`));
         }
     }
 
