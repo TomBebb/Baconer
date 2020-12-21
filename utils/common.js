@@ -43,18 +43,9 @@ function fromUtcRaw(utcSecs) {
     return d;
 }
 
-function makeURLFromParts(url, params) {
-    if (params) {
-        if (url.indexOf("?") === -1)
-            url += "?";
-        url += urlUtils.makeUrlParams(params);
-    }
-    return url;
-}
-
 function genAuthorizeURL(scopes, state){
 
-    return makeURLFromParts("https://www.reddit.com/api/v1/authorize", {
+    return urlUtils.generateUrl("https://www.reddit.com/api/v1/authorize", {
         client_id: clientID         ,
         response_type:  "token",
         state: state,

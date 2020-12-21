@@ -20,7 +20,8 @@ public:
     explicit UrlUtils(QObject *parent = nullptr);
 
     Q_INVOKABLE url* parseUrl(const QString&) const;
-    Q_INVOKABLE QString makeUrlParams(const QVariantMap&);
+    Q_INVOKABLE QString combineUrlParams(const QVariantMap&);
+    Q_INVOKABLE QString generateUrl(const QString& baseUrl, const QVariant& params);
 signals:
 };
 

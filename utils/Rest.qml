@@ -55,8 +55,8 @@ Item {
 
     }
 
-    function rawGet(url, params, forceRefresh, timeout) {
-        url = Common.makeURLFromParts(url, params);
+    function rawGet(url, params = {}, forceRefresh, timeout) {
+        url = urlUtils.generateUrl(url, params);
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", url);
@@ -83,8 +83,8 @@ Item {
         });
     }
 
-    function rawPost(url, params, postParams, timeout) {
-        url = Common.makeURLFromParts(url, params);
+    function rawPost(url, params = {}, postParams = {}, timeout) {
+        url = urlUtils.generateUrl(url, params);
 
 
         const xhr = new XMLHttpRequest();
@@ -101,7 +101,7 @@ Item {
 
         console.debug(`POST ${url} w/ ${JSON.stringify(postParams)}`);
 
-        xhr.send(postParams ? urlUtils.makeUrlParams(postParams) : undefined);
+        xhr.send(postParams ? urlUtils.combineUrlParams(postParams) : undefined);
 
         return new Promise(function(resolve, reject) {
             xhr.onreadystatechange = function() {

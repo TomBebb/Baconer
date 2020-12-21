@@ -39,7 +39,7 @@ url* UrlUtils::parseUrl(const QString& pUrl) const {
 
 
 
-QString UrlUtils::makeUrlParams(const QVariantMap& params) {
+QString UrlUtils::combineUrlParams(const QVariantMap& params) {
 
     QString url;
     url.reserve(params.size() * 8);
@@ -49,6 +49,18 @@ QString UrlUtils::makeUrlParams(const QVariantMap& params) {
         url.append('=');
         url.append(QUrl::fromPercentEncoding(value.toString().toUtf8()));
         url.append('&');
+    }
+    return url;
+}
+QString UrlUtils::generateUrl(const QString& baseUrl, const QVariant& rawParams) {
+    if (!rawParams.canConvert<QVariantMap>()) {
+        return baseUrl;
+    }
+    auto params = rawParams.toMap();
+    auto url = baseUrl;
+    if (!url.contains('?')) {
+        url.append('?');
+        url.append(combineUrlParams(params));
     }
     return url;
 }
