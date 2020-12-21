@@ -18,5 +18,6 @@
         <file>urltools.cpp</file>
         <file>images/reddit.png</file>
         <file>dialogs/SettingsDialog.qml</file>
+        <file>common/VideoPlayer.qml</file>
     </qresource>
 </RCC>

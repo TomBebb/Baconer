@@ -21,6 +21,7 @@ function convertPost(rawChild) {
     const previewData = child.preview;
 
     const previewDataImages = previewData ? previewData.images : null;
+    const previewDataVideo = previewData ? previewData.reddit_video_preview : null;
 
 
     let modelData = {
@@ -40,6 +41,7 @@ function convertPost(rawChild) {
         commentCount: child.num_comments,
         previewImages: [],
         previewImage: {isValid: false},
+        previewVideo: {isValid: false},
         flairs: []
     };
 
@@ -80,6 +82,19 @@ function convertPost(rawChild) {
 
         modelData.previewImage.isValid = true;
     }
+    if (previewDataVideo) {
+        modelData.previewVideo = {
+            isValid: true,
+            lowRes: previewDataVideo.scrubber_media_url,
+            highRes: previewDataVideo.fallback_url,
+            isGif: previewDataVideo.is_gif,
+            duration: previewDataVideo.duration,
+            width: previewDataVideo.width,
+            height: previewDataVideo.height
+        }
+        console.debug(JSON.stringify(modelData.previewVideo));
+    }
+
     modelData.numFlairs = modelData.flairs.length;
 
     return modelData;

@@ -10,17 +10,31 @@ Card {
     readonly property int maxPostPreviewLength: 255
     readonly property bool hasContent: Common.isNonEmptyString(postContent)
     readonly property real rowEachWidthMult: 0.2
-    readonly property bool showImagePreview: previewImage.isValid
+    readonly property bool showImagePreview: previewImage.isValid && !showVideoPreview
+    readonly property bool showVideoPreview: previewVideo.isValid
     readonly property bool showThumbnail: (!showImagePreview && Common.isNonEmptyString(thumbnail))
     readonly property bool isActiveSub: root.currentPage && root.currentPage.url != null && subredditURL === root.currentPage.url
     property int voteValue: 0
 
+    Component.onCompleted: {
+        if (!showVideoPreview)
+            return;
+
+
+        if (root.numGifs < 5) {
+            console.debug("Show video!");
+        Common.createComponent("/common/VideoPlayer.qml", {source: previewVideo.highRes}, header)
+            .then(vidEl => console.debug("made video player; source="+vidEl.source));
+            root.numGifs++;
+        }
+    }
 
     banner {
         title: postTitle
         titleLevel: 4
         titleWrapMode: Text.WrapAtWordBoundaryOrAnywhere
         source: previewImage.url ? previewImage.url : ""
+        visible: showImagePreview
     }
     actions: [
         Action {

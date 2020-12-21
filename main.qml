@@ -12,6 +12,7 @@ import "utils"
 ApplicationWindow {
     property bool assumeMobile: height > width * 1.5
     property Page currentPage: root.pageStack.currentItem
+    property int numGifs: 0
     id: root
     title: `Baconer - ${currentPage.title}`
     property Rest rest: rest
@@ -41,6 +42,14 @@ ApplicationWindow {
         SubredditList {
             id: subsView
             Layout.fillHeight: true
+        }
+    }
+
+    Shortcut {
+        sequence: "Ctrl+K"
+        onActivated: {
+            navDrawer.visible = true;
+            subsSearch.focus = true;
         }
     }
 

@@ -328,38 +328,12 @@ function randomString(len = 10) {
     return result;
 }
 
-function resolveComponent(path) {
+function createComponent(path, props={}, parent = root) {
+    const comp = Qt.createComponent(path);
+    const instance = comp.createObject(parent, props);
+
     return new Promise((resolve, reject) => {
-        console.debug(`Creating component: ${path}`);
-        const component = Qt.createComponent(path, Quick.Component.Asynchronous);
-
-        if (component.status === Quick.Component.Ready) {
-           resolve(component);
-        } else {
-           console.debug(`Waiting for ready: ${path}`);
-
-           component.statusChanged.connect(() => {
-                console.debug(`${path} status: ${statusToString(component.status)}`);
-               if (component.status === Quick.Component.Ready) {
-                console.debug(`${path} ready`);
-                   resolve(component);
-               } else if (component.status === Quick.Component.Error) {
-                   reject(`Error loading component: ${component.errorString()}`);
-               } else if (component.status === Quick.Component.Loading) {
-                    console.debug(`${url} loading`);
-               }
-           });
-
-
-        }
-    }).catch(err => console.error("error resolving comp:" +err));
-}
-
-function createComponent(path, props={}) {
-    return resolveComponent(path).then(comp => {
-        console.debug(`Creating object for: ${path} ${comp}`);
-        const obj = comp.createObject(root, props);
-        console.debug("Created object");
-        return obj;
-    }).catch(err => console.error("error making comp: "+err));
+        if (instance == null) reject(`Error creating object for: ${path}`);
+        resolve(instance);
+    });
 }

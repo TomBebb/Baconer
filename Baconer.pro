@@ -1,4 +1,4 @@
-QT += quick webview quickcontrols2
+QT += quick webview quickcontrols2 multimedia multimediawidgets
 
 CONFIG += c++11 qtquickcompiler
 

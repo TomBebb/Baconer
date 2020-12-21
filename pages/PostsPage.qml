@@ -122,10 +122,7 @@ ScrollablePage {
         Layout.fillHeight: true
 
         Image {
-            property real aspectRatio: sourceSize.width / sourceSize.height
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            //Layout.preferredWidth: sourceSize.width
-            //Layout.preferredHeight: width / aspectRatio
+            Layout.alignment: Qt.AlignHCenter
             clip: false
             source: hasHeader ? headerImage.source : ""
             sourceSize.width: hasHeader ? headerImage.width : 0
@@ -135,7 +132,7 @@ ScrollablePage {
         }
 
         CardsListView {
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+            Layout.alignment: Qt.AlignHCenter
             Layout.maximumWidth: root.pageStack.defaultColumnWidth
             Layout.fillWidth: true
             flickableDirection: Flickable.VerticalFlick
