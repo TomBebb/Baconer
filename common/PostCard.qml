@@ -24,7 +24,7 @@ Card {
     }
     actions: [
         Action {
-            text: Common.formatScore(score + voteValue)
+            text: fmtUtils.formatNum(score + voteValue, true)
         },
 
         Action {
@@ -50,7 +50,7 @@ Card {
             }
         },
         Action {
-            text: Common.formatNum(commentCount)
+            text: fmtUtils.formatNum(commentCount)
             iconName: "dialog-messages"
             onTriggered: openPostInfoPage()
             tooltip: qsTr("View comments")

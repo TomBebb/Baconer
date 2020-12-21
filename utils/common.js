@@ -19,24 +19,6 @@ function convertColor(color, isBg) {
     }
 }
 
-function formatNum(num) {
-
-    if (num < 1000)
-        return qsTr("%1").arg(num);
-
-    if (num < 1000000)
-        return qsTr("%L1K").arg(Math.round(num / 1000));
-
-    if (num < 1000000000)
-        return qsTr("%L1M").arg(Math.round(num / 1000000));
-
-    return qsTr("%L1B").arg(Math.round(num / 1000000000));
-}
-
-function formatScore(num) {
-    return formatNum(Math.abs(num), num < 0 ? "-" : "+");
-}
-
 function fromUtcRaw(utcSecs) {
     const d = new Date(0);
     d.setUTCSeconds(utcSecs);

@@ -15,7 +15,7 @@ Kirigami.OverlaySheet {
             return;
         header.text = `${data.url} - ${data.title}`;
         desc.text = data.fullDescription;
-        subs.text = qsTr("%1 subscribers").arg(Common.formatNum(data.subscribers))
+        subs.text = qsTr("%1 subscribers").arg(fmtUtils.formatNum(data.subscribers))
 
         subscribed = data.subscribed;
 

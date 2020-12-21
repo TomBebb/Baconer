@@ -98,7 +98,7 @@ ScrollablePage {
                     ActionToolBar {
                         actions: [
                             Action {
-                                text: Common.formatNum(score)
+                                text: fmtUtils.formatNum(score)
                             },
 
                             Action {
@@ -110,7 +110,7 @@ ScrollablePage {
                                 visible: rest.isLoggedIn
                             },
                             Action {
-                                text: Common.formatNum(commentCount)
+                                text: fmtUtils.formatNum(commentCount)
                                 iconName: "dialog-messages"
                                 tooltip: qsTr("Reply")
                                 visible: rest.isLoggedIn

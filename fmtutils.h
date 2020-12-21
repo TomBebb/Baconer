@@ -16,6 +16,7 @@ public:
     explicit FmtUtils(QObject *parent = nullptr);
 
     Q_INVOKABLE QString pluralize(uint amount, const QString& unit);
+    Q_INVOKABLE QString formatNum(int, bool showSign = false);
 };
 
 #endif // FMTUTILS_H
