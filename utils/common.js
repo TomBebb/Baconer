@@ -1,13 +1,14 @@
 .import QtQuick 2.1 as Quick
 .import org.kde.kirigami 2.13 as Kirigami
 
-const redditRegex = /^(?:https?:\/\/)?(?:old\.|www\.)?reddit.com/;
+const redditRegex = /^(?:https?:\/\/)?(?:old\.|www\.)?reddit\.com/;
 const subRedditRegex = /^\/r\/([a-zA-Z-_]+)\/?/;
 const postRegex = /^\/r\/([a-zA-Z-_]+)\/comments\/([a-zA-Z0-9]+)\/?/;
 const urlHashArgRegex = /(?:\#|&|;)([^=]+)=([^&|;]+)/g;
 const urlArgRegex = /(?:\?|&|;)([^=]+)=([^&|;]+)/g;
 const clientID = "QwuPozK5cW9cwA";
 const redirectURI = "http://locahost:8042/redirect";
+const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|watch\?v=))([a-zA-Z0-9\-_]+)/;
 
 
 function convertColor(color, isBg) {
@@ -237,7 +238,7 @@ function openRedditLink(url) {
             return Promise.resolve({});
         }
 
-        return createComponent("/pages/PostsPage.qml", {url: `/r/${name}`});
+        return createComponent("qrc:///pages/PostsPage.qml", {url: `/r/${name}`});
     }
     const postMatch = redditUrl.match(postRegex);
     return null;
@@ -250,6 +251,12 @@ function openLink(url) {
             root.openPage(page);
             return page;
         }).catch(err => console.error("Error opening reddit link: "+err));
+    }
+
+    const youtubeMatch = url.match(youtubeRegex);
+    if (youtubeMatch && youtubeMatch.length >= 2 && !settingsDialog.settings.preferExternalBrowser) {
+        console.debug("Youtube link, using embed instead...");
+        url = `https://www.youtube.com/embed/${youtubeMatch[1]}`;
     }
 
     if (url.indexOf("://") === -1)
@@ -265,7 +272,7 @@ function openLink(url) {
 }
 
 function openLinkWebView(url) {
-    return createComponent("/pages/WebPage.qml", {initialURL: url}).then(page => {
+    return createComponent("qrc:///pages/WebPage.qml", {initialURL: url}).then(page => {
         console.log("Page made");
         root.openPage(page);
         return page;

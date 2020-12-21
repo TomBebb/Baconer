@@ -28,6 +28,17 @@ ScrollablePage {
         }
     }
 
+    Connections {
+        target: root.pageStack
+        function onPageRemoved(removedPage) {
+            console.debug("Page removed from stack: "+removedPage.title);
+            if (removedPage === page) {
+                console.debug("Page removed");
+                destroy();
+            }
+        }
+    }
+
     contentItem: WebView {
         id: view
         onUrlChanged: {
@@ -41,4 +52,5 @@ ScrollablePage {
     Component.onCompleted: {
         view.url = initialURL;
     }
+    Component.onDestruction: console.debug(`Web page: ${url} destoryed`)
 }

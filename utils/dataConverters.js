@@ -13,7 +13,7 @@ function isValidFlair(flairText) {
     const firstChar = flairText.substr(0, 1);
     const lastChar = flairText.substr(flairText.length - 1, 1);
 
-    return firstChar !== ':' || lastChar !== ':';
+    return firstChar !== ':' && lastChar !== ':';
 }
 
 function convertPost(rawChild) {
@@ -89,10 +89,9 @@ function convertPost(rawChild) {
             highRes: previewDataVideo.fallback_url,
             isGif: previewDataVideo.is_gif,
             duration: previewDataVideo.duration,
-            width: previewDataVideo.width,
-            height: previewDataVideo.height
+            width: previewDataVideo.width | 0,
+            height: previewDataVideo.height | 0
         }
-        console.debug(JSON.stringify(modelData.previewVideo));
     }
 
     modelData.numFlairs = modelData.flairs.length;
@@ -172,8 +171,6 @@ function convertSub(rawChild)  {
             height: headerSize[1]
         };
     }
-
-    console.debug("HEADER: "+JSON.stringify(subData.headerImage));
 
     if (rawChild.user_is_subscriber)
         subData.subscribed = rawChild.user_is_subscriber;

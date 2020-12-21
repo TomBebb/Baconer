@@ -306,10 +306,8 @@ Item {
             subsModel.clear();
 
             for (const item of items) {
-                console.debug(`Append to subs: ${JSON.stringify(item)}`);
                 subsModel.append(item);
-                        console.debug(`Appended to subs: ${JSON.stringify(item)}`);
-                    }
+            }
         });
     }
 
@@ -331,12 +329,7 @@ Item {
             const subs = [];
 
             for (const rawChild of data.data.children) {
-                console.debug("Converting subreddit...");
                 const subData = DataConv.convertSub(rawChild);
-
-                console.debug("Pushing subreddit...");
-                subs.push(subData);
-                                                                    console.debug("Pushing subreddit...");
                 subInfoCache.set(subData.url, subData);
             }
 
@@ -371,7 +364,6 @@ Item {
                 if (Common.startsWith(urlText, Common.redirectURI)) {
                     const urlDetails = Common.parseURL(urlText);
                     const hashArgs = urlDetails.hash;
-                    console.debug(JSON.stringifyhashArgs);
 
                     if (hashArgs.state !== state)
                         console.error(`State mismatch from reddit: ${hashArgs.state} != ${state}`);

@@ -16,29 +16,15 @@ Card {
     readonly property bool isActiveSub: root.currentPage && root.currentPage.url != null && subredditURL === root.currentPage.url
     property int voteValue: 0
 
-    Component.onCompleted: {
-        if (!showVideoPreview)
-            return;
-
-
-        if (root.numGifs < 5) {
-            console.debug("Show video!");
-        Common.createComponent("/common/VideoPlayer.qml", {source: previewVideo.highRes}, header)
-            .then(vidEl => console.debug("made video player; source="+vidEl.source));
-            root.numGifs++;
-        }
-    }
-
     banner {
         title: postTitle
         titleLevel: 4
         titleWrapMode: Text.WrapAtWordBoundaryOrAnywhere
-        source: previewImage.url ? previewImage.url : ""
-        visible: showImagePreview
+        source: showImagePreview && previewImage.url ? previewImage.url : ""
     }
     actions: [
         Action {
-            text: Common.formatNum(score + voteValue)
+            text: Common.formatScore(score + voteValue)
         },
 
         Action {
@@ -81,100 +67,111 @@ Card {
     ]
 
     onClicked: {
+        if (showVideoPreview)
+            return;
         if (url)
             Common.openLink(url);
         else
             openPostInfoPage();
     }
 
-    contentItem: Item {
+
+
+    contentItem: Column {
         id: item
-        implicitWidth: delegateLayout.implicitWidth
-        implicitHeight: delegateLayout.implicitHeight
+        anchors.fill: parent
 
-
-        ColumnLayout {
-            id: delegateLayout
+        Loader {
+            id: videoPlayerLoader
             width: parent.width
-            height: parent.height
+            visible: showVideoPreview
+
+            Component.onCompleted: {
+                if (!showVideoPreview)
+                    return;
 
 
-            RowLayout {
-                Layout.preferredWidth: item.width
+                setSource("qrc:///common/VideoPlayer.qml", {
+                    source: previewVideo.highRes,
+                    sourceWidth: previewVideo.width,
+                    sourceHeight: previewVideo.height,
+                    isGif: previewVideo.isGif
+                });
+            }
+        }
+        RowLayout {
+            width: parent.width
+            Controls.Label {
+                id: label
+                Layout.preferredWidth: parent.width / parent.visibleChildren.count
+                text: qsTr("by %1")
+                    .arg(`[${author}](http://reddit.com/u/${author})`)
+                textFormat: TextEdit.MarkdownText
+
+                LinkHandlerConnection {}
+            }
+
+            Row {
+                Layout.preferredWidth: label.width
+
+
+                Icon {
+                    source: "clock"
+                    height: label.height
+                }
 
                 Controls.Label {
-                    id: label
-                    Layout.preferredWidth: parent.width / parent.visibleChildren.count
-                    text: qsTr("by %1")
-                        .arg(`[${author}](http://reddit.com/u/${author})`)
+
+                    text: qsTr("%1 ago").arg(Common.timeSince(date))
+                }
+
+            }
+
+            Row {
+                visible: !isActiveSub
+                Layout.preferredWidth: label.width
+
+                Icon {
+                    source: hasIcon ? subIcon.source : ""
+                    height: label.height
+                    visible: hasIcon
+                }
+
+                Controls.Label {
+
+                    text: `[${subreddit}](http://reddit.com/r/${subreddit})`
                     textFormat: TextEdit.MarkdownText
 
                     LinkHandlerConnection {}
                 }
 
-                Row {
-                    Layout.preferredWidth: label.width
-
-
-                    Icon {
-                        source: "clock"
-                        height: label.height
-                    }
-
-                    Controls.Label {
-
-                        text: qsTr("%1 ago").arg(Common.timeSince(date))
-                    }
-
-                }
-
-                Row {
-                    visible: !isActiveSub
-                    Layout.preferredWidth: label.width
-
-                    Icon {
-                        source: hasIcon ? subIcon.source : ""
-                        height: label.height
-                        visible: hasIcon
-                    }
-
-                    Controls.Label {
-
-                        text: `[${subreddit}](http://reddit.com/r/${subreddit})`
-                        textFormat: TextEdit.MarkdownText
-
-                        LinkHandlerConnection {}
-                    }
-
-                }
             }
+        }
 
 
-            Controls.Label {
-                Layout.fillWidth: true
-                Layout.preferredWidth:  item.width
-                textFormat: TextEdit.MarkdownText
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                text: postContent
-                visible: hasContent
+        Controls.Label {
+            width: item.width
+            textFormat: TextEdit.MarkdownText
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            text: postContent
+            visible: hasContent
 
-                LinkHandlerConnection {}
-            }
-            Controls.Label {
-                font.bold: true
-                visible: false
+            LinkHandlerConnection {}
+        }
+        Controls.Label {
+            textFormat: TextEdit.MarkdownText
 
-                Component.onCompleted: {
-                    if (flairs.count > 0)
-                        visible = true;
-                    let newText = "";
-                    for (let i = 0; i < flairs.count; i++) {
-                        if (i > 0)
-                            newText += ", ";
-                        newText += flairs.get(i).flairText;
-                    }
-                     text = newText;
+            Component.onCompleted: {
+                if (flairs.count > 0)
+                    visible = true;
+                let newText = "";
+                for (let i = 0; i < flairs.count; i++) {
+                    if (i > 0)
+                        newText += ", ";
+                    const flairText = flairs.get(i).flairText;
+                    newText += `**${flairText}**`;
                 }
+                 text = newText;
             }
         }
     }

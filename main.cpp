@@ -5,6 +5,7 @@
 #include <iostream>
 #include <QQmlContext>
 #include <QQuickStyle>
+#include <QtWebView>
 
 #include "styletools.h"
 
@@ -18,8 +19,11 @@ int main(int argc, char *argv[])
     app.setOrganizationDomain("org.baconer");
     app.setApplicationName("Baconer Reddit Client");
 
+    QtWebView::initialize();
+
 
     QQmlApplicationEngine engine;
+
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 
     auto styleTools = new StyleTools(nullptr);

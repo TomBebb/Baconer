@@ -1,23 +1,57 @@
 import QtQuick 2.0
-import QtMultimedia 5.15
+import QtMultimedia 5.12
+import org.kde.kirigami 2.13
 
-Video {
-    anchors.fill: parent
-    id: video
-    width : parent.width
-    height : parent.height
+Column {
+    property int sourceWidth
+    property int sourceHeight
+    property bool isGif: false
+    property alias source: video.source
+    //anchors.fill: parent
+    width: parent.width
+    height: childrenRect.height
+    Video {
+        id: video
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            video.play()
-        }
+        autoLoad: true
+        autoPlay: isGif
+        clip: true
+
+
+        loops: isGif ? MediaPlayer.Infinite : 1
+        muted: isGif
+
+        fillMode: VideoOutput.PreserveAspectCrop
+
+
+        width: parent.width
+        height: width * (sourceHeight / sourceWidth)
+
+        anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    focus: true
-    Keys.onSpacePressed: video.playbackState == MediaPlayer.PlayingState ? video.pause() : video.play()
-    Keys.onLeftPressed: video.seek(video.position - 5000)
-    Keys.onRightPressed: video.seek(video.position + 5000)
-    onPlaybackStateChanged:
-        console.debug(`Playback state for vid: ${playbackState}`);
+    ActionToolBar {
+        width: parent.width
+        actions: [
+            Action {
+                text: "Pause"
+                iconName: "media-playback-pause"
+                visible: video.playbackState === MediaPlayer.PlayingState
+                onTriggered: video.pause()
+            },
+            Action {
+                text: video.playbackState === MediaPlayer.PausedState ? "Resume" : "Start"
+                iconName: "media-playback-start"
+                visible: video.playbackState !== MediaPlayer.PlayingState
+                onTriggered: video.play()
+            },
+            Action {
+                text: video.muted ? "" : "Mute"
+                iconName: video.muted ? "audio-volume-high" : "audio-volume-muted"
+                visible: video.hasAudio
+                onTriggered: video.muted = !video.muted
+            }
+
+        ]
+    }
 }
