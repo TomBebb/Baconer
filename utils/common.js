@@ -4,8 +4,6 @@
 const redditRegex = /^(?:https?:\/\/)?(?:old\.|www\.)?reddit\.com/;
 const subRedditRegex = /^\/r\/([a-zA-Z-_]+)\/?/;
 const postRegex = /^\/r\/([a-zA-Z-_]+)\/comments\/([a-zA-Z0-9]+)\/?/;
-const urlHashArgRegex = /(?:\#|&|;)([^=]+)=([^&|;]+)/g;
-const urlArgRegex = /(?:\?|&|;)([^=]+)=([^&|;]+)/g;
 const clientID = "QwuPozK5cW9cwA";
 const redirectURI = "http://locahost:8042/redirect";
 const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|watch\?v=))([a-zA-Z0-9\-_]+)/;
@@ -45,19 +43,11 @@ function fromUtcRaw(utcSecs) {
     return d;
 }
 
-function makeURLParams(params) {
-    let url = "";
-    for (let key of Object.keys(params)) {
-        url += `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}&`;
-    }
-    return url;
-}
-
 function makeURLFromParts(url, params) {
     if (params) {
         if (url.indexOf("?") === -1)
             url += "?";
-        url += makeURLParams(params);
+        url += urlUtils.makeUrlParams(params);
     }
     return url;
 }

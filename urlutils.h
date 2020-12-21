@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QUrl>
+#include <QVariantMap>
 
 #include "url.h"
 
@@ -17,10 +18,9 @@ public:
         return instance;
     }
     explicit UrlUtils(QObject *parent = nullptr);
-public slots:
 
-
-    url* parseUrl(const QString&) const;
+    Q_INVOKABLE url* parseUrl(const QString&) const;
+    Q_INVOKABLE QString makeUrlParams(const QVariantMap&);
 signals:
 };
 

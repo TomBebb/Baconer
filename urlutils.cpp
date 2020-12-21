@@ -1,6 +1,7 @@
 #include "urlutils.h"
 #include <QDebug>
 #include <QRegularExpression>
+#include <QUrl>
 
 UrlUtils::UrlUtils(QObject *parent) : QObject(parent)
 {
@@ -34,4 +35,20 @@ url* UrlUtils::parseUrl(const QString& pUrl) const {
     }
 
     return new url(pUrl, urlNoArgs, args, hashArgs);
+}
+
+
+
+QString UrlUtils::makeUrlParams(const QVariantMap& params) {
+
+    QString url;
+    url.reserve(params.size() * 8);
+    for (const auto &name: params.keys()) {
+        const auto& value = params[name];
+        url.append(QUrl::fromPercentEncoding(name.toUtf8()));
+        url.append('=');
+        url.append(QUrl::fromPercentEncoding(value.toString().toUtf8()));
+        url.append('&');
+    }
+    return url;
 }

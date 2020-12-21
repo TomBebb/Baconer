@@ -101,7 +101,7 @@ Item {
 
         console.debug(`POST ${url} w/ ${JSON.stringify(postParams)}`);
 
-        xhr.send(postParams ? Common.makeURLParams(postParams) : undefined);
+        xhr.send(postParams ? urlUtils.makeUrlParams(postParams) : undefined);
 
         return new Promise(function(resolve, reject) {
             xhr.onreadystatechange = function() {
