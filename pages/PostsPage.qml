@@ -147,6 +147,7 @@ ScrollablePage {
                 property bool loadingPosts
             }
             delegate: PostCard {
+                isSub: isSubreddit
             }
         }
     }

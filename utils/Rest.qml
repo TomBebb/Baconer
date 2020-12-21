@@ -24,7 +24,7 @@ Item {
     property string baseURL: isLoggedIn ? "https://oauth.reddit.com" : "https://api.reddit.com";
 
     Timer {
-        interval: 1000
+        interval: 1000 * 60 // every min
         running: true
         repeat: true
         onTriggered: {
@@ -188,8 +188,6 @@ Item {
             for (const rawChild of data.data.children) {
                 const child = DataConv.convertPost(rawChild);
                 child.postIndex = postsModel.count;
-                child.hasIcon = false;
-                child.subIcon = {source: ""};
                 posts.push(child);
             }
 
@@ -197,20 +195,6 @@ Item {
             postsModel.before = data.data.before
 
             return posts
-        }).then(data => {
-            // load sub icons
-            if (isSub)
-                return data;
-
-            const postPromises = data.map(postData => {
-                 return loadSubInfo("/r/"+postData.subreddit)
-                     .then(info => {
-                          postData.subIcon = info.itemIcon;
-                          postData.hasIcon = info.itemIcon && info.itemIcon.source && stringUtils.isNonEmptyString(info.itemIcon.source);
-                      })
-                     .catch(err => console.error(`Error getting sub icon: ${err}`));
-            });
-            return Promise.all(postPromises).then(postPromises => data);
         }).then(posts => {
             for (const post of posts) {
                 postsModel.append(post);

@@ -6,6 +6,11 @@ import "../utils/common.js" as Common
 
 Card {
     id: postCard
+    property bool hasIcon: false
+    property var subIcon: ({})
+
+    onSubIconChanged: console.debug(`${subredditURL} => ${JSON.stringify(subIcon)}`)
+    property bool isSub: false
     readonly property string subredditURL: `/r/${subreddit}`
     readonly property int maxPostPreviewLength: 255
     readonly property bool hasContent: stringUtils.isNonEmptyString(postContent)
@@ -14,7 +19,22 @@ Card {
     readonly property bool showVideoPreview: previewVideo.isValid
     readonly property bool showThumbnail: (!showImagePreview && stringUtils.isNonEmptyString(thumbnail))
     readonly property bool isActiveSub: root.currentPage && root.currentPage.url != null && subredditURL === root.currentPage.url
+
     property int voteValue: 0
+
+    Component.onCompleted: {
+        if (isSub)
+            return;
+
+        const post = postCard;
+
+        rest.loadSubInfo("/r/"+subreddit).then(info => {
+            if (!info.itemIcon)
+                return;
+            post.subIcon = info.itemIcon;
+            post.hasIcon = info.itemIcon && info.itemIcon.source;
+        }).catch(err => console.error(`Error getting sub icon: ${err}; postCard = ${post}`));
+    }
 
     banner {
         title: postTitle
@@ -134,6 +154,7 @@ Card {
                 Icon {
                     source: hasIcon ? subIcon.source : ""
                     height: label.height
+                    width: height
                     visible: hasIcon
                 }
 
