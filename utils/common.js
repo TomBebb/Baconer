@@ -67,35 +67,31 @@ function chooseImageSource(previewImages) {
     return previewImages[previewImages.length - 1];
 }
 
-function pluralize(amount, unit) {
-    return qsTr("%L1 %2").arg(amount | 0).arg(unit);
-}
-
 function timeSince(date) {
     const seconds = Math.floor((Date.now() - date) / 1000);
     let interval = seconds / 31536000;
 
     if (interval > 1) {
-        return pluralize(interval, "years");
+        return fmtUtils.pluralize(interval, "year");
     }
     interval = seconds / 2592000;
     if (interval > 1) {
-        return pluralize(interval, "months");
+        return fmtUtils.pluralize(interval, "month");
     }
     interval = seconds / 86400;
     if (interval > 1) {
-        return pluralize(interval, "days");
+        return fmtUtils.pluralize(interval, "day");
     }
     interval = seconds / 3600;
     if (interval > 1) {
-        return pluralize(interval, "hours");
+        return fmtUtils.pluralize(interval, "hour");
     }
     interval = seconds / 60;
     if (interval > 1) {
-        return pluralize(interval, "mins");
+        return fmtUtils.pluralize(interval, "min");
     }
 
-    return pluralize(interval, "secs");
+    return fmtUtils.pluralize(interval, "sec");
 }
 
 function openRedditLink(url) {

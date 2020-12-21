@@ -7,6 +7,7 @@
 #include <QQuickStyle>
 #include <QtWebView>
 
+#include "fmtutils.h"
 #include "styletools.h"
 #include "stringutils.h"
 #include "url.h"
@@ -30,6 +31,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     auto& stringUtils = StringUtils::getInstance();
+    auto& fmtUtils = FmtUtils::getInstance();
     auto& urlUtils = UrlUtils::getInstance();
     auto& styleTools = StyleTools::getInstance();
 
@@ -44,6 +46,7 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
 
     engine.rootContext()->setContextProperty("styleTools", &styleTools);
+    engine.rootContext()->setContextProperty("fmtUtils", &fmtUtils);
     engine.rootContext()->setContextProperty("stringUtils", &stringUtils);
     engine.rootContext()->setContextProperty("urlUtils", &urlUtils);
 
