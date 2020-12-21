@@ -2,22 +2,25 @@
 #include <QQuickStyle>
 #include <QSettings>
 #include <iostream>
+#include <QDebug>
+#include <QRegularExpression>
+
 
 StyleTools::StyleTools(QObject *parent) : QObject(parent)
 {
-
+    qInfo() << "StyleTools created";
 }
 
 void StyleTools::checkTheme()
 {
     const auto theme = getTheme();
-    std::cout << "Theme loaded: " << theme.toStdString() << std::endl;
+    qInfo() << "Theme loaded: " << theme << endl;
     QQuickStyle::setStyle(theme);
 }
 
 void StyleTools::setTheme(QString styleName)
 {
-    std::cout << "Theme saved: " << styleName.toStdString() << std::endl;
+    qInfo() << "Theme saved: " << styleName << endl;
     QSettings settings;
     settings.setValue("theme", QVariant(styleName));
     themeName = styleName;
@@ -27,9 +30,10 @@ QString StyleTools::getTheme()
 {
     if (themeName.length())
         return themeName;
+
     QSettings settings;
     QString def = "Material";
-    QString themeValue = settings.value("theme", QVariant(def)).toString();
+    QString themeValue = settings.value("theme", def).toString();
     if (themeValue.length() == 0) {
         themeValue = def;
     }
@@ -38,5 +42,6 @@ QString StyleTools::getTheme()
 
 QStringList StyleTools::getThemes()
 {
-    return QQuickStyle::availableStyles();
+    return QQuickStyle::availableStyles()
+        .filter(QRegularExpression("^[A-Z][a-z]+$"));
 }

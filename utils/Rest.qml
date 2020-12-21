@@ -176,7 +176,7 @@ Item {
         if (after) {
             params.after = after;
         }
-        const isSub = Common.startsWith(url, "/r/");
+        const isSub = stringUtils.startsWith(url, "/r/");
 
         console.debug(`load posts: ${url}`);
 
@@ -206,7 +206,7 @@ Item {
                  return loadSubInfo("/r/"+postData.subreddit)
                      .then(info => {
                           postData.subIcon = info.itemIcon;
-                          postData.hasIcon = info.itemIcon && info.itemIcon.source && Common.isNonEmptyString(info.itemIcon.source);
+                          postData.hasIcon = info.itemIcon && info.itemIcon.source && stringUtils.isNonEmptyString(info.itemIcon.source);
                       })
                      .catch(err => console.error(`Error getting sub icon: ${err}`));
             });
@@ -350,7 +350,7 @@ Item {
     }
 
     function authorize(scopes){
-        const state = Common.randomString();
+        const state = stringUtils.randomString();
         scopes = [
             "identity", "edit", "flair", "history", "mysubreddits", "privatemessages", "read", "report", "save", "submit",
             "subscribe", "vote", "wikiread"
@@ -361,7 +361,7 @@ Item {
             const view = webPage.webView;
             view.urlChanged.connect(() => {
                 const urlText = view.url.toString();
-                if (Common.startsWith(urlText, Common.redirectURI)) {
+                if (stringUtils.startsWith(urlText, Common.redirectURI)) {
                     const urlDetails = Common.parseURL(urlText);
                     const hashArgs = urlDetails.hash;
 

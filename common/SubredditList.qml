@@ -31,13 +31,13 @@ ListView {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    model: Common.isNonEmptyString(searchText) ? searchModel : subsModel
+    model: stringUtils.isNonEmptyString(searchText) ? searchModel : subsModel
     clip: true
     flickableDirection: Flickable.VerticalFlick
     boundsBehavior: Flickable.StopAtBounds
 
     delegate: Kirigami.BasicListItem {
-        label: Common.isFrontpage(this) ? title: `${title} (${url})`
+        label: url == "/" ? title: `${title} (${url})`
         subtitle: description || ""
         visible: isVisible
         icon : itemIcon ? itemIcon.source: ""
@@ -99,7 +99,7 @@ ListView {
     }
 
     onSearchTextChanged:  {
-        if (!Common.isNonEmptyString(searchText)) {
+        if (!stringUtils.isNonEmptyString(searchText)) {
             awaitingSearchData = false;
             return;
         }

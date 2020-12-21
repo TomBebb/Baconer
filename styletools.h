@@ -9,6 +9,10 @@ class StyleTools : public QObject
 private:
     QString themeName;
 public:
+    static StyleTools& getInstance() {
+        static StyleTools instance;
+        return instance;
+    }
     explicit StyleTools(QObject *parent = nullptr);
     void checkTheme();
 

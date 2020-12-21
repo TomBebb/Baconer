@@ -9,7 +9,7 @@ ScrollablePage {
     id: page
     property var postData
     property var commentsData
-    readonly property bool hasContent: Common.isNonEmptyString(postData.postContent)
+    readonly property bool hasContent: stringUtils.isNonEmptyString(postData.postContent)
     property bool loadingComments: false
     property int voteValue: 0
 
@@ -51,7 +51,7 @@ ScrollablePage {
             textFormat: TextEdit.MarkdownText
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             text: postData.postContent
-            visible: Common.isNonEmptyString(text)
+            visible: stringUtils.isNonEmptyString(text)
 
             LinkHandlerConnection {
 
@@ -83,7 +83,7 @@ ScrollablePage {
                     Controls.Label {
                         id: commentText
                         color:  commentItem.textColor
-                        text: Common.decodeHtml(body)
+                        text: stringUtils.decodeHtml(body)
                         textFormat: TextEdit.MarkdownText
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                         onLinkActivated: Common.openLink(url);

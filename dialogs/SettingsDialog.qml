@@ -65,10 +65,7 @@ Dialog {
 
     function loadThemes() {
         console.debug(`load themes`);
-        const rawThemes = styleTools.getThemes();
-
-        var themesModel  = rawThemes.filter(raw => !Common.isLowerCase(Common.charAt(raw, 0)));
-        themeInput.model = themesModel
+        themeInput.model = styleTools.getThemes();
         const theme = styleTools.getTheme();
         console.debug(`current theme: ${theme}`);
         themeInput.currentIndex = themesModel.indexOf(theme);

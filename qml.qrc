@@ -13,11 +13,12 @@
         <file>common/LinkHandlerConnection.qml</file>
         <file>overlays/SubInfoOverlay.qml</file>
         <file>utils/dataConverters.js</file>
-        <file>pages/LoginScopesPage.qml</file>
         <file>urltools.h</file>
         <file>urltools.cpp</file>
         <file>images/reddit.png</file>
         <file>dialogs/SettingsDialog.qml</file>
         <file>common/VideoPlayer.qml</file>
+        <file>stringutils.h</file>
+        <file>stringutils.cpp</file>
     </qresource>
 </RCC>

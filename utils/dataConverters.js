@@ -36,8 +36,8 @@ function convertPost(rawChild) {
         score: child.score,
         ups: child.ups,
         downs: child.downs,
-        thumbnail: Common.decodeHtml(child.thumbnail),
-        url: child.url_overridden_by_dest ? Common.decodeHtml(child.url_overridden_by_dest): "",
+        thumbnail: stringUtils.decodeHtml(child.thumbnail),
+        url: child.url_overridden_by_dest ? stringUtils.decodeHtml(child.url_overridden_by_dest): "",
         commentCount: child.num_comments,
         previewImages: [],
         previewImage: {isValid: false},
@@ -75,7 +75,7 @@ function convertPost(rawChild) {
             images.push(rawImageData.source);
 
             for (let resData of images)
-                resData.url = Common.decodeHtml(resData.url)
+                resData.url = stringUtils.decodeHtml(resData.url)
             return images;
         });
         modelData.previewImage = Common.chooseImageSource(previewImages[0]);
@@ -150,9 +150,9 @@ function convertSub(rawChild)  {
         name: child.display_name,
         title: child.title,
         url: child.url,
-        description: Common.tidyDescription(child.public_description),
-        fullDescription: Common.isNonEmptyString(child.description) ? Common.decodeHtml(child.description) : "",
-        submitText: Common.isNonEmptyString(child.submit_text) ? Common.decodeHtml(child.submit_text) : qsTr("Submit post"),
+        description: stringUtils.tidyDesc(child.public_description),
+        fullDescription: stringUtils.decodeHtml(child.description),
+        submitText: stringUtils.isNonEmptyString(child.submit_text) ? stringUtils.decodeHtml(child.submit_text) : qsTr("Submit post"),
         subscribers: child.subscribers,
         hasHeader: false,
         headerImage: {},
@@ -163,7 +163,7 @@ function convertSub(rawChild)  {
     };
 
 
-    if (headerSize && headerSize.length === 2 && Common.isNonEmptyString(child.header_img)) {
+    if (headerSize && headerSize.length === 2 && stringUtils.isNonEmptyString(child.header_img)) {
         subData.hasHeader = true;
         subData.headerImage = {
             source: child.header_img,

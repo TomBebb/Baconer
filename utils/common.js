@@ -52,60 +52,6 @@ function parseURL(url) {
 
 }
 
-function nodeToStr(node) {
-    if (node.id && node.id.length > 0)
-        return node.id;
-    if (node.objectName && node.objectName.length > 0)
-        return node.objectName;
-
-    return "????";
-}
-
-function setAll(node, field, value) {
-
-    forAllIn(node, obj => {
-        const preValue = obj[field];
-        if (preValue !== null && preValue !== undefined)
-            obj[field] = value;
-    });
-}
-
-function getPage(node) {
-    console.debug(`find page for: ${nodeToStr(node)}`);
-    while (node && !(node instanceof Kirigami.Page)) {
-        console.debug(`finding page for: ${nodeToStr(node)}`);
-        node = node.parent;
-    }
-    return node;
-}
-function decodeHtml(text) {
-    if (typeof text !== "string")
-        throw `Invalid  'decodeHtml'param ${text}`;
-    return text.replace("&amp;", "&")
-        .replace("&lt;", "<")
-        .replace("&gt;", ">");
-}
-
-function forAllIn(obj, func) {
-    const objectsToProcess = [obj];
-
-    while (objectsToProcess.length > 0) {
-        const curr = objectsToProcess.pop();
-        if (typeof curr !== "object")
-            continue;
-
-        func(curr);
-
-        if (curr.contentItem)
-            objectsToProcess.push(curr.contentItem);
-
-        if (curr.children && curr.children.length > 0)
-            for (let i = 0; i < curr.children.length; i++) {
-                objectsToProcess.push(curr.children[i]);
-            }
-    }
-}
-
 function formatNum(num) {
 
     if (num < 1000)
@@ -202,29 +148,6 @@ function timeSince(date) {
     return pluralize(interval, "secs");
 }
 
-function charAt(text, index) {
-    if (typeof text !== "string")
-        throw `charAt expects text, got ${typeof text}`;
-    if (typeof index !== "number")
-        throw "charAt expects num";
-    return text.substr(index, 1);
-}
-function isLowerCase(char) {
-    if (typeof char !== "string")
-        throw `isLowerCase expects text, got ${typeof text}`;
-    return char.toLowerCase() === char;
-}
-function isUpperCase(char) {
-    return !isLowerCase(char);
-}
-
-function startsWith(text, sub) {
-    return text.indexOf(sub) === 0;
-}
-function endsWith(text, sub) {
-    return text.indexOf(sub, text.length - sub.length) !== -1;
-}
-
 function openRedditLink(url) {
     const redditUrl = url.replace(redditRegex, "");
     const subRedditMatch = redditUrl.match(subRedditRegex);
@@ -292,55 +215,12 @@ function searchValuesFor(obj, txt, caseSensitive=true) {
     return false;
 }
 
-
-function isString(txt) {
-    return typeof(txt) === 'string';
-}
-function isNonEmptyString(txt) {
-    return isString(txt) && txt.length > 0;
-}
-
-function tidyDescription(text, maxLength = 255) {
-    text = decodeHtml(text);
-    const newlines = /[\r\n]/;
-    const newlineIndex = text.search(newlines);
-    if (newlineIndex !== -1)
-        text = text.substr(0, newlineIndex);
-
-
-    if (text.length > maxLength)
-        text = text.substr(0, maxLength - 3) + "...";
-    return text;
-}
-
-function isFrontpage(data) {
-    return data.url === "/";
-}
-
-function statusToString(status) {
-    switch(status) {
-        case Quick.Component.Null: return "null";
-        case Quick.Component.Ready: return "ready";
-        case Quick.Component.Loading: return "loading";
-        case Quick.Component.Error: return "error";
-    }
-    return "???";
-}
-
-function randomString(len = 10) {
-    let result = "";
-    const chars = "abcdefghijklmnopqrstuvqxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    for (let i  = 0; i < len; i++)
-        result += charAt(chars, Math.floor(chars.length * Math.random()));
-    return result;
-}
-
 function createComponent(path, props={}, parent = root) {
     const comp = Qt.createComponent(path);
     const instance = comp.createObject(parent, props);
 
     return new Promise((resolve, reject) => {
-        if (instance == null) reject(`Error creating object for: ${path}`);
+        if (instance === null) reject(`Error creating object for: ${path}`);
         resolve(instance);
     });
 }

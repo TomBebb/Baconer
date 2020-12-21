@@ -8,11 +8,11 @@ Card {
     id: postCard
     readonly property string subredditURL: `/r/${subreddit}`
     readonly property int maxPostPreviewLength: 255
-    readonly property bool hasContent: Common.isNonEmptyString(postContent)
+    readonly property bool hasContent: stringUtils.isNonEmptyString(postContent)
     readonly property real rowEachWidthMult: 0.2
     readonly property bool showImagePreview: previewImage.isValid && !showVideoPreview
     readonly property bool showVideoPreview: previewVideo.isValid
-    readonly property bool showThumbnail: (!showImagePreview && Common.isNonEmptyString(thumbnail))
+    readonly property bool showThumbnail: (!showImagePreview && stringUtils.isNonEmptyString(thumbnail))
     readonly property bool isActiveSub: root.currentPage && root.currentPage.url != null && subredditURL === root.currentPage.url
     property int voteValue: 0
 

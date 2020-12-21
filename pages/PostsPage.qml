@@ -183,7 +183,13 @@ ScrollablePage {
         refreshing = true;
 
         let fullUrl = url;
-        if (!Common.endsWith(fullUrl, "/"))
+        console.debug(`StyleTools: ${styleTools}`);
+        console.debug(`StyleTools theme: ` + styleTools.getTheme());
+        console.debug(`StringUtils: ${stringUtils}`);
+        //console.debug(`StringUtils: ${Object.fields(StringUtils).concat(',')}`);
+        console.debug(`stringUtils.endsWith: ${stringUtils.endsWith}`);
+        console.debug(`stringUtils.endsWith type: ${typeof stringUtils.endsWith}`);
+        if (!stringUtils.endsWith(fullUrl, "/"))
             fullUrl += "/";
 
         fullUrl += sortUrl;
@@ -206,7 +212,7 @@ ScrollablePage {
         if (postsModel.loadingPosts)
             return;
         let fullUrl = url;
-        if (!Common.endsWith(fullUrl, "/"))
+        if (!stringUtils.endsWith(fullUrl, "/"))
             fullUrl += "/";
 
         fullUrl += sortUrl;
