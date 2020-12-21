@@ -48,34 +48,6 @@ function chooseImageSource(previewImages) {
     }
     return previewImages[previewImages.length - 1];
 }
-
-function timeSince(date) {
-    const seconds = Math.floor((Date.now() - date) / 1000);
-    let interval = seconds / 31536000;
-
-    if (interval > 1) {
-        return fmtUtils.pluralize(interval, "year");
-    }
-    interval = seconds / 2592000;
-    if (interval > 1) {
-        return fmtUtils.pluralize(interval, "month");
-    }
-    interval = seconds / 86400;
-    if (interval > 1) {
-        return fmtUtils.pluralize(interval, "day");
-    }
-    interval = seconds / 3600;
-    if (interval > 1) {
-        return fmtUtils.pluralize(interval, "hour");
-    }
-    interval = seconds / 60;
-    if (interval > 1) {
-        return fmtUtils.pluralize(interval, "min");
-    }
-
-    return fmtUtils.pluralize(interval, "sec");
-}
-
 function openRedditLink(url) {
     const redditUrl = url.replace(redditRegex, "");
     const subRedditMatch = redditUrl.match(subRedditRegex);

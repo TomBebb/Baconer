@@ -12,6 +12,7 @@
 #include "stringutils.h"
 #include "url.h"
 #include "urlutils.h"
+#include "miscutils.h"
 
 
 int main(int argc, char *argv[])
@@ -33,6 +34,7 @@ int main(int argc, char *argv[])
     auto& stringUtils = StringUtils::getInstance();
     auto& fmtUtils = FmtUtils::getInstance();
     auto& urlUtils = UrlUtils::getInstance();
+    auto& miscUtils = MiscUtils::getInstance();
     auto& styleTools = StyleTools::getInstance();
 
     styleTools.checkTheme();
@@ -48,6 +50,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("styleTools", &styleTools);
     engine.rootContext()->setContextProperty("fmtUtils", &fmtUtils);
     engine.rootContext()->setContextProperty("stringUtils", &stringUtils);
+    engine.rootContext()->setContextProperty("miscUtils", &miscUtils);
     engine.rootContext()->setContextProperty("urlUtils", &urlUtils);
 
     engine.load(url);

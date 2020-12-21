@@ -90,7 +90,7 @@ ScrollablePage {
                         width: parent.width
                     }
                     Controls.Label {
-                        text: `${Common.timeSince(date)} ago`
+                        text: fmtUtils.formatNum(date)
                         color: Theme.disabledTextColor
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                         width: parent.width

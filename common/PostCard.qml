@@ -122,7 +122,7 @@ Card {
 
                 Controls.Label {
 
-                    text: qsTr("%1 ago").arg(Common.timeSince(date))
+                    text: fmtUtils.formatDate(date)
                 }
 
             }
