@@ -121,7 +121,7 @@ ListView {
                 for (let i = 0; i < subsModel.count; i++) {
                     const entry = subsModel.get(i);
 
-                    if (entry.category !== "Subreddits" && Common.searchValuesFor(entry, searchText, false)) {
+                    if (entry.category !== "Subreddits" && miscUtils.searchValuesFor(entry, searchText, false)) {
                         const searchData = Object.assign({}, entry);
                         searchData.category = "Search results";
                         searchModel.append(searchData);

@@ -68,7 +68,7 @@ Dialog {
         themeInput.model = styleTools.getThemes();
         const theme = styleTools.getTheme();
         console.debug(`current theme: ${theme}`);
-        themeInput.currentIndex = themesModel.indexOf(theme);
+        themeInput.currentIndex = themeInput.model.indexOf(theme);
         hasInit= true;
     }
 

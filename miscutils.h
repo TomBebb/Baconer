@@ -2,6 +2,7 @@
 #define MISCUTILS_H
 
 #include <QObject>
+#include <QVariantMap>
 
 class MiscUtils : public QObject
 {
@@ -13,7 +14,7 @@ public:
     }
     explicit MiscUtils(QObject *parent = nullptr);
 
-    Q_INVOKABLE
+    Q_INVOKABLE bool searchValuesFor(const QVariant& mapOrArray, const QString& text, bool caseSensitive = true) const;
 
 signals:
 

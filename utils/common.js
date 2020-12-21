@@ -67,7 +67,6 @@ function openRedditLink(url) {
     return null;
 }
 function openLink(url) {
-    console.debug(`open link: ${url}`);
     const redditPageForLink = openRedditLink(url);
     if (redditPageForLink) {
         return redditPageForLink.then(page => {
@@ -100,19 +99,6 @@ function openLinkWebView(url) {
         root.openPage(page);
         return page;
     }).catch(err => console.error(`Error opening web page: ${url}`));
-}
-
-function searchValuesFor(obj, txt, caseSensitive=true) {
-    if (!caseSensitive)
-        txt = txt.toLowerCase();
-    for (let val of Object.values(obj)) {
-        val += "";
-        if (!caseSensitive)
-            val = val.toLowerCase();
-        if (val.includes(txt))
-            return true;
-    }
-    return false;
 }
 
 function createComponent(path, props={}, parent = root) {
