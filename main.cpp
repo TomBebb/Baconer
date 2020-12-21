@@ -9,10 +9,14 @@
 
 #include "styletools.h"
 #include "stringutils.h"
+#include "url.h"
+#include "urlutils.h"
 
 
 int main(int argc, char *argv[])
 {
+
+    qmlRegisterAnonymousType<url>("Baconer", 1);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
@@ -26,9 +30,9 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     auto& stringUtils = StringUtils::getInstance();
-
-
+    auto& urlUtils = UrlUtils::getInstance();
     auto& styleTools = StyleTools::getInstance();
+
     styleTools.checkTheme();
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
@@ -39,9 +43,9 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
 
-
     engine.rootContext()->setContextProperty("styleTools", &styleTools);
     engine.rootContext()->setContextProperty("stringUtils", &stringUtils);
+    engine.rootContext()->setContextProperty("urlUtils", &urlUtils);
 
     engine.load(url);
 

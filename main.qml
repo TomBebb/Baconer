@@ -17,6 +17,8 @@ ApplicationWindow {
 
     pageStack.interactive: true
     pageStack.defaultColumnWidth: Units.gridUnit * 40
+
+
     Rest {
         id: rest
     }

@@ -21,37 +21,6 @@ function convertColor(color, isBg) {
     }
 }
 
-function parseURL(url) {
-    let hashArgs = {};
-    let urlArgs = {};
-    let matches = [];
-
-    const hashIndex = url.indexOf("#");
-    if (hashIndex !== -1) {
-        let hash = url.substr(hashIndex);
-        url = url.substr(0, hashIndex);
-
-
-        while (true) {
-            matches = urlHashArgRegex.exec(hash);
-            if (!matches)
-                break;
-            hashArgs[matches[1]] = matches[2];
-        }
-    }
-    while (true) {
-        matches = urlArgRegex.exec(url);
-        if (!matches)
-            break;
-        urlArgs[matches[1]] = matches[2];
-    }
-    const questionIndex = url.indexOf("?");
-    if (questionIndex !== -1)
-        url = url.substr(0, questionIndex);
-    return {url: url, args: urlArgs, hash: hashArgs};
-
-}
-
 function formatNum(num) {
 
     if (num < 1000)

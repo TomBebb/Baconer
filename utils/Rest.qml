@@ -362,11 +362,13 @@ Item {
             view.urlChanged.connect(() => {
                 const urlText = view.url.toString();
                 if (stringUtils.startsWith(urlText, Common.redirectURI)) {
-                    const urlDetails = Common.parseURL(urlText);
-                    const hashArgs = urlDetails.hash;
+                    const urlDetails = urlUtils.parseUrl(urlText);
+                    const hashArgs = urlDetails.hashArgs;
+
+                    console.debug(`details: ${urlDetails}; args: ${urlDetails.args}; hashArgs: ${urlDetails.hashArgs}; state: ${hashArgs.state}`);
 
                     if (hashArgs.state !== state)
-                        console.error(`State mismatch from reddit: ${hashArgs.state} != ${state}`);
+                        console.error(`State mismatch from reddit: ${urlDetails.hashArgs.state} != ${state}`);
 
                     // TODO: handle error
 

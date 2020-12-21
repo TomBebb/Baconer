@@ -9,12 +9,16 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 SOURCES += \
         main.cpp \
         stringutils.cpp \
-        styletools.cpp
+        styletools.cpp \
+        url.cpp \
+        urlutils.cpp
 
 RESOURCES += qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
+QML_IMPORT_NAME = org.baconer
+QML_IMPORT_MAJOR_VERSION = 1
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
@@ -26,4 +30,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     stringutils.h \
-    styletools.h
+    styletools.h \
+    url.h \
+    urlutils.h
