@@ -8,8 +8,6 @@ Card {
     id: postCard
     property bool hasIcon: false
     property var subIcon: ({})
-
-    onSubIconChanged: console.debug(`${subredditURL} => ${JSON.stringify(subIcon)}`)
     property bool isSub: false
     readonly property string subredditURL: `/r/${subreddit}`
     readonly property int maxPostPreviewLength: 255

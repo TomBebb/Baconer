@@ -12,12 +12,6 @@ Item {
     onAccessTokenChanged: settingsDialog.settings.accessToken = accessToken
     onAccessTokenExpiryChanged: settingsDialog.settings.accessTokenExpiry = accessTokenExpiry
 
-    Component.onCompleted: {
-        accessToken = settingsDialog.settings.accessToken;
-        accessTokenExpiry = settingsDialog.accessTokenExpiry;
-
-    }
-
 
     property bool isLoggedIn: accessToken != null && Date.now() < accessTokenExpiry
     onIsLoggedInChanged: console.debug(`Logged in changed: ${isLoggedIn}`);
@@ -205,6 +199,7 @@ Item {
     }
 
     function loadPostsAfter(url, postsModel, forceRefresh) {
+        console.debug("load posts after");
         return loadPosts(url, postsModel, postsModel.after, forceRefresh);
     }
 
@@ -230,14 +225,18 @@ Item {
         let infoUrl = url + "";
         if (url.charAt(url.length - 1) === '/')
             infoUrl = infoUrl.substr(0, infoUrl.length - 1);
+        else
+            url += "/";
 
-        if (subInfoCache.has(infoUrl)) {
-            return Promise.resolve(subInfoCache.get(infoUrl));
+        // console.debug(`url=${url}: in stored=${subInfoCache.has(url)}; stored: `+ Array.from(subInfoCache.keys()).join(", "));
+        if (subInfoCache.has(url)) {
+            return Promise.resolve(subInfoCache.get(url));
         }
         return getRedditJSON(`${infoUrl}/about`)
             .then(rawData => {
+                // console.debug(`got url=${url}: in stored=${subInfoCache.has(url)}; stored: `+ Array.from(subInfoCache.keys()).join(", "));
                 const data = DataConv.convertSub(rawData.data);
-                subInfoCache.set(infoUrl, data);
+                subInfoCache.set(url, data);
                 return data;
              })
             .catch(raw => console.log(`info error: ${raw}`));
@@ -292,6 +291,7 @@ Item {
             for (const item of items) {
                 subsModel.append(item);
             }
+            return items;
         });
     }
 
@@ -315,6 +315,7 @@ Item {
             for (const rawChild of data.data.children) {
                 const subData = DataConv.convertSub(rawChild);
                 subInfoCache.set(subData.url, subData);
+                subs.push(subData);
             }
 
             return subs;
@@ -349,19 +350,16 @@ Item {
                     const urlDetails = urlUtils.parseUrl(urlText);
                     const hashArgs = urlDetails.hashArgs;
 
-                    console.debug(`details: ${urlDetails}; args: ${urlDetails.args}; hashArgs: ${urlDetails.hashArgs}; state: ${hashArgs.state}`);
-
                     if (hashArgs.state !== state)
                         console.error(`State mismatch from reddit: ${urlDetails.hashArgs.state} != ${state}`);
 
                     // TODO: handle error
 
                     const expireTime = new Date();
-                    expireTime.setSeconds(expireTime.getTime() / 1000 + hashArgs.expires_in);
+                    expireTime.setSeconds(expireTime.getSeconds() + (hashArgs.expires_in | 0));
 
                     accessTokenExpiry = expireTime;
                     accessToken = hashArgs.access_token.toString();
-
                     isLoggedIn = true;
 
                     root.closePage(webPage);

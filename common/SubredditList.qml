@@ -70,6 +70,7 @@ ListView {
         const currentUrl = currentURL;
 
         rest.loadDrawerItems(subsModel).then(rawDatas => {
+                                                 /*
 
             let newUrlIndex = -1;
             for (let i = 0; i < model.count; i++) {
@@ -81,7 +82,7 @@ ListView {
                 }
             }
             currentIndex = newUrlIndex;
-            refreshSubInfo(refreshPosts);
+            refreshSubInfo(refreshPosts);*/
         }).catch(err => console.error(`Error loading subs: ${err}`));
     }
 
