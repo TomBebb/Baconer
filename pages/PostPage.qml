@@ -90,7 +90,7 @@ ScrollablePage {
                         width: parent.width
                     }
                     Controls.Label {
-                        text: fmtUtils.formatNum(date)
+                        text: fmtUtils.formatDate(date)
                         color: Theme.disabledTextColor
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                         width: parent.width

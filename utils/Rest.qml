@@ -243,12 +243,13 @@ Item {
     }
 
     function loadDrawerItems(subsModel, forceRefresh) {
+        console.debug(`loadDrawerItems`);
 
         return loadSubs(forceRefresh).then(rawSubItems => {
 
-            let favItems = [];
+            let multiItems = [];
             let subItems = [];
-            let multiItems = [
+            let favItems = [
                 {
                     isFavorite: true,
                     isVisible: true,

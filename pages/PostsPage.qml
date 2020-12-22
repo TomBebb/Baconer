@@ -31,7 +31,7 @@ ScrollablePage {
     Connections {
         target: flickable
         function onContentYChanged() {
-            if (flickable.atYEnd)
+            if (flickable.atYEnd && !postsModel.loadingPosts)
                 loadPostsAfter();
         }
     }
@@ -110,8 +110,8 @@ ScrollablePage {
     Connections {
         target: settingsDialog.settings
 
-        function onChanged() {
-            console.debug("Settings changed");
+        function onFavoritesChanged() {
+            console.debug("Faves changed");
             favAction.updateFav()
         }
     }
@@ -157,7 +157,6 @@ ScrollablePage {
     }
 
     onInfoChanged: {
-        console.debug(`Info changed: `+info);
         title = info ? info.title : url;
     }
 

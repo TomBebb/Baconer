@@ -34,17 +34,14 @@ Dialog {
         property string accessToken
         property var accessTokenExpiry
 
-        onThemeNameChanged: changed();
-        onPreferExternalBrowserChanged: changed();
-        onImagePreviewChoiceChanged: changed();
-        onChanged: console.debug("Settings changed")
+        onFavoritesChanged: {
+            console.debug(`faves changed: ${JSON.stringify(favorites)}`);
+            subsView.refreshAll();
+        }
 
         onAccessTokenChanged: console.debug(`Settings access token: ${accessToken}`);
 
         onAccessTokenExpiryChanged: console.debug(`Settings access token expires: ${accessTokenExpiry}`);
-
-
-        signal changed()
 
     }
 
@@ -55,21 +52,21 @@ Dialog {
         else if (isFav && !wasFav)
             settings.favorites.push(url);
 
-        settings.changed();
+        settings.favorites = [...settings.favorites];
         settings.sync();
     }
 
     function isFav(url) {
+        console.debug(`check isFav: ${url}; type: ${typeof url} index: ${settings.favorites.indexOf(url)}`);
         return settings.favorites.indexOf(url) !== -1;
     }
 
     function loadThemes() {
-        console.debug(`load themes`);
         themeInput.model = styleTools.getThemes();
         const theme = styleTools.getTheme();
-        console.debug(`current theme: ${theme}`);
+
         themeInput.currentIndex = themeInput.model.indexOf(theme);
-        hasInit= true;
+        hasInit = true;
     }
 
     function logout() {
@@ -85,7 +82,6 @@ Dialog {
         Connections {
             target: dialog
             Component.onCompleted:  {
-                console.debug(`Settings inited: accessToken = ${settings.accessToken}; ${settings.accessTokenExpiry}`)
                 rest.accessToken = settings.accessToken;
                 rest.accessTokenExpiry = settings.accessTokenExpiry;
             }

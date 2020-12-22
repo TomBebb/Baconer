@@ -30,11 +30,13 @@ ApplicationWindow {
 
         header: RowLayout {
             Layout.fillWidth: true
+            Layout.fillHeight: true
 
             SearchField {
                 id: subsSearch
                 visible: !navDrawer.collapsed
                 Layout.fillWidth: true
+                Layout.fillHeight: true
 
             }
         }
