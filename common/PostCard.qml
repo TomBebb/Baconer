@@ -79,7 +79,7 @@ Card {
             checkable: true
             checked: saved
             tooltip: checked ? qsTr("Unsave") : qsTr("Save")
-            onCheckedChanged: rest.setSaved(fullName, checked)
+            onCheckedChanged: if (checked !== saved) rest.setSaved(fullName, checked)
             visible: rest.isLoggedIn
         }
     ]
@@ -177,14 +177,13 @@ Card {
 
             LinkHandlerConnection {}
         }
-
-        RowLayout {
+        Row {
             Theme.inherit: false
             Theme.colorSet: Theme.Window
             Theme.backgroundColor: "#b9d795"
             Theme.textColor: "#465c2b"
             Theme.highlightColor: "#89e51c"
-            visible: flairs.count > 0
+            visible: flairs && flairs.count > 0
 
             width: item.width
             height: childrenRect.height

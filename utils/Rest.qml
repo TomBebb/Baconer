@@ -17,6 +17,9 @@ Item {
     property bool isLoggedIn: accessToken != null && Date.now() < accessTokenExpiry
     onIsLoggedInChanged: {
         console.debug(`Logged in changed: ${isLoggedIn}`);
+
+        clearCache();
+        root.reload();
     }
     property string baseURL: isLoggedIn ? "https://oauth.reddit.com" : "https://api.reddit.com";
 
@@ -392,9 +395,6 @@ Item {
                     isLoggedIn = true;
 
                     root.closePage(webPage);
-
-                    rest.clearCache();
-                    root.reload();
                 }
             });
         });

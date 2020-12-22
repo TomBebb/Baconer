@@ -57,7 +57,6 @@ Dialog {
     }
 
     function isFav(url) {
-        console.debug(`check isFav: ${url}; type: ${typeof url} index: ${settings.favorites.indexOf(url)}`);
         return settings.favorites.indexOf(url) !== -1;
     }
 
@@ -72,8 +71,6 @@ Dialog {
     function logout() {
         rest.accessToken = rest.accessTokenExpiry = null;
         rest.isLoggedIn = false;
-        rest.clearCache();
-        root.reload();
     }
 
     Kirigami.FormLayout {

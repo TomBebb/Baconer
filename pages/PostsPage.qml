@@ -1,4 +1,4 @@
-import QtQuick 2.1
+import QtQuick 2.12
 import QtQuick.Controls 2.0 as Controls
 import QtQuick.Layouts 1.2
 import org.kde.kirigami 2.13
@@ -36,6 +36,19 @@ ScrollablePage {
         }
     }
 
+
+    Shortcut {
+        sequence: "Ctrl+W"
+        onActivated:  {
+            console.debug("Up shortcut activated");
+            postsView.currentIndex--;
+        }
+    }
+
+    Shortcut {
+        sequence: "Ctrl+S"
+        onActivated: postsView.currentIndex++;
+    }
 
 
     actions {
@@ -132,6 +145,7 @@ ScrollablePage {
         }
 
         CardsListView {
+            id: postsView
             Layout.alignment: Qt.AlignHCenter
             Layout.maximumWidth: root.pageStack.defaultColumnWidth
             Layout.fillWidth: true

@@ -36,8 +36,6 @@ ApplicationWindow {
                 id: subsSearch
                 visible: !navDrawer.collapsed
                 Layout.fillWidth: true
-                Layout.fillHeight: true
-
             }
         }
 
@@ -51,7 +49,7 @@ ApplicationWindow {
         sequence: "Ctrl+K"
         onActivated: {
             navDrawer.visible = true;
-            subsSearch.focus = true;
+            subsSearch.forceActiveFocus();
         }
     }
 
@@ -60,10 +58,20 @@ ApplicationWindow {
         onActivated: navDrawer.visible = !navDrawer.visible
     }
 
+    Timer {
+        id: searchTimer
+        interval: 500
+        onTriggered: subsView.search(subsSearch.text)
+    }
+
     Connections {
         target: subsSearch
         function onAccepted() {
             subsView.search(target.text)
+            searchTimer.stop()
+        }
+        function onTextChanged() {
+            searchTimer.restart();
         }
     }
 
