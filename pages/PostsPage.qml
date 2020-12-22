@@ -27,6 +27,9 @@ ScrollablePage {
     Component.onCompleted: {
         refresh();
     }
+    Controls.ScrollBar {
+        id: scrollBar
+    }
 
     Connections {
         target: flickable
@@ -34,20 +37,6 @@ ScrollablePage {
             if (flickable.atYEnd && !postsModel.loadingPosts)
                 loadPostsAfter();
         }
-    }
-
-
-    Shortcut {
-        sequence: "Ctrl+W"
-        onActivated:  {
-            console.debug("Up shortcut activated");
-            postsView.currentIndex--;
-        }
-    }
-
-    Shortcut {
-        sequence: "Ctrl+S"
-        onActivated: postsView.currentIndex++;
     }
 
 
@@ -146,6 +135,7 @@ ScrollablePage {
 
         CardsListView {
             id: postsView
+            snapMode: ListView.SnapToItem
             Layout.alignment: Qt.AlignHCenter
             Layout.maximumWidth: root.pageStack.defaultColumnWidth
             Layout.fillWidth: true
