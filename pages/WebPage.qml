@@ -52,5 +52,5 @@ ScrollablePage {
     Component.onCompleted: {
         view.url = initialURL;
     }
-    Component.onDestruction: console.debug(`Web page: ${url} destoryed`)
+    Component.onDestruction: console.debug(`Web page:  destoryed`)
 }

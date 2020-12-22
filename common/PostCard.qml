@@ -177,20 +177,34 @@ Card {
 
             LinkHandlerConnection {}
         }
-        Controls.Label {
-            textFormat: TextEdit.MarkdownText
 
-            Component.onCompleted: {
-                if (flairs.count > 0)
-                    visible = true;
-                let newText = "";
-                for (let i = 0; i < flairs.count; i++) {
-                    if (i > 0)
-                        newText += ", ";
-                    const flairText = flairs.get(i).flairText;
-                    newText += `**${flairText}**`;
+        RowLayout {
+            Theme.inherit: false
+            Theme.colorSet: Theme.Window
+            Theme.backgroundColor: "#b9d795"
+            Theme.textColor: "#465c2b"
+            Theme.highlightColor: "#89e51c"
+            visible: flairs.count > 0
+
+            width: item.width
+            height: childrenRect.height
+
+            spacing: Units.gridUnit / 2
+
+            Repeater {
+                model: flairs
+                delegate: Controls.Label {
+                    textFormat: TextEdit.MarkdownText
+                    color: Theme.textColor
+                    text: flairText
+                    padding: Units.smallSpacing * 2
+                    font.bold: true
+
+                    background: Rectangle {
+                        color: Theme.backgroundColor
+                        radius: Units.gridUnit * 5
+                    }
                 }
-                 text = newText;
             }
         }
     }
