@@ -72,6 +72,7 @@ Dialog {
     function logout() {
         rest.accessToken = rest.accessTokenExpiry = null;
         rest.isLoggedIn = false;
+        rest.clearCache();
         root.reload();
     }
 

@@ -8,13 +8,16 @@ Item {
     property string accessToken
     property var accessTokenExpiry
     property var subInfoCache: new Map()
+    property var cache: new Map()
 
     onAccessTokenChanged: settingsDialog.settings.accessToken = accessToken
     onAccessTokenExpiryChanged: settingsDialog.settings.accessTokenExpiry = accessTokenExpiry
 
 
     property bool isLoggedIn: accessToken != null && Date.now() < accessTokenExpiry
-    onIsLoggedInChanged: console.debug(`Logged in changed: ${isLoggedIn}`);
+    onIsLoggedInChanged: {
+        console.debug(`Logged in changed: ${isLoggedIn}`);
+    }
     property string baseURL: isLoggedIn ? "https://oauth.reddit.com" : "https://api.reddit.com";
 
     Timer {
@@ -27,8 +30,6 @@ Item {
                 console.debug("Log-in token expired");
                 isLoggedIn = false;
             }
-
-            const cache = subInfoCache;
 
             for (let [url, data] of cache) {
                 const sinceCachedMs = Date.now() - data.time;
@@ -49,24 +50,37 @@ Item {
 
     }
 
-    function rawGet(url, params = {}, forceRefresh, timeout) {
+    function clearCache() {
+        cache.clear();
+        subInfoCache.clear();
+    }
+
+    function rawGet(url, params = {}, forceRefresh = false, timeout = 5000, useCache = true) {
         url = urlUtils.generateUrl(url, params);
+
+        if (useCache && !forceRefresh && cache.has(url)) {
+            const cached = cache.get(url);
+            if (cached instanceof Promise)
+                return cached;
+            return Promise.resolve(cached);
+        }
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", url);
         setDefaultHeaders(xhr);
         xhr.send();
 
-        return new Promise(function(resolve, reject) {
+        const result = new Promise(function(resolve, reject) {
             xhr.onreadystatechange = function() {
                 // console.debug(`${url} GET State changed: readyState=${xhr.readyState} status=${xhr.status}`);
                 if (xhr.readyState !== XMLHttpRequest.DONE)
                     return;
 
                 if (xhr.status >= 200 && xhr.status < 300) {
-                    console.debug(`got: ${url}`);
+                    ;
                     resolve(xhr.responseText);
                 } else {
+                    cache.delete(url);
                     reject({
                         url: url,
                         status: xhr.status,
@@ -75,9 +89,18 @@ Item {
                 }
             };
         });
+
+        if (useCache) {
+            result
+                .then(txt => cache.set(url, txt))
+                .catch(err => cache.delete(url));
+            cache.set(url, result);
+        }
+
+        return result;
     }
 
-    function rawPost(url, params = {}, postParams = {}, timeout) {
+    function rawPost(url, params = {}, postParams = {}, timeout = 5000) {
         url = urlUtils.generateUrl(url, params);
 
 
@@ -115,18 +138,18 @@ Item {
         });
     }
 
-    function getJSON(url, params, forceRefresh = false, timeout = 5000) {
-        return rawGet(url, params, forceRefresh, timeout)
+    function getJSON(url, params, forceRefresh, timeout, useCache) {
+        return rawGet(url, params, forceRefresh, timeout, useCache)
             .then(resp => JSON.parse(resp));
     }
-    function postJSON(url, params, postParams, timeout = 5000) {
+    function postJSON(url, params, postParams, timeout) {
         return rawPost(url, params, postParams, timeout)
             .then(resp => JSON.parse(resp));
     }
 
 
-    function getRedditJSON(url, params, forceRefresh = false) {
-        return getJSON(baseURL + url, params, forceRefresh);
+    function getRedditJSON(url, params, forceRefresh, timeout, useCache) {
+        return getJSON(baseURL + url, params, forceRefresh, timeout, useCache);
     }
 
     function getScopes() {
@@ -154,7 +177,6 @@ Item {
         }).catch(err => console.error(`Error voting on post: ${JSON.stringify(err)}`));
     }
     function subscribe(subName, sub = true) {
-        console.debug("NAME: " + subName);
         return postJSON(`${baseURL}/api/subscribe`, null, {
             action: sub ? "sub" : "unsub",
             action_source: "n",
@@ -171,8 +193,6 @@ Item {
             params.after = after;
         }
         const isSub = stringUtils.startsWith(url, "/r/");
-
-        console.debug(`load posts: ${url}`);
 
         return getRedditJSON(url, params, forceRefresh).then(data => {
             if (!after)
@@ -230,16 +250,24 @@ Item {
 
         // console.debug(`url=${url}: in stored=${subInfoCache.has(url)}; stored: `+ Array.from(subInfoCache.keys()).join(", "));
         if (subInfoCache.has(url)) {
+            const data = subInfoCache.get(url);
+            if (data instanceof Promise)
+                return data;
             return Promise.resolve(subInfoCache.get(url));
         }
-        return getRedditJSON(`${infoUrl}/about`)
+        const result = getRedditJSON(`${infoUrl}/about`, {}, false, false)
             .then(rawData => {
                 // console.debug(`got url=${url}: in stored=${subInfoCache.has(url)}; stored: `+ Array.from(subInfoCache.keys()).join(", "));
                 const data = DataConv.convertSub(rawData.data);
                 subInfoCache.set(url, data);
                 return data;
              })
-            .catch(raw => console.log(`info error: ${raw}`));
+            .catch(raw => {
+                console.error(`info error: ${raw}`);
+                subInfoCache.delete(url);
+            });
+        subInfoCache.set(url, result);
+        return result;
     }
 
     function loadDrawerItems(subsModel, forceRefresh) {
@@ -365,6 +393,7 @@ Item {
 
                     root.closePage(webPage);
 
+                    rest.clearCache();
                     root.reload();
                 }
             });
