@@ -218,7 +218,7 @@ Item {
             }
             return posts;
         })
-        .catch(err => console.error(`Error loading posts: ${JSON.stringiy(err)}`));
+        .catch(err => console.error(`Error loading posts: ${err}`));
     }
 
     function loadPostsAfter(url, postsModel, forceRefresh) {

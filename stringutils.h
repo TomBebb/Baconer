@@ -23,6 +23,8 @@ class StringUtils : public QObject {
     bool isNonEmptyString ( QVariant str );
     QString tidyDesc ( const QString& txt, uint len = 255 );
     QString randomString ( uint len = 20 );
+   
+    bool isValidFlair(const QString& flairText);
     signals:
 };
 

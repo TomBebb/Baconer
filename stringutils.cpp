@@ -77,3 +77,9 @@ QString StringUtils::randomString ( uint len )
     qDebug() << "string w/ " << len << " chars generated: " << result;
     return result;
 }
+
+bool StringUtils::isValidFlair(const QString& flairText) {
+    if (flairText.length() == 0)
+        return false;
+    return flairText.at(0) != ':' && flairText.at(flairText.length() - 1) != ':';
+}
