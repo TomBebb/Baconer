@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0 as Controls
+import QtWebView 1.1
 import org.kde.kirigami 2.13
 import "../utils/common.js" as Common
 
@@ -16,10 +17,31 @@ Card {
     readonly property bool showImagePreview: previewImage.isValid && !showVideoPreview
     readonly property bool showVideoPreview: previewVideo.isValid
     readonly property bool isActiveSub: root.currentPage && root.currentPage.url != null && subredditURL === root.currentPage.url
-
+    property bool canShowEmbed: false
+    property var oembedData: null
     property int voteValue: 0
 
+    function showEmbed() {
+        banner.source = "";
+        oembedLoader.visible = true;
+        oembedLoader.setSource("qrc:///common/EmbeddedWebView.qml", {
+            initialURL: oembedData.url,
+            initialHTML: oembedData.html
+        });
+
+        canShowEmbed = false;
+    }
+
     Component.onCompleted: {
+        const oembedRes = rest.tryOembed(url);
+        if (oembedRes)
+        oembedRes.then(data => {
+            if (data === null)
+                return;
+            canShowEmbed = true;
+            oembedData = data;
+        }).catch(err => console.error(`Error while embedding ${url}: ${err}`));
+
         if (isSub)
             return;
 
@@ -31,6 +53,7 @@ Card {
             post.subIcon = info.itemIcon;
             post.hasIcon = info.itemIcon && info.itemIcon.source;
         }).catch(err => console.error(`Error getting sub icon: ${err}; postCard = ${post}`));
+
     }
 
     banner {
@@ -84,19 +107,25 @@ Card {
     ]
 
     onClicked: {
-        if (showVideoPreview)
-            return;
-        if (url)
+        if (canShowEmbed)
+            showEmbed();
+        else if (url)
             Common.openLink(url);
         else
             openPostInfoPage();
     }
 
 
-
     contentItem: Column {
         id: item
         anchors.fill: parent
+
+        Loader {
+            id: oembedLoader
+            width: parent.width
+            height: 500
+            visible: false
+        }
 
         Loader {
             id: videoPlayerLoader

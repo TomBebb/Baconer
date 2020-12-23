@@ -22,20 +22,20 @@ ScrollablePage {
             text: "Refresh"
             icon.name: "view-refresh"
             onTriggered: refresh(true)
+            shortcut: StandardKey.Refresh
             enabled: !commentsModel.loadingComments
         }
         left: Action {
             text: "Close"
             iconName: "view-close"
-            onTriggered:  root.closePage(page)
+            onTriggered: {
+                root.closePage(page);
+                page.destroy();
+            }
             shortcut: StandardKey.Close
         }
     }
 
-    Shortcut {
-        sequences: [StandardKey.Refresh, "Ctrl+R"]
-        onActivated: refresh(true)
-    }
 
     Component.onCompleted: refresh();
 
@@ -148,6 +148,7 @@ ScrollablePage {
             }
         }
     }
+    Component.onDestruction: console.debug(`Post page destroyed`)
 
     function refresh(forceRefresh = false) {
         loadingComments = true;
@@ -158,4 +159,5 @@ ScrollablePage {
                loadingComments = refreshing = false;
             });
     }
+
 }

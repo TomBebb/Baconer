@@ -120,7 +120,6 @@ ScrollablePage {
             favAction.updateFav()
         }
     }
-
     ColumnLayout {
         id: layout
         Layout.fillWidth: true

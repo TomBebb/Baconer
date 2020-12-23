@@ -19,5 +19,6 @@
         <file>stringutils.h</file>
         <file>stringutils.cpp</file>
         <file>dialogs/CenteredDialog.qml</file>
+        <file>common/EmbeddedWebView.qml</file>
     </qresource>
 </RCC>

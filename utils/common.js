@@ -6,8 +6,6 @@ const subRedditRegex = /^\/r\/([a-zA-Z-_]+)\/?/;
 const postRegex = /^\/r\/([a-zA-Z-_]+)\/comments\/([a-zA-Z0-9]+)\/?/;
 const clientID = "QwuPozK5cW9cwA";
 const redirectURI = "http://locahost:8042/redirect";
-const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|watch\?v=))([a-zA-Z0-9\-_]+)/;
-
 
 function convertColor(color, isBg) {
     if (color === null || color.length === 0)
@@ -73,12 +71,6 @@ function openLink(url) {
             root.openPage(page);
             return page;
         }).catch(err => console.error("Error opening reddit link: "+err));
-    }
-
-    const youtubeMatch = url.match(youtubeRegex);
-    if (youtubeMatch && youtubeMatch.length >= 2 && !settingsDialog.settings.preferExternalBrowser) {
-        console.debug("Youtube link, using embed instead...");
-        url = `https://www.youtube.com/embed/${youtubeMatch[1]}`;
     }
 
     if (url.indexOf("://") === -1)

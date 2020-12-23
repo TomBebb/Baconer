@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.12
 import "common.js" as Common
 import "dataConverters.js" as DataConv
 import "../utils"
@@ -58,7 +58,7 @@ Item {
         subInfoCache.clear();
     }
 
-    function rawGet(url, params = {}, forceRefresh = false, timeout = 5000, useCache = true) {
+    function rawGet(url, params = {}, forceRefresh = false, timeout = 5000, useCache = false) {
         url = urlUtils.generateUrl(url, params);
 
         if (useCache && !forceRefresh && cache.has(url)) {
@@ -364,6 +364,35 @@ Item {
             }
             return subs;
         });
+    }
+
+    function tryOembed(url) {
+        const twitterPostRegex = /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
+        const youtubeVidRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?/;
+        const youtubeVidMatchResult = url.match(youtubeVidRegex);
+
+        if (twitterPostRegex.test(url)) {
+            return getJSON("https://publish.twitter.com/oembed", {url: url}, true, null, false);
+        } else if (youtubeVidMatchResult) {
+            // group 5
+            return Promise.resolve({
+                url: urlUtils.generateUrl("https://www.youtube.com/embed/"+youtubeVidMatchResult[5],{
+                        allowfullscreen:1,
+                        autoplay: 1
+                }),
+                version: "1.0",
+                type: "video",
+                width: null,
+                height: null,
+                title: null,
+                author_name: null,
+                author_url: null,
+                provider_name: "YouTube",
+                provider_url: "https://www.youtube.com"
+            });
+        }
+
+        return Promise.resolve(null);
     }
 
     function authorize(scopes){
