@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.2
 import QtQml.Models 2.12
+import QtQuick.Controls 2.12
 import org.kde.kirigami 2.13
 import "pages"
 import "common"
@@ -28,7 +29,7 @@ ApplicationWindow {
         id: navDrawer
         showContentWhenCollapsed: true
 
-        header: RowLayout {
+        header: ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
@@ -36,6 +37,16 @@ ApplicationWindow {
                 id: subsSearch
                 visible: !navDrawer.collapsed
                 Layout.fillWidth: true
+            }
+
+            Button {
+                Layout.fillWidth: true
+                icon.name: "configure"
+                text: "Open Settings"
+                onClicked: {
+                    navDrawer.close();
+                    root.showSettings();
+                }
             }
         }
 

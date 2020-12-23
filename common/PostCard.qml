@@ -1,4 +1,4 @@
-import QtQuick 2.1
+import QtQuick 2.12
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0 as Controls
 import org.kde.kirigami 2.13
@@ -15,7 +15,6 @@ Card {
     readonly property real rowEachWidthMult: 0.2
     readonly property bool showImagePreview: previewImage.isValid && !showVideoPreview
     readonly property bool showVideoPreview: previewVideo.isValid
-    readonly property bool showThumbnail: (!showImagePreview && stringUtils.isNonEmptyString(thumbnail))
     readonly property bool isActiveSub: root.currentPage && root.currentPage.url != null && subredditURL === root.currentPage.url
 
     property int voteValue: 0
@@ -36,7 +35,7 @@ Card {
 
     banner {
         title: postTitle
-        titleLevel: 4
+        titleLevel: 3
         titleWrapMode: Text.WrapAtWordBoundaryOrAnywhere
         source: showImagePreview && previewImage.url ? previewImage.url : ""
     }

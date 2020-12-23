@@ -71,11 +71,6 @@ ScrollablePage {
                 visible: isSubreddit
             },
             Action {
-                text: "Setting"
-                iconName: "gtk-preferences"
-                onTriggered: root.showSettings()
-            },
-            Action {
                 id: favAction
                 iconName: "favorite"
                 checkable: true

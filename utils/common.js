@@ -1,4 +1,4 @@
-.import QtQuick 2.1 as Quick
+.import QtQuick 2.12 as Quick
 .import org.kde.kirigami 2.13 as Kirigami
 
 const redditRegex = /^(?:https?:\/\/)?(?:old\.|www\.)?reddit\.com/;

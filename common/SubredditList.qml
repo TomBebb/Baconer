@@ -1,4 +1,4 @@
-import QtQuick 2.1
+import QtQuick 2.12
 import org.kde.kirigami 2.13 as Kirigami
 import QtQuick.Layouts 1.2
 import QtQml.Models 2.12

@@ -18,5 +18,6 @@
         <file>common/VideoPlayer.qml</file>
         <file>stringutils.h</file>
         <file>stringutils.cpp</file>
+        <file>dialogs/CenteredDialog.qml</file>
     </qresource>
 </RCC>

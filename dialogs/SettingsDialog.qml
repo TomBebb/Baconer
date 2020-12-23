@@ -1,14 +1,13 @@
-import QtQuick 2.1
-import QtQuick.Controls 2.2
+import QtQuick 2.12
 import QtQuick.Layouts 1.2
 import org.kde.kirigami 2.13 as Kirigami
-import QtQuick.Dialogs 1.3
+import QtQuick.Controls 2.12
 import Qt.labs.settings 1.0
 
 import "../utils/common.js" as Common
 import "../common"
 
-Dialog {
+CenteredDialog {
     property var imagePreviewChoiceName: imagePreviewModel.get(imagePreviewChoiceBox.currentIndex).name
     property Settings settings: settings
 
@@ -17,13 +16,14 @@ Dialog {
     property var rawThemes
 
     title: "Settings"
-
+    modal: true
     id: dialog
     objectName: "settingsDialog"
 
-    standardButtons: StandardButton.Ok
-
-    onVisibilityChanged: console.debug(`Settings dialog visible: ${visible}`);
+    Shortcut {
+        sequence: StandardKey.Preferences
+        onActivated: show()
+    }
 
     Settings {
         id: settings
