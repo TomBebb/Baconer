@@ -7,7 +7,7 @@ import "../utils/common.js" as Common
 
 ListView {
     property var currentData: model.get(currentIndex)
-    property string currentURL: currentData ? `${currentData.url}` : "/"
+    property string currentURL: currentData ? currentData.url : "/"
     property bool awaitingSearchData: false
     property string lastURL
     property string searchText

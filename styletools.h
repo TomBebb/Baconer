@@ -3,24 +3,23 @@
 
 #include <QObject>
 
-class StyleTools : public QObject
-{
+class StyleTools : public QObject {
     Q_OBJECT
-private:
+    private:
     QString themeName;
-public:
+    public:
     static StyleTools& getInstance() {
         static StyleTools instance;
         return instance;
     }
-    explicit StyleTools(QObject *parent = nullptr);
+    explicit StyleTools ( QObject *parent = nullptr );
     void checkTheme();
 
-public slots:
-    void setTheme(QString styleName);
+    public slots:
+    void setTheme ( QString styleName );
     QString getTheme();
     QStringList getThemes();
-signals:
+    signals:
 
 };
 

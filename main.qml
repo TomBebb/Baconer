@@ -13,7 +13,7 @@ ApplicationWindow {
     property Page currentPage: root.pageStack.currentItem
     property int numGifs: 0
     id: root
-    title: `Baconer - ${currentPage.title}`
+    title: "Baconer - " + currentPage.title
     property Rest rest: rest
 
     pageStack.interactive: true
@@ -25,9 +25,8 @@ ApplicationWindow {
     }
 
     globalDrawer: GlobalDrawer {
-        title:  subsView.searchText ? qsTr("Search results") : (rest.isLoggedIn ? qsTr("My subscriptions") : qsTr("Subreddits"))
+        title:  (subsView.searchText ? qsTr("Search results") : (rest.isLoggedIn ? qsTr("My subscriptions") : qsTr("Subreddits")))
         id: navDrawer
-        showContentWhenCollapsed: true
 
         header: ColumnLayout {
             Layout.fillWidth: true

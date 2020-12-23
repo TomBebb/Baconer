@@ -12,7 +12,5 @@ WebView {
         } else {
             url = initialURL;
         }
-        runJavaScript(`document.onfullscreenchange = () => console.log("fullscreen changed " + document.fullscreenElement)`);
-        runJavaScript(`console.log("fullscreen ")`);
     }
 }

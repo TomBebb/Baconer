@@ -4,19 +4,18 @@
 #include <QObject>
 #include <QVariantMap>
 
-class MiscUtils : public QObject
-{
+class MiscUtils : public QObject {
     Q_OBJECT
-public:
+    public:
     static MiscUtils& getInstance() {
         static MiscUtils instance;
         return instance;
     }
-    explicit MiscUtils(QObject *parent = nullptr);
+    explicit MiscUtils ( QObject *parent = nullptr );
 
-    Q_INVOKABLE bool searchValuesFor(const QVariant& mapOrArray, const QString& text, bool caseSensitive = true) const;
+    Q_INVOKABLE bool searchValuesFor ( const QVariant& mapOrArray, const QString& text, bool caseSensitive = true ) const;
 
-signals:
+    signals:
 
 };
 

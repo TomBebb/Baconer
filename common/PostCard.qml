@@ -11,7 +11,7 @@ Card {
     property var subIcon: ({})
     property bool isSub: false
     property bool isPreview: true
-    readonly property string subredditURL: `/r/${subreddit}`
+    readonly property string subredditURL: "/r/"+subreddit
     readonly property int maxPostPreviewLength: 255
     readonly property bool hasContent: stringUtils.isNonEmptyString(postContent)
     readonly property real rowEachWidthMult: 0.2
@@ -34,12 +34,27 @@ Card {
     }
 
     Component.onCompleted: {
-        const oembed = rest.tryOembed(url).then(data => {
+        if (showVideoPreview) {
+            
+            console.debug(`Show video: ${postTitle}`);
+            videoPlayerLoader.visible = true;
+            videoPlayerLoader.setSource("qrc:///common/VideoPlayer.qml", {
+                source: previewVideo.highRes,
+                sourceWidth: previewVideo.width,
+                sourceHeight: previewVideo.height,
+                isGif: previewVideo.isGif
+            });
+            return;
+        }
+        console.debug(`Try embed: ${postTitle}`);
+        const oembed = rest.tryOembed(url).then(function(data) {
             if (data === null)
                 return;
             canShowEmbed = true;
             oembedData = data;
-        }).catch(err => console.error(`Error while embedding ${url}: ${err}`));
+        }).catch(function(err) {
+            console.error(qsTr("Error while embedding %1: %2".arg(url).arg(err)));
+        });
 
         if (!isPreview) {
             // auto-embed if post is viewed directly
@@ -51,13 +66,17 @@ Card {
 
         const post = postCard;
 
-        rest.loadSubInfo("/r/"+subreddit).then(info => {
+        rest.loadSubInfo("/r/"+subreddit).then(function(info) {
             if (!info.itemIcon)
                 return;
             post.subIcon = info.itemIcon;
             post.hasIcon = info.itemIcon && info.itemIcon.source;
-        }).catch(err => console.error(`Error getting sub icon: ${err}; postCard = ${post}`));
-
+        }).catch(function(err) {
+            console.error(qsTr("Error getting subreddit icon for %1: %2")
+                .arg(subreddit)
+                .arg(err)
+            );
+        });
     }
 
     banner {
@@ -123,39 +142,26 @@ Card {
     contentItem: Column {
         id: item
         anchors.fill: parent
-
+        
+        
+        Loader {
+            id: videoPlayerLoader
+            visible: showVideoPreview
+            width: parent.width
+        }
         Loader {
             id: oembedLoader
             width: parent.width
             height: width * (9 / 16)
             visible: false
         }
-
-        Loader {
-            id: videoPlayerLoader
-            width: parent.width
-            visible: showVideoPreview
-
-            Component.onCompleted: {
-                if (!showVideoPreview)
-                    return;
-
-
-                setSource("qrc:///common/VideoPlayer.qml", {
-                    source: previewVideo.highRes,
-                    sourceWidth: previewVideo.width,
-                    sourceHeight: previewVideo.height,
-                    isGif: previewVideo.isGif
-                });
-            }
-        }
         RowLayout {
             width: parent.width
             Controls.Label {
                 id: label
                 Layout.preferredWidth: parent.width / parent.visibleChildren.count
-                text: qsTr("by %1")
-                    .arg(`[${author}](http://reddit.com/u/${author})`)
+                text: qsTr("by [%1](http://reddit.com/u/%1)")
+                    .arg(author)
                 textFormat: TextEdit.MarkdownText
 
                 LinkHandlerConnection {}
@@ -190,7 +196,8 @@ Card {
 
                 Controls.Label {
 
-                    text: `[${subreddit}](http://reddit.com/r/${subreddit})`
+                    text: "[%1](http://reddit.com/r/%1)"
+                        .arg(subreddit)
                     textFormat: TextEdit.MarkdownText
 
                     LinkHandlerConnection {}
@@ -246,8 +253,10 @@ Card {
         const data = postsPage.getPostData(index);
 
         Common.createComponent("/pages/PostPage.qml", {postData: data})
-            .then(page => root.openPage(page))
-            .catch(err => console.error(`Error loading post: ${err}`));
+            .then(root.openPage)
+            .catch(function(err) {
+                console.error(qsTr("Error loading post info page: %1").arg(err));
+            });
     }
 
 }

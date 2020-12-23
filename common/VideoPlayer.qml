@@ -7,29 +7,10 @@ Column {
     property int sourceHeight
     property bool isGif: false
     property alias source: video.source
-    //anchors.fill: parent
+    
     width: parent.width
     height: childrenRect.height
-    Video {
-        id: video
-
-        autoLoad: true
-        autoPlay: isGif
-        clip: true
-
-
-        loops: isGif ? MediaPlayer.Infinite : 1
-        muted: isGif
-
-        fillMode: VideoOutput.PreserveAspectCrop
-
-
-        width: parent.width
-        height: width * (sourceHeight / sourceWidth)
-
-        anchors.horizontalCenter: parent.horizontalCenter
-    }
-
+    
     ActionToolBar {
         width: parent.width
         actions: [
@@ -51,7 +32,38 @@ Column {
                 visible: video.hasAudio
                 onTriggered: video.muted = !video.muted
             }
-
         ]
+    }
+    
+    Video {
+        id: video
+        autoLoad: true
+        autoPlay: isGif
+        width: parent.width - Units.largeSpacing
+        height: width * (sourceHeight / sourceWidth)
+
+
+        loops: isGif ? MediaPlayer.Infinite : 1
+        muted: isGif
+
+        fillMode: VideoOutput.PreserveAspectCrop
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        
+        onPlaybackStateChanged: {
+            let stackStr = "Playing";
+            if (playbackState == MediaPlayer.PausedState)
+                stackStr = "Paused";
+            else if (playbackState == MediaPlayer.StoppedState)
+                stackStr = "Stopped";
+            console.debug(`${source} ${stackStr}`);
+        }
+    }
+    Component.onCompleted: {
+        console.debug("Video: width=%1, height=%2, 
+source=%3".arg(width).arg(height).arg(source));
+        if (video.error) {
+            console.error(`Video error in ${source}: ${video.error}`);
+        }
     }
 }
