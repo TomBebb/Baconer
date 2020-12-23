@@ -10,13 +10,22 @@ ScrollablePage {
     id: page
     title: view.title
 
-    actions.contextualActions: [
-        Action {
-            text: "Refresh"
-            iconName: "view-refresh"
-            onTriggered: view.reload()
+    actions {
+        contextualActions: [
+            Action {
+                text: "Refresh"
+                iconName: "view-refresh"
+                onTriggered: view.reload()
+                shortcut: StandardKey.Refresh
+            }
+        ]
+        left: Action {
+            text: "Close"
+            iconName: "view-close"
+            onTriggered:  root.closePage(page)
+            shortcut: StandardKey.Close
         }
-    ]
+    }
 
     //Close the drawer with the back button
     onBackRequested: {

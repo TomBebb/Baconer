@@ -45,6 +45,7 @@ ScrollablePage {
             text: "Refresh"
             icon.name: "view-refresh"
             onTriggered: refresh(true)
+            shortcut: StandardKey.Refresh
         }
         contextualActions: [
             Action {

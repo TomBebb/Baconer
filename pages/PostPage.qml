@@ -24,6 +24,12 @@ ScrollablePage {
             onTriggered: refresh(true)
             enabled: !commentsModel.loadingComments
         }
+        left: Action {
+            text: "Close"
+            iconName: "view-close"
+            onTriggered:  root.closePage(page)
+            shortcut: StandardKey.Close
+        }
     }
 
     Shortcut {
