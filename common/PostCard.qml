@@ -127,7 +127,7 @@ Card {
         Loader {
             id: oembedLoader
             width: parent.width
-            height: 500
+            height: width * (9 / 16)
             visible: false
         }
 
