@@ -64,6 +64,13 @@ ScrollablePage {
             }
         }
 
+        Repeater {
+            model: [postData]
+            delegate: PostCard {
+                isPreview: false
+            }
+        }
+
         ListView {
             id: commentsList
             Layout.fillWidth: true

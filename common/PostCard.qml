@@ -10,6 +10,7 @@ Card {
     property bool hasIcon: false
     property var subIcon: ({})
     property bool isSub: false
+    property bool isPreview: true
     readonly property string subredditURL: `/r/${subreddit}`
     readonly property int maxPostPreviewLength: 255
     readonly property bool hasContent: stringUtils.isNonEmptyString(postContent)
@@ -33,14 +34,17 @@ Card {
     }
 
     Component.onCompleted: {
-        const oembedRes = rest.tryOembed(url);
-        if (oembedRes)
-        oembedRes.then(data => {
+        const oembed = rest.tryOembed(url).then(data => {
             if (data === null)
                 return;
             canShowEmbed = true;
             oembedData = data;
         }).catch(err => console.error(`Error while embedding ${url}: ${err}`));
+
+        if (!isPreview) {
+            // auto-embed if post is viewed directly
+            oembed.then(showEmbed);
+        }
 
         if (isSub)
             return;
@@ -200,7 +204,7 @@ Card {
             width: item.width
             textFormat: TextEdit.MarkdownText
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            text: postContent
+            text: isPreview ? stringUtils.tidyDesc(postContent, 255) : postContent
             visible: hasContent
 
             LinkHandlerConnection {}
