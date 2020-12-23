@@ -47,6 +47,13 @@ ScrollablePage {
             onTriggered: refresh(true)
             shortcut: StandardKey.Refresh
         }
+        left: Action {
+            text: "Close"
+            iconName: "view-close"
+            onTriggered:  root.closePage(postsPage)
+            shortcut: StandardKey.Close
+            visible: root.pageStack.depth > 1 && root.pageStack.items[0] !== postsPage
+        }
         contextualActions: [
             Action {
                 text: rest.isLoggedIn ? "Logout" : "Login"
