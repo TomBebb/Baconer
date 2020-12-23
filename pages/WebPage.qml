@@ -26,6 +26,11 @@ ScrollablePage {
             onTriggered:  root.closePage(page)
             shortcut: StandardKey.Close
         }
+        right: Action {
+            text: "Open externally"
+            onTriggered: Qt.openUrlExternally(initialURL)
+            visible: initialURL != null
+        }
     }
 
     //Close the drawer with the back button

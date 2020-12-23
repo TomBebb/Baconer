@@ -7,16 +7,6 @@ const postRegex = /^\/r\/([a-zA-Z-_]+)\/comments\/([a-zA-Z0-9]+)\/?/;
 const clientID = "QwuPozK5cW9cwA";
 const redirectURI = "http://locahost:8042/redirect";
 
-function convertColor(color, isBg) {
-    if (color === null || color.length === 0)
-        return isBg ? "white" : "black";
-    switch(color) {
-        case "dark": return "black";
-        case "light": return "white";
-        default: return color;
-    }
-}
-
 function fromUtcRaw(utcSecs) {
     const d = new Date(0);
     d.setUTCSeconds(utcSecs);
