@@ -32,9 +32,8 @@ function chooseImageSource(previewImages) {
             return previewImages[0];
         case "max":
             return previewImages[previewImages.length - 1];
-
     }
-    return previewImages[previewImages.length - 1];
+    return previewImages[(previewImages.length - 1) / 2];
 }
 function openRedditLink(url) {
     const redditUrl = url.replace(redditRegex, "");
